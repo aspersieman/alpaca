@@ -8,7 +8,7 @@
     </v-snackbar>
     <v-container class="my-2">
       <v-layout row class="mb-3" wrap>
-        <v-btn icon @click="tasks = projectsCopy; todos = true">
+        <v-btn icon @click="tasks = tasksCopy; todos = true">
           <v-icon color="primary">dashboard</v-icon>
         </v-btn>
         <v-btn icon @click="filterTasks('complete'); todos = false">
@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       tasks: [],
-      projectsCopy: [],
+      tasksCopy: [],
       todos: true,
       userId: '',
       btnColor: '',
@@ -128,9 +128,10 @@ export default {
       self.$eventBus.$emit('dialog', true)
     },
     loadTasks() {
-      console.log("loading tasks");
+      const self = this;
       window.axios.get('/api/tasks').then(response => {
-        this.tasks = response.data;
+        self.tasks = response.data;
+        self.tasksCopy = self.tasks;
       /*
         window.axios.get('/task/timers/active').then(response => {
           if (response.data.id !== undefined) {
@@ -143,7 +144,8 @@ export default {
       });
     },
     filterTasks(status){
-      this.tasks = this.projectsCopy
+      this.tasks = this.tasksCopy
+      console.log(this.tasks);
 
       if (status === "complete") {
         this.tasks = this.tasks.filter(function(item) {
@@ -216,7 +218,7 @@ export default {
 
       if (index > -1) {
         this.tasks.splice(index, 1);
-        this.projectsCopy.splice(index, 1);
+        this.tasksCopy.splice(index, 1);
       }
 
       this.saveOrder();
@@ -409,6 +411,7 @@ export default {
     /* REFACTOR }*/
   },
   created() {
+    const self = this;
     const user = {}; //firebase.auth().currentUser;
     if (user) {
       var userId = user.uid
@@ -417,13 +420,13 @@ export default {
       // not logged
     }
 
+    /*
     var projectsRef = {}; //db.collection('users/'+userId+'/tasks')
 
     // ORDER DATA BY PRIORITY
     projectsRef = {}; //projectsRef.orderBy("priority", "desc")
 
     // GET DATA
-    /*
     projectsRef.onSnapshot(res => {
       const changes = res.docChanges();
 
@@ -437,7 +440,6 @@ export default {
         })
     })
     */
-
   }
 }
 </script>
