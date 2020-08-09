@@ -18,7 +18,11 @@ class TaskController extends Controller
 
   public function index()
   {
-    return Task::mine()->with(['timers', 'tagged'])->get()->toArray();
+    return Task::mine()
+      ->with(['timers', 'tagged'])
+      ->orderBy('order', 'asc')
+      ->get()
+      ->toArray();
   }
 
   public function store(Request $request)
@@ -66,5 +70,11 @@ class TaskController extends Controller
     ]);
     Task::name($id, $request->name);
     return ["status" => "success"];
+  }
+
+  public function order(Request $request)
+  {
+    $updated = Task::order($request->tasks);
+    return ["status" => "success", "updated" => $updated];
   }
 }

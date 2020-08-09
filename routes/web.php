@@ -10,6 +10,7 @@ Route::get('files/{id}','Front\\FileController@show')->name('front.file.show');
 Route::get('/api/menu','Front\\MenuController@index')->name('front.menu');
 Route::get('/api/tasks', 'Front\\TaskController@index');
 Route::post('/api/tasks', 'Front\\TaskController@store');
+Route::post('/api/tasks/order', 'Front\\TaskController@order');
 Route::delete('/api/tasks/{id}', 'Front\\TaskController@delete');
 Route::post('/api/tasks/{id}/timers/stop', 'Front\\TimerController@stopRunning');
 Route::post('/api/tasks/{id}/timers', 'Front\\TimerController@store');

@@ -79,4 +79,20 @@ class Task extends Model
     return Task::where('id', $id)
       ->update(['name' => $name]);
   }
+
+  /**
+   * Update order
+   *
+   * @return \Illuminate\Database\Eloquent\Relations\HasMany
+   */
+  public static function order($tasks)
+  {
+    $updated = [];
+    foreach($tasks as $task) {
+      $count = Task::where('id', $task['id'])
+        ->update(['order' => $task['order']]);
+      if ($count > 0) $updated[$task['id']] = $task['order'];
+    }
+    return $updated;
+  }
 }
