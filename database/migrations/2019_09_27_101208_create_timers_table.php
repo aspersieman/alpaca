@@ -23,6 +23,7 @@ class CreateTimersTable extends Migration
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
+            $table->softDeletes();
         });
     }
 

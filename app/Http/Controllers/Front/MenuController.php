@@ -39,6 +39,20 @@ class MenuController extends FrontController
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'dashboard',
           'route_type'=>'vue',
+          'route_name'=>'dashboard',
+          'visible'=>true,
+        ]),
+        new MenuItem([
+          'label' => 'divider1',
+          'nav_type' => MenuItem::$NAV_TYPE_DIVIDER
+        ]),
+        new MenuItem([
+          'group_requirements' => [],
+          'permission_requirements' => ['superuser'],
+          'label'=>'Admin',
+          'nav_type' => MenuItem::$NAV_TYPE_NAV,
+          'icon'=>'admin_panel_settings',
+          'route_type'=>'vue',
           'route_name'=>'admin.dashboard',
           'visible'=>true,
         ]),
