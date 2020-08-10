@@ -35,13 +35,8 @@ export default new Vuex.Store({
     },
     menu: [],
     appName: "Alpaca",
-    awardDialog: {
-      theme: "",
-      toName: "",
-      title: "",
-      fromName: "",
-      date: ""
-    },
+    task: null,
+    timer: null
   },
   mutations: {
     //logged in user
@@ -100,6 +95,12 @@ export default new Vuex.Store({
     setImageDialogFile(state, data) {
       state.imageDialogFile = data;
     },
+    setActiveTask(state, task) {
+      state.task = task;
+    },
+    setActiveTimer(state, timer) {
+      state.timer = timer;
+    },
   },
   getters: {
     //logged in user
@@ -147,7 +148,13 @@ export default new Vuex.Store({
     },
     awardDialog: state => {
       return state.awardDialog;
-    }
+    },
+    getActiveTask: state => {
+      return state.task
+    },
+    getActiveTimer: state => {
+      return state.timer
+    },
   },
   actions: {
     loadMenu({commit}) {

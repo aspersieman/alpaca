@@ -14,7 +14,7 @@ class Task extends Model
   /**
    * {@inheritDoc}
    */
-  protected $fillable = ['name', 'status', 'due', 'user_id'];
+  protected $fillable = ['name', 'status', 'due', 'tags', 'user_id'];
 
   /**
    * {@inheritDoc}

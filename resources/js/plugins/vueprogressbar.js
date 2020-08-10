@@ -5,8 +5,8 @@ import VueProgressBar from 'vue-progressbar'
 // can change colors here to fit on your needs or match
 // your theming above
 Vue.use(VueProgressBar,{
-  color: '#3f51b5',
-  failedColor: '#b71c1c',
+  color: '#ff4f4f',
+  failedColor: '#bf5329',
   thickness: '5px',
   transition: {
     speed: '0.2s',

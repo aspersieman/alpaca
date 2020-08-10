@@ -5,7 +5,7 @@
     <core-content></core-content>
     <core-footer></core-footer>
     <div v-if="showLoader" class="wask_loader bg_half_transparent">
-        <moon-loader color="blue"></moon-loader>
+        <moon-loader color="#ff4f4f"></moon-loader>
     </div>
     <vue-progress-bar></vue-progress-bar>
     <home-snack-bar></home-snack-bar>

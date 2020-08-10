@@ -42,8 +42,8 @@ class TaskController extends Controller
 
     $task = Task::create($data);
     if (!empty($tags)) {
-      $task->tag(array_column($tags, 'text'));
-      $task->tags = $task->tags ? $task->tags : [];
+      $task->tag($tags);
+      $task->save();
     }
     return $task ? array_merge($task->toArray(), ['timers' => [], 'tags' => $tags]) : false;
   }

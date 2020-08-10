@@ -1,8 +1,6 @@
 <template>
   <v-content>
     <v-container fluid>
-      <v-divider
-        v-if="this.$store.getters.isLoggedIn"></v-divider>
       <v-breadcrumbs
         v-if="this.$store.getters.isLoggedIn"
         :items="getBreadcrumbs">

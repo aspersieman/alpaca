@@ -31,6 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 Vue.use(formatters);
 Vue.use(eventBus);
+Vue.use(require('vue-shortkey'))
 
 Vue.config.devtools = process.env.NODE_ENV === 'development';
 

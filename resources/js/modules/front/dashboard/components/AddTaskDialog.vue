@@ -1,13 +1,32 @@
 <template>
   <v-dialog max-width="600px" v-model="dialog">
     <v-card>
-      <v-card-title>
+      <v-card-title class="grey--text">
         <h2>Add a New Task</h2>
       </v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
-          <v-text-field label="Title" v-model="name" prepend-icon="edit"></v-text-field>
-          <!-- Date Picker -->
+          <v-text-field label="Title" v-model="name" prepend-icon="edit" autofocus></v-text-field>
+          <v-combobox
+            v-model="tags"
+            :items="items"
+            chips
+            clearable
+            label="Categories"
+            multiple
+            prepend-icon="category"
+            solo>
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="remove(item)">
+                <strong>{{ item }}</strong>&nbsp;
+              </v-chip>
+            </template>
+          </v-combobox>
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
@@ -57,11 +76,11 @@ export default {
       ],
       loading: false,
       menu: false,
-      tags: []
+      tags: [],
+      items: [],
     }
   },
   methods: {
-    
     submit() {
       if(this.name.length > 0 && this.due.length >= 4) {
         this.loading = true;
@@ -71,7 +90,7 @@ export default {
           content: this.content,
           due: moment(this.due).format('YYYY-MM-DD'),
           status: 'ongoing',
-          priority: 100,
+          order: null,
           tags: this.tags
         };
 
@@ -82,7 +101,7 @@ export default {
           this.formReset();
           this.name = ''
           this.tags = [];
-          this.$eventBus.$emit('task-added');
+          this.$eventBus.$emit('TASK_ADDED');
           this.$store.commit('showSnackbar',{
             message: "Task added",
             color: 'success',
@@ -107,6 +126,10 @@ export default {
       this.content = '';
       this.due = moment().format('YYYY-MM-DD');
     },
+    remove (item) {
+      this.tags.splice(this.tags.indexOf(item), 1)
+      this.tags = [...this.tags]
+    },
   },
   computed: {
     formattedDate() {
@@ -115,9 +138,9 @@ export default {
   },
 
   mounted() {
-    this.$eventBus.$on('dialog', (value) => {
+    this.$eventBus.$on('TASK_DIALOG', (value) => {
       this.dialog = value
-    })
+    });
   },
   created() {
     const user = {}; //firebase.auth().currentUser;
