@@ -49,6 +49,7 @@ export default {
     
     submit() {
       const task = this.$store.state.task;
+      const self = this;
       if(this.name.length > 0) {
         const timer = {
           name: this.name,
@@ -69,7 +70,7 @@ export default {
           })
           .catch(error => {
           console.log(error);
-          this.$store.commit('showSnackbar',{
+          self.$store.commit('showSnackbar',{
             message: error.response.data.message,
             color: 'error',
             duration: 3000
