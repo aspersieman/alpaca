@@ -21,7 +21,7 @@ class CreateUserMetaTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('key')->index();
             $table->text('value');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

@@ -16,8 +16,8 @@ class AlterUsersTable extends Migration {
 		Schema::table('users', function(Blueprint $table)
 		{
 			$table->text('permissions')->nullable();
-			$table->timestamp('last_login')->nullable();
-			$table->timestamp('active')->nullable();
+			$table->timestampTz('last_login')->nullable();
+			$table->timestampTz('active')->nullable();
 			$table->string('activation_key',255)->nullable();
 		});
 	}

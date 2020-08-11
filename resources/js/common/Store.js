@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-window.moment = require('moment');
+window.moment = require('moment-timezone');
 
 Vue.use(Vuex);
 Vue.config.devtools = process.env.NODE_ENV === 'development';

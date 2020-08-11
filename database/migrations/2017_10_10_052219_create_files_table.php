@@ -22,7 +22,7 @@ class CreateFilesTable extends Migration
             $table->string('extension');
             $table->double('size',19);
             $table->string('path');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

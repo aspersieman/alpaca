@@ -236,9 +236,6 @@ export default {
       self.saveOrder();
       self.loadTasks(()=>{});
     });
-    self.$eventBus.$on(['TIMER_ADDED'],()=>{
-      this.startTimer(this.$store.state.task, this.$store.state.timer)
-    });
   },
   methods: {
     openTaskDialog() {
@@ -418,11 +415,10 @@ export default {
      */
     calculateTimeSpent: function (timer) {
       if (timer.stopped_at) {
-        const started = moment(timer.started_at)
-        const stopped = moment(timer.stopped_at)
-        const time = this._readableTimeFromSeconds(
-          parseInt(moment.duration(stopped.diff(started)).asSeconds())
-        )
+        const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
+        const stopped = moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
+        const seconds = parseInt(moment.duration(stopped.diff(started)).asSeconds())
+        const time = this._readableTimeFromSeconds(seconds);
         return `${time.hours}:${time.minutes}:${time.seconds}`; // for syntax highlighting: `
       }
       return '';
@@ -442,11 +438,14 @@ export default {
      * Start counting the timer. Tick tock.
      */
     startTimer: function (task, timer) {
-      const started = moment(timer.started_at)
+      // remove 'z' from timezone, moment doesn't like it
+      // when doing maths
+      const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+      const now = moment();
 
       this.counter.timer = timer
       this.counter.timer.task = task
-      this.counter.seconds = parseInt(moment.duration(moment().diff(started)).asSeconds())
+      this.counter.seconds = parseInt(moment.duration(now.diff(started)).asSeconds())
       this.counter.ticker = setInterval(() => {
         const time = this._readableTimeFromSeconds(++this.counter.seconds)
         this.activeTimerString = `${time.hours}:${time.minutes}:${time.seconds}`
@@ -457,7 +456,10 @@ export default {
      * Stop the timer from the API and then from the local counter.
      */
     stopTimer: function () {
-      window.axios.post(`/api/tasks/${this.counter.timer.id}/timers/stop`)
+      const timer = {
+        tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+      window.axios.post(`/api/tasks/${this.counter.timer.id}/timers/stop`, timer)
         .then(response => {
           // Loop through the tasks and get the right task...
           this.tasks.forEach(task => {

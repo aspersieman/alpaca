@@ -53,7 +53,8 @@ export default {
       if(this.name.length > 0) {
         const timer = {
           name: this.name,
-          task_id: this.task_id
+          task_id: this.task_id,
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone
         };
         window.axios.post(`/api/tasks/${task.id}/timers`, timer)
           .then(response => {

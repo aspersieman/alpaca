@@ -23,7 +23,7 @@
   "dependencies": {
     "dropzone": "^5.7.0",
     "fabric": "^3.6.3",
-    "moment": "^2.21.0",
+    "moment-timezone": "^0.5.31",
     "vue-analytics": "^5.22.1",
     "vue-progressbar": "^0.7.5",
     "vue-router": "^3.1.6",

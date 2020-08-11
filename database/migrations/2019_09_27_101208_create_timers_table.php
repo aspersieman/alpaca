@@ -18,9 +18,9 @@ class CreateTimersTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('task_id');
             $table->unsignedInteger('user_id');
-            $table->dateTime('started_at');
-            $table->dateTime('stopped_at')->default(null)->nullable();
-            $table->timestamps();
+            $table->timestampTz('started_at')->nullable();
+            $table->timestampTz('stopped_at')->nullable();
+            $table->timestampsTz();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->softDeletes();

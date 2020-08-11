@@ -6,34 +6,34 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTasksTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('status');
-            $table->date('due');
-            $table->time('dueTime')->nullable();
-            $table->unsignedInteger('order')->nullable();
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('tasks', function (Blueprint $table) {
+      $table->bigIncrements('id');
+      $table->string('name');
+      $table->string('status');
+      $table->date('due');
+      $table->time('dueTime')->nullable();
+      $table->unsignedInteger('order')->nullable();
+      $table->unsignedInteger('user_id');
+      $table->foreign('user_id')->references('id')->on('users');
+      $table->timestampsTz();
+      $table->softDeletes();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('tasks');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('tasks');
+  }
 }
