@@ -130,7 +130,12 @@
                   Delete
                 </v-tooltip>
               </v-btn>
-              <v-btn icon :class="`${task.status}`" @click="openTimerDialog(task);" class="pa-0 ma-0">
+              <v-btn
+                v-if="$store.state.activeTimerCounter.seconds == 0"
+                icon
+                :class="`${task.status}`"
+                @click="openTimerDialog(task);"
+                class="pa-0 ma-0">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">more_time</v-icon>
