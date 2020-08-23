@@ -69,7 +69,7 @@
       <v-layout row justify-center v-if="this.tasks.length == 0">
         <v-layout column align-center>
           <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here 🦙</span>
-          <v-btn text color="primary" class="display-1" @click="openTaskDialog">Add new Task</v-btn>
+          <v-btn text color="primary" class="display-1" @click="openTaskDialog()">Add new Task</v-btn>
         </v-layout>
       </v-layout>
 
@@ -111,47 +111,10 @@
             </div>
           </v-flex>
 
-          <v-flex xs3 sm3 md2 v-if="$vuetify.breakpoint.mdAndUp">
-            <v-list dense two-line subheader v-if="task.timers.length > 0">
-              <v-list-item v-for="timer in task.timers" :key="timer.id" class="list-group-item timer-item" v-bind:class="{ active: showTimerForTask(task, timer) }">
-                <v-list-item-icon>
-                  <v-icon>access_time</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="timer.name">{{timer.name}}</v-list-item-title>
-                  <v-list-item-subtitle>
-                    <div v-if="showTimerForTask(task, timer)">
-                      {{ activeTimerString }}
-                      <v-btn icon v-if="showTimerForTask(task, timer)" class="btn btn-sm btn-secondary" @click="stopTimer()">
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <v-icon v-on="on">stop</v-icon>
-                          </template>
-                          Stop timer
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
-                    <div v-else>
-                      {{ calculateTimeSpent(timer) }}
-                      <v-btn icon @click="deleteTimer(task, timer)">
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on }">
-                            <v-icon v-on="on">delete</v-icon>
-                          </template>
-                          Delete timer
-                        </v-tooltip>
-                      </v-btn>
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            <p v-else>No work logged yet.</p>
-          </v-flex>
           <v-spacer></v-spacer>
-          <v-flex xs3 sm3 md2 v-if="$vuetify.breakpoint.mdAndUp">
+          <v-flex xs3 sm3 md2>
             <div class="mt-0 pt-0">
-              <v-btn icon :class="`${task.status}`" @click="editMode = !editMode; indexToEdit = index; newName = task.name;" class="pa-0 ma-0">
+              <v-btn icon :class="`${task.status}`" @click="openTaskDialog(task);" class="pa-0 ma-0">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">edit</v-icon>
@@ -177,28 +140,28 @@
               </v-btn>
             </div>
           </v-flex>
-          <v-flex xs3 sm3 md2 v-if="$vuetify.breakpoint.smAndDown">
-            small
-          </v-flex>
+          <timer :dense="false" :two-line="true" :task="task"></timer>
         </v-layout>
       </v-card>
       </draggable>
     </v-container>
-    <AddTaskDialog @taskAdded="snackbar=true" />
-    <AddTimerDialog @timerAdded="snackbar=true" />
+    <task-dialog @taskAdded="snackbar=true" />
+    <timer-dialog @timerAdded="snackbar=true" />
   </div>
 </template>
 
 <script>
-import AddTaskDialog from './components/AddTaskDialog';
-import AddTimerDialog from './components/AddTimerDialog';
+import TaskDialog from './components/TaskDialog';
+import TimerDialog from './components/TimerDialog';
+import Timer from './components/Timer';
 import draggable from 'vuedraggable';
 
 export default {
   components: {
     draggable,
-    AddTaskDialog,
-    AddTimerDialog
+    TaskDialog,
+    TimerDialog,
+    Timer
   },
   data() {
     return {
@@ -215,16 +178,10 @@ export default {
       snackbar: false,
       search: "",
       searching: false,
-      // CLEAN UP
-      newTimerName: '',
-      newTaskName: '',
-      newTaskTag: '',
-      newTaskTags: [],
       activeTimerString: 'Timing...',
       counter: { seconds: 0, timer: null },
       modal: false,
       newValues: [],
-      tasks: [],
     }
   },
   mounted() {
@@ -238,14 +195,20 @@ export default {
     });
   },
   methods: {
-    openTaskDialog() {
+    openTaskDialog(task) {
       const self = this;
-      self.$eventBus.$emit('TASK_DIALOG', true)
+      if (task) {
+        self.$store.commit('setActiveTask', task);
+        self.$eventBus.$emit('TASK_UPDATE_DIALOG', true)
+      } else {
+        self.$store.commit('setActiveTask', null);
+        self.$eventBus.$emit('TASK_ADD_DIALOG', true)
+      }
     },
     openTimerDialog(task) {
       const self = this;
       self.$store.commit('setActiveTask', task);
-      self.$eventBus.$emit('TIMER_DIALOG', true)
+      self.$eventBus.$emit('TIMER_ADD_DIALOG', true)
     },
     loadTasks() {
       const self = this;
@@ -255,7 +218,7 @@ export default {
         window.axios.get('/api/task/timers/active').then(response => {
           if (response.data.id !== undefined) {
             self.$store.commit('setActiveTimer', response.data);
-            self.startTimer(response.data.task, response.data);
+            self.$eventBus.$emit('TIMER_START', response.data)
           }
         })
       });
@@ -434,86 +397,6 @@ export default {
         this.counter.timer.task.id === task.id
     },
 
-    /**
-     * Start counting the timer. Tick tock.
-     */
-    startTimer: function (task, timer) {
-      // remove 'z' from timezone, moment doesn't like it
-      // when doing maths
-      const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-      const now = moment();
-
-      this.counter.timer = timer
-      this.counter.timer.task = task
-      this.counter.seconds = parseInt(moment.duration(now.diff(started)).asSeconds())
-      this.counter.ticker = setInterval(() => {
-        const time = this._readableTimeFromSeconds(++this.counter.seconds)
-        this.activeTimerString = `${time.hours}:${time.minutes}:${time.seconds}`
-      }, 1000)
-    },
-
-    /**
-     * Stop the timer from the API and then from the local counter.
-     */
-    stopTimer: function () {
-      const timer = {
-        tz: Intl.DateTimeFormat().resolvedOptions().timeZone
-      };
-      window.axios.post(`/api/tasks/${this.counter.timer.id}/timers/stop`, timer)
-        .then(response => {
-          // Loop through the tasks and get the right task...
-          this.tasks.forEach(task => {
-            if (task.id === parseInt(this.counter.timer.task.id)) {
-              // Loop through the timers of the task and set the `stopped_at` time
-              return task.timers.forEach(timer => {
-                if (timer.id === parseInt(this.counter.timer.id)) {
-                  return timer.stopped_at = response.data.stopped_at
-                }
-              })
-            }
-          });
-
-          // Stop the ticker
-          clearInterval(this.counter.ticker)
-
-          // Reset the counter and timer string
-          this.counter = { seconds: 0, timer: null }
-          this.activeTimerString = 'Timing...'
-        })
-    },
-
-    /**
-     * Delete a timer.
-     */
-    deleteTimer: function (task, timer) {
-      window.axios.delete(`/api/tasks/${task.id}/timer/${timer.id}`)
-        .then(
-          response => {
-            task.timers = task.timers
-              .filter(function(element) {
-                return element.id !== timer.id;
-              });
-          })
-        .catch(error => {
-          this.authenticationCheck(error.response.status);
-        });
-      this.newTimerName = ''
-    },
-
-    handleDelete(eventIndex) {
-      this.events.splice(eventIndex, 1);
-    },
-    handleInput(val, type) {
-      this.newValues[type] = val;
-    },
-    addEvent() {
-      this.events.push({
-        time: this.newValues["time"],
-        name: this.newValues["name"],
-        location: this.newValues["location"],
-        description: this.newValues["description"]
-      });
-    },
     /* REFACTOR }*/
     searchFocus() {
       this.$refs.searchInput.focus();
@@ -561,56 +444,55 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+@import "../../../../sass/_variables";
+.task.complete {
+  border-left: 4px solid $task-status-complete;
+}
 
-<style>
+.task.ongoing {
+  border-left: 4px solid $task-status-ongoing;
+}
 
-  .task.complete {
-    border-left: 4px solid #3cd1c2;
-  }
+.task.overdue {
+  border-left: 4px solid $task-status-overdue;
+}
 
-  .task.ongoing {
-    border-left: 4px solid #ffaa2c;
-  }
+.task button.status {
+  min-width: 88px;
+  height: 28px;
+}
 
-  .task.overdue {
-    border-left: 4px solid #f83e70;
-  }
+.theme--light.v-btn:not(.v-btn--icon).complete {
+  background-color: $task-status-complete;
+}
 
-  .task button.status {
-    min-width: 88px;
-    height: 28px;
-  }
+.theme--light.v-btn:not(.v-btn--icon).ongoing {
+  background-color: $task-status-ongoing;
+}
 
-  .theme--light.v-btn:not(.v-btn--icon).complete {
-    background-color: #3cd1c2;
-  }
+.theme--light.v-btn:not(.v-btn--icon).overdue {
+  background-color: $task-status-overdue;
+}
 
-  .theme--light.v-btn:not(.v-btn--icon).ongoing {
-    background-color: #ffaa2c;
-  }
+.theme--light.v-btn.complete {
+  color: $task-status-complete;
+}
 
-  .theme--light.v-btn:not(.v-btn--icon).overdue {
-    background-color: #f83e70;
-  }
+.theme--light.v-btn.ongoing {
+  color: $task-status-ongoing;
+}
 
-  .theme--light.v-btn.complete {
-    color: #3cd1c2;
-  }
+.theme--light.v-btn.overdue {
+  color: $task-status-overdue;
+}
 
-  .theme--light.v-btn.ongoing {
-    color: #ffaa2c;
-  }
+.handle {
+  cursor: move;
+}
 
-  .theme--light.v-btn.overdue {
-    color: #f83e70;
-  }
-
-  .handle {
-    cursor: move;
-  }
-
-  .row {
-    margin-left: unset;
-    border-radius: unset !important;
-  }
+.row {
+  margin-left: unset;
+  border-radius: unset !important;
+}
 </style>

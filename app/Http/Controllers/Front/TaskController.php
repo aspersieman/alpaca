@@ -77,4 +77,17 @@ class TaskController extends Controller
     $updated = Task::order($request->tasks);
     return ["status" => "success", "updated" => $updated];
   }
+
+  public function update(Request $request, int $id)
+  {
+    $data = $request->validate([
+      'name' => 'required|between:2,20',
+      'status' => 'required|in:'.join(',', Task::STATUSES),
+      'due' => 'date'
+    ]);
+    $data['tags'] = $request->tags;
+    return Task::put($id, $data);
+
+    return $task;
+  }
 }

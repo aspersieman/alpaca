@@ -95,4 +95,15 @@ class Task extends Model
     }
     return $updated;
   }
+
+  public static function put($id, $data)
+  {
+    $task = Task::where('id', $id)->first();
+    $task->name = $data['name'];
+    $task->due = $data['due'];
+    $task->status = $data['status'];
+    $task->retag($data['tags']);
+    $task->save();
+    return $task;
+  }
 }

@@ -8,16 +8,21 @@ Route::get('files/{id}','Front\\FileController@show')->name('front.file.show');
 
 // api
 Route::get('/api/menu','Front\\MenuController@index')->name('front.menu');
-Route::get('/api/tasks', 'Front\\TaskController@index');
-Route::post('/api/tasks', 'Front\\TaskController@store');
-Route::post('/api/tasks/order', 'Front\\TaskController@order');
-Route::delete('/api/tasks/{id}', 'Front\\TaskController@delete');
-Route::post('/api/tasks/{id}/timers/stop', 'Front\\TimerController@stopRunning');
-Route::post('/api/tasks/{id}/timers', 'Front\\TimerController@store');
-Route::post('/api/tasks/{id}/status', 'Front\\TaskController@status');
-Route::post('/api/tasks/{id}/name', 'Front\\TaskController@name');
-Route::delete('/api/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@delete');
-Route::get('/api/task/timers/active', 'Front\\TimerController@running');
+
+Route::prefix('/api')->middleware(['auth'])->group(function()
+{
+  Route::get('/tasks', 'Front\\TaskController@index');
+  Route::post('/tasks', 'Front\\TaskController@store');
+  Route::post('/tasks/order', 'Front\\TaskController@order');
+  Route::delete('/tasks/{id}', 'Front\\TaskController@delete');
+  Route::put('/tasks/{id}', 'Front\\TaskController@update');
+  Route::post('/tasks/{id}/timers/stop', 'Front\\TimerController@stopRunning');
+  Route::post('/tasks/{id}/timers', 'Front\\TimerController@store');
+  Route::post('/tasks/{id}/status', 'Front\\TaskController@status');
+  Route::post('/tasks/{id}/name', 'Front\\TaskController@name');
+  Route::delete('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@delete');
+  Route::get('/task/timers/active', 'Front\\TimerController@running');
+});
 
 // admin
 Route::prefix('/api/admin')->namespace('Admin')->middleware(['auth'])->group(function()
