@@ -21,6 +21,7 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
   Route::post('/tasks/{id}/status', 'Front\\TaskController@status');
   Route::post('/tasks/{id}/name', 'Front\\TaskController@name');
   Route::delete('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@delete');
+  Route::put('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@update');
   Route::get('/task/timers/active', 'Front\\TimerController@running');
 });
 

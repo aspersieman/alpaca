@@ -194,7 +194,7 @@ export default {
     self.$store.commit('setBreadcrumbs',[
       {label:'Tasks',to:{name:'dashboard'}},
     ]);
-    self.$eventBus.$on(['TASK_ADDED','TASK_UPDATED','TASK_DELETED','TIMER_ADDED'],()=>{
+    self.$eventBus.$on(['TASK_ADDED','TASK_UPDATED','TASK_DELETED','TIMER_ADDED', 'TIMER_UPDATED'],()=>{
       self.saveOrder();
       self.loadTasks(()=>{});
     });

@@ -51,4 +51,15 @@ class TimerController extends Controller
     Timer::destroy($timer_id);
     return ["status"=>"success"];
   }
+
+  public function update(Request $request, int $id, int $timer_id)
+  {
+    $data = $request->validate([
+      'name' => 'required|between:3,100',
+      'started_at' => 'date',
+      'stopped_at' => 'date'
+    ]);
+    $data['tags'] = $request->tags;
+    return Timer::put($timer_id, $data);
+  }
 }

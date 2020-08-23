@@ -67,4 +67,14 @@ class Timer extends Model
   {
     return $query->whereNull('stopped_at');
   }
+
+  public static function put($id, $data)
+  {
+    $timer = Timer::where('id', $id)->first();
+    $timer->name = $data['name'];
+    $timer->started_at = $data['started_at'];
+    $timer->stopped_at = $data['stopped_at'];
+    $timer->save();
+    return $timer;
+  }
 }

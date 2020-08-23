@@ -87,7 +87,5 @@ class TaskController extends Controller
     ]);
     $data['tags'] = $request->tags;
     return Task::put($id, $data);
-
-    return $task;
   }
 }

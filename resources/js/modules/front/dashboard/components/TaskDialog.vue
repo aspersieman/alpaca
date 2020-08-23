@@ -170,8 +170,6 @@ export default {
           this.loading = false;
           this.dialog = false;
           this.formReset();
-          this.name = ''
-          this.tags = [];
           this.$eventBus.$emit('TASK_ADDED');
           this.$store.commit('showSnackbar',{
             message: "Task added",
@@ -207,8 +205,6 @@ export default {
           this.loading = false;
           this.dialog = false;
           this.formReset();
-          this.name = ''
-          this.tags = [];
           this.$eventBus.$emit('TASK_UPDATED');
           this.$store.commit('showSnackbar',{
             message: "Task updated",
@@ -237,6 +233,7 @@ export default {
     formReset() {
       this.name = '';
       this.due = moment().format('YYYY-MM-DD');
+      this.tags = [];
     },
     removeCategory(item) {
       this.tags.splice(this.tags.indexOf(item), 1)

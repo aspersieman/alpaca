@@ -38,7 +38,7 @@
                     <v-text-field
                       :rules="dateRules"
                       :value="formattedDate"
-                      v-model="date"
+                      v-model="startDate"
                       label="Date"
                       prepend-icon="event"
                       readonly
@@ -46,7 +46,7 @@
                       v-on="on">
                     </v-text-field>
                   </template>
-                  <v-date-picker v-model="date" @input="menu = false"></v-date-picker>
+                  <v-date-picker v-model="startDate" @input="menu = false"></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col>
@@ -106,7 +106,7 @@ export default {
       mode: 'ADD',
       dialog: false,
       name: '',
-      date: '',
+      startDate: '',
       startTime: '',
       endTime: '',
       duration: '',
@@ -155,31 +155,63 @@ export default {
       }
     },
     updateTimer() {
-      console.log("updateTimer");
+      if(this.name.length > 0 && this.startDate.length >= 4) {
+        this.loading = true;
+        
+        const started_at = moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
+        const timer = {
+          name: this.name,
+          started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
+          stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss")
+        };
+        console.log(this.duration);
+        console.log(timer);
+
+        window.axios.put(`/api/tasks/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
+          .then(response => {
+          this.loading = false;
+          this.dialog = false;
+          this.formReset();
+          this.$eventBus.$emit('TIMER_UPDATED');
+          this.$store.commit('showSnackbar',{
+            message: "Timer updated",
+            color: 'success',
+            duration: 1000
+          });
+        })
+          .catch(error => {
+          console.log(error);
+          this.$store.commit('showSnackbar',{
+            message: error.response.data.message,
+            color: 'error',
+            duration: 3000
+          });
+          this.loading = false;
+        });
+      }
     },
 
     formReset() {
       this.name = '';
+      this.startDate = '';
+      this.startTime = '';
+      this.endTime = '';
+      this.duration = '';
+      this.timer = null;
     },
   },
-  mounted() {
-  },
+  mounted() { },
   created() {
     const self = this;
     this.$eventBus.$on('TIMER_ADD_DIALOG', (value) => {
       this.dialog = value;
       this.mode = 'ADD';
-      this.timer = null;
-      this.name = '';
-      this.date = '';
-      this.startTime = '';
-      this.endTime = '';
-      this.duration = '';
+      this.formReset();
     });
     this.$eventBus.$on('TIMER_UPDATE_DIALOG', (value) => {
       this.timer = this.$store.state.timer;
       this.name = this.timer.name;
-      this.date = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+      this.startDate = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
       this.startTime = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       this.endTime = this.timer.stopped_at ? moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       this.duration = moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
@@ -189,7 +221,7 @@ export default {
   },
   computed: {
     formattedDate() {
-      return this.date ? moment(this.date).format('YYYY-MM-DD') : ''
+      return this.startDate ? moment(this.startDate).format('YYYY-MM-DD') : ''
     }
   }
 }
