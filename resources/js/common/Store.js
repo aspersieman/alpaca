@@ -7,9 +7,6 @@ Vue.config.devtools = process.env.NODE_ENV === 'development';
 
 export default new Vuex.Store({
   state: {
-    /* TESTING REMOVE */
-    articles: require('../../data/articles.json'),
-    /* TESTING REMOVE */
     //logged in user
     user: null,
     // breadcrumbs

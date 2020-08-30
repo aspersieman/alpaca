@@ -38,13 +38,6 @@ export default {
       return this.$store.getters.showLoader;
     },
   },
-  methods: {
-    dialogOk() {
-      this.$store.commit('dialogOk');
-    },
-    dialogCancel() {
-      this.$store.commit('dialogCancel');
-    }
-  }
+  methods: { }
 }
 </script>

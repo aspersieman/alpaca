@@ -1,19 +1,16 @@
 <template>
   <div id="home">
-    <pictures>
-    </pictures>
+    <h1 class="subheading grey--text ml-4">Home</h1>
+    <v-container class="my-2">
+    </v-container>
   </div>
 </template>
 <script>
-import Pictures from './Pictures.vue';
 
 export default {
   name: 'Home',
-  components: {
-    Pictures,
-  },
+  components: { },
   mounted() {
-    console.log("index.home.Home.vue");
     const self = this;
     self.$store.commit('setBreadcrumbs',[
       {label:'',name:''}

@@ -102,30 +102,29 @@
       </v-data-table>
 
       <v-divider class="py-5"/>
-
-        <!-- dialog for show permissions -->
-        <v-dialog v-model="dialogs.showPermissions.show" absolute max-width="300px">
-          <v-card>
-            <v-card-title>
-              <div class="headline"><v-icon>vpn_key</v-icon> User Permissions</div>
-            </v-card-title>
-            <v-card-text>
-              <v-chip v-for="(permission,key) in dialogs.showPermissions.items" :key="key" class="ma-1" :class="{'green':(permission.value==1),'red':(permission.value==-1),'blue':(permission.value==0)}">
-                <v-avatar v-if="permission.value==-1" class="red darken-4" title="Deny">
-                  <v-icon>block</v-icon>
-                </v-avatar>
-                <v-avatar v-if="permission.value==1" class="green darken-4" title="Allow">
-                  <v-icon>check_circle</v-icon>
-                </v-avatar>
-                <v-avatar v-if="permission.value==0" class="blue darken-4" title="Inherit">
-                  <v-icon>swap_horiz</v-icon>
-                </v-avatar>
-                {{permission.title}}
-              </v-chip>
-              <p v-if="dialogs.showPermissions.items.length==0">No permissions</p>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
+      <!-- dialog for show permissions -->
+      <v-dialog v-model="dialogs.showPermissions.show" absolute max-width="300px">
+        <v-card>
+          <v-card-title>
+            <div class="headline"><v-icon>vpn_key</v-icon> User Permissions</div>
+          </v-card-title>
+          <v-card-text>
+            <v-chip v-for="(permission,key) in dialogs.showPermissions.items" :key="key" class="ma-1" :class="{'green':(permission.value==1),'red':(permission.value==-1),'blue':(permission.value==0)}">
+              <v-avatar v-if="permission.value==-1" class="red darken-4" title="Deny">
+                <v-icon>block</v-icon>
+              </v-avatar>
+              <v-avatar v-if="permission.value==1" class="green darken-4" title="Allow">
+                <v-icon>check_circle</v-icon>
+              </v-avatar>
+              <v-avatar v-if="permission.value==0" class="blue darken-4" title="Inherit">
+                <v-icon>swap_horiz</v-icon>
+              </v-avatar>
+              {{permission.title}}
+            </v-chip>
+            <p v-if="dialogs.showPermissions.items.length==0">No permissions</p>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
 
   </div>
 </template>
@@ -234,9 +233,11 @@ export default {
       });
     },
     showDialog(dialog, data) {
+      console.log(dialog);
+      console.log(data);
       const self = this;
       switch (dialog){
-        case 'user_permissions':
+        case 'admin.user_permissions':
           self.dialogs.showPermissions.items = data;
           setTimeout(()=>{
             self.dialogs.showPermissions.show = true;
@@ -245,7 +246,6 @@ export default {
       }
     },
     loadUsers(cb) {
-
       const self = this;
 
       let params = {

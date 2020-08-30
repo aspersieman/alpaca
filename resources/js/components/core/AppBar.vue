@@ -30,6 +30,12 @@
             to="/dashboard">
             Dashboard
           </v-btn>
+          <v-btn
+            class="d-none d-sm-flex appbar-button"
+            text
+            to="/tasks">
+            Tasks
+          </v-btn>
           <v-spacer />
           <v-text-field
             class="hidden-sm-and-down"

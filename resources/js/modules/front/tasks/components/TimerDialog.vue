@@ -87,9 +87,12 @@
               </v-col>
             </v-row>
             <v-spacer></v-spacer>
-            <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTimer" :loading="loading">Add timer</v-btn>
-            <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTimer" :loading="loading">Update timer</v-btn>
-            <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
+            <v-layout row wrap width="100%">
+              <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTimer" :loading="loading">Add timer</v-btn>
+              <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTimer" :loading="loading">Update timer</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
+            </v-layout>
           </v-container>
         </v-form>
       </v-card-text>

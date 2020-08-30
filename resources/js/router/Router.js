@@ -25,6 +25,11 @@ const router = new Router({
           component: require("../modules/front/dashboard/Dashboard")
         },
         {
+          path: '/tasks',
+          name: 'tasks',
+          component: require("../modules/front/tasks/Tasks")
+        },
+        {
           name: "admin.dashboard",
           path: "/admin/dashboard",
           component: require("../modules/admin/dashboard/Home"),

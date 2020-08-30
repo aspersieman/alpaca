@@ -16,6 +16,8 @@ import eventBus from './common/Event';
 import formatters from './common/Formatters';
 import AxiosAjaxDetct from './common/AxiosAjaxDetect';
 import VueAnalytics from 'vue-analytics';
+import Chartkick from 'vue-chartkick'
+import Chart from 'chart.js'
 import './plugins/base'
 
 Vue.config.productionTip = false;
@@ -32,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(formatters);
 Vue.use(eventBus);
 Vue.use(require('vue-shortkey'))
+Vue.use(Chartkick.use(Chart))
 
 Vue.config.devtools = process.env.NODE_ENV === 'development';
 
