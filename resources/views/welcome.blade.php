@@ -20,7 +20,7 @@
   <link href="{{ asset('css/index.css') }}" rel="stylesheet">
 
   <!-- favicon -->
-  <link rel="icon" type="image/png" href="{{ asset('img/favicon/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" href="{{ asset('img/logo/llama_emoji.png') }}">
 
   <!-- app js values -->
   <script type="application/javascript">

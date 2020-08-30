@@ -17,7 +17,7 @@
         <v-row align="center">
           <router-link to="/">
             <v-img
-              :src="require('../../../img/logo/logo.svg')"
+              :src="require('../../../img/logo/llama_emoji.png')"
               class="mr-5"
               contain
               height="48"

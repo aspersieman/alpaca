@@ -2,7 +2,7 @@
   <v-content>
     <v-container fluid>
       <v-breadcrumbs
-        v-if="this.$store.getters.isLoggedIn"
+        v-if="this.$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
         :items="getBreadcrumbs">
         <template v-slot:item="props">
           <v-breadcrumbs-item
@@ -18,7 +18,7 @@
         </template>
       </v-breadcrumbs>
       <v-divider
-        v-if="this.$store.getters.isLoggedIn">
+        v-if="this.$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp">
       </v-divider>
       <router-view></router-view>
     </v-container>

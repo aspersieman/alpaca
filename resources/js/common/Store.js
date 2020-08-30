@@ -36,6 +36,7 @@ export default new Vuex.Store({
     menu: [],
     appName: "Alpaca",
     task: null,
+    tasks: [],
     timer: null,
     activeTimerCounter: { seconds: 0, timer: null, title: 'Timing...' },
     stoppedTimer: null,
@@ -101,6 +102,9 @@ export default new Vuex.Store({
     setActiveTask(state, task) {
       state.task = task;
     },
+    setTasks(state, tasks) {
+      state.tasks = tasks;
+    },
     setActiveTimer(state, timer) {
       state.timer = timer;
     },
@@ -163,6 +167,9 @@ export default new Vuex.Store({
     },
     getActiveTask: state => {
       return state.task
+    },
+    getTasks: state => {
+      return state.tasks
     },
     getActiveTimer: state => {
       return state.timer

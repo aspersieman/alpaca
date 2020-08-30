@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="600px" v-model="dialog">
+  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.mdAndDown" v-model="dialog">
     <v-card>
       <v-card-title class="grey--text">
         <h2 v-if="mode == 'ADD'">Add a New Timer</h2>
@@ -89,6 +89,7 @@
             <v-spacer></v-spacer>
             <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTimer" :loading="loading">Add timer</v-btn>
             <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTimer" :loading="loading">Update timer</v-btn>
+            <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
           </v-container>
         </v-form>
       </v-card-text>
@@ -190,7 +191,9 @@ export default {
         });
       }
     },
-
+    close() {
+      this.dialog = false;
+    },
     formReset() {
       this.name = '';
       this.startDate = '';

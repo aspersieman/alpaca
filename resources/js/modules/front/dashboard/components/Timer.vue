@@ -1,11 +1,11 @@
 <template>
   <div>
-    <v-list :dense="dense" :two-line="twoLine" subheader v-if="task.timers.length > 0">
+    <v-list :dense="dense" :two-line="twoLine" subheader v-if="task.timers.length > 0" class="timers">
       <template v-for="timer in task.timers">
         <v-list-item
           :key="timer.id" 
           :class="showTimerForTask(task, timer) ? 'active-timer' : ''">
-          <v-list-item-icon>
+          <v-list-item-icon class="horizontal-center">
             <v-icon>access_time</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
@@ -26,35 +26,36 @@
                 </v-tooltip>
               </v-btn>
             </div>
-            <div v-else>
-              <div v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id">
+            <v-layout v-else row>
+              <v-flex class="horizontal-center" v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id">
                 {{ $store.state.stoppedTimerValue }}
-              </div>
-              <div v-else>
+              </v-flex>
+              <v-flex class="horizontal-center" v-else>
                 {{ calculateTimeSpent(timer) }}
-              </div>
-              <v-btn icon @click="deleteTimer(task, timer)">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">delete</v-icon>
-                  </template>
-                  Delete timer
-                </v-tooltip>
-              </v-btn>
-              <v-btn icon @click="openTimerDialog(task, timer)">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">edit</v-icon>
-                  </template>
-                  Edit timer
-                </v-tooltip>
-              </v-btn>
-            </div>
+              </v-flex>
+              <v-flex>
+                <v-btn icon @click="deleteTimer(task, timer)">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">delete</v-icon>
+                    </template>
+                    Delete timer
+                  </v-tooltip>
+                </v-btn>
+                <v-btn icon @click="openTimerDialog(task, timer)">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">edit</v-icon>
+                    </template>
+                    Edit timer
+                  </v-tooltip>
+                </v-btn>
+              </v-flex>
+            </v-layout>
           </v-list-item-icon>
         </v-list-item>
       </template>
     </v-list>
-    <p v-else>No work logged yet.</p>
   </div>
 </template>
 <script>
@@ -226,5 +227,14 @@ export default {
   border-left: solid 4px $selected-dark-grey;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
+}
+.timers {
+  max-width: 500px;
+}
+.v-list-item {
+  height: 20px;
+}
+.horizontal-center {
+  margin: auto;
 }
 </style>

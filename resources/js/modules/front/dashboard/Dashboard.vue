@@ -8,67 +8,71 @@
     </v-snackbar>
     <v-container class="my-2">
       <v-layout row class="mb-3" wrap>
-        <v-btn icon @click="tasks = tasksCopy; todos = true">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon color="primary" v-on="on">dashboard</v-icon>
-            </template>
-            All tasks
-          </v-tooltip>
-        </v-btn>
-        <v-btn icon @click="searchByStatus('complete'); todos = false">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon color="success" v-on="on">check_circle</v-icon>
-            </template>
-            Completed tasks
-          </v-tooltip>
-        </v-btn>
-        <v-btn icon @click="searchByStatus('ongoing'); todos = false">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon color="warning" v-on="on">work</v-icon>
-            </template>
-            Ongoing tasks
-          </v-tooltip>
-        </v-btn>
-        <v-btn icon @click="searchByStatus('overdue'); todos = false">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon color="error" v-on="on">watch_later</v-icon>
-            </template>
-            Overdue tasks
-          </v-tooltip>
-        </v-btn>
-        <v-spacer></v-spacer>
         <v-btn 
           style="display: none;"
           v-shortkey.once="['ctrl', 'alt', '/']"
           @shortkey="searchFocus()">
           Search focus
         </v-btn>
-        <v-text-field
-          v-model="search"
-          outlined
-          clearable
-          label="Search"
-          dense
-          ref="searchInput"
-          type="text">
-        </v-text-field>
+        <v-flex class="search-input-container" xs3 md3 lg3>
+          <v-text-field
+            v-model="search"
+            outlined
+            clearable
+            label="Search"
+            dense
+            class="search-input"
+            ref="searchInput"
+            type="text">
+          </v-text-field>
+        </v-flex>
+        <v-flex xs6 md6 lg5>
+          <div class="cmb-statuses">
+            <v-combobox
+              v-model="status"
+              :items="statuses"
+              multiple
+              label="Status"
+              class="search-input"
+              @change="searchByStatus()"
+              outlined
+              clearable
+              dense
+              chips>
+              <template v-slot:selection="data">
+                <v-chip
+                  :key="JSON.stringify(data.item)"
+                  :small="$vuetify.breakpoint.mdAndUp"
+                  :x-small="$vuetify.breakpoint.smAndDown"
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                  :disabled="data.disabled"
+                  @click:close="data.parent.selectItem(data.item)"
+                  :class="`status ${data.item}`">
+                  {{ data.item }}
+                </v-chip>
+              </template>
+            </v-combobox>
+          </div>
+        </v-flex>
         <v-spacer></v-spacer>
-        <v-btn 
-          icon
-          v-shortkey.once="['ctrl', 'alt', 't']"
-          @shortkey="openTaskDialog()" 
-          @click="openTaskDialog()">
-          <v-icon color="primary">add_circle</v-icon>
-        </v-btn>
+        <v-flex xs2 md1 lg1>
+          <base-btn
+            class="mr-0"
+            square
+            title="Add new Task"
+            v-shortkey.once="['ctrl', 'alt', 't']"
+            @shortkey="openTaskDialog()" 
+            @click="openTaskDialog()">
+            <v-icon>add</v-icon>
+          </base-btn>
+        </v-flex>
       </v-layout>
 
       <v-layout row justify-center v-if="this.tasks.length == 0">
         <v-layout column align-center>
-          <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here 🦙</span>
+          <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here </span>
+          <v-img src="img/logo/llama_emoji.png" width="120px"></v-img>
           <v-btn text color="primary" class="display-1" @click="openTaskDialog()">Add new Task</v-btn>
         </v-layout>
       </v-layout>
@@ -76,7 +80,7 @@
       <draggable v-model="tasks" @change="saveOrder" handle=".handle" :disabled="!todos" v-if="this.tasks.length > 0">
       <v-card text flat v-for="(task, index) in searchTasks" :key="task.id">
         <v-layout row wrap :class="`pa-2 task ${task.status}`">
-          <v-flex xs12 md3>
+          <v-flex xs12 sm12 md4 lg4 class="task-column">
             <div class="caption grey--text ml-3" v-if="todos">Task Title</div>
             <div class="caption grey--text" v-if="!todos">Task Title</div>
             <div :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}" v-if="!editMode || index != indexToEdit" @click="editMode = !editMode; indexToEdit = index; newName = task.name;">
@@ -87,11 +91,12 @@
             <v-text-field autofocus :color="`${task.status}s`" v-model="newName" v-if="editMode && indexToEdit == index" class="ma-0 pa-0"></v-text-field>
             </v-form>
           </v-flex>
-          <v-flex xs2 sm3 md1>
-            <div class="caption grey--text">Due by</div>
-            <div :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}">{{ task.due }}</div>
+          <v-flex xs4 sm4 md3 lg2 class="task-column">
+            <div class="caption grey--text ml-3">Due by</div>
+            <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">{{ task.due }}</div>
           </v-flex>
-          <v-flex xs5 sm6 md2 v-if="task.tagged && $vuetify.breakpoint.mdAndUp">
+          <v-flex md3 lg2 v-if="$vuetify.breakpoint.mdAndUp" class="task-column">
+            <div class="caption grey--text ml-3" v-if="task.tagged.length > 0">Categories</div>
             <div 
               :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}">
               <v-chip
@@ -103,16 +108,15 @@
               </v-chip>
             </div>
           </v-flex>
-          <v-flex xs3 sm3 md2 class="pt-0">
+          <v-flex xs4 sm4 md3 lg2 class="pt-0 task-column">
             <div class="mt-0 pt-0">
               <v-btn @click="changeStatus(index)" text small rounded :class="`${task.status} white--text px-0 mx-0 status v-btn--round`">
                 {{ task.status }}
               </v-btn>
             </div>
           </v-flex>
-
           <v-spacer></v-spacer>
-          <v-flex xs3 sm3 md2>
+          <v-flex md3 lg2 v-if="$vuetify.breakpoint.mdAndUp" class="task-column">
             <div class="mt-0 pt-0">
               <v-btn icon :class="`${task.status}`" @click="openTaskDialog(task);" class="pa-0 ma-0">
                 <v-tooltip bottom>
@@ -145,7 +149,52 @@
               </v-btn>
             </div>
           </v-flex>
-          <timer :dense="false" :two-line="true" :task="task"></timer>
+          <v-flex xs1 sm1 v-if="$vuetify.breakpoint.smAndDown" class="task-column">
+            <div>
+              <v-menu bottom left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    light
+                    icon
+                    v-bind="attrs"
+                    v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item
+                    :class="`${task.status}`"
+                    @click="openTaskDialog(task);">
+                    <v-list-item-icon class="horizontal-center">
+                      <v-icon>edit</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Edit</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    :class="`${task.status}`"
+                    @click="snackbar = true; indexToEdit = index;">
+                    <v-list-item-icon class="horizontal-center">
+                      <v-icon>delete</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Delete</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    :class="`${task.status}`"
+                    v-if="$store.state.activeTimerCounter.seconds == 0"
+                    @click="openTimerDialog(task);">
+                    <v-list-item-icon class="horizontal-center">
+                      <v-icon>more_time</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Add timer</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </v-flex>
+          <v-flex xs12 sm12 md12 lg12 v-if="task.timers.length > 0" class="task-column">
+            <div class="caption grey--text ml-3">Timers</div>
+            <timer :dense="false" :two-line="true" :task="task"></timer>
+          </v-flex>
         </v-layout>
       </v-card>
       </draggable>
@@ -185,18 +234,25 @@ export default {
       searching: false,
       activeTimerString: 'Timing...',
       counter: { seconds: 0, timer: null },
-      modal: false,
+      modal: [],
+      status: [],
+      statuses: [
+        'complete',
+        'ongoing',
+        'overdue'
+      ],
       newValues: [],
     }
   },
   mounted() {
     const self = this;
+    this.getDashboardSettings();
     self.$store.commit('setBreadcrumbs',[
       {label:'Tasks',to:{name:'dashboard'}},
     ]);
     self.$eventBus.$on(['TASK_ADDED','TASK_UPDATED','TASK_DELETED','TIMER_ADDED', 'TIMER_UPDATED'],()=>{
       self.saveOrder();
-      self.loadTasks(()=>{});
+      self.loadTasks();  
     });
   },
   methods: {
@@ -219,33 +275,33 @@ export default {
       const self = this;
       window.axios.get('/api/tasks').then(response => {
         self.tasks = response.data;
-        self.tasksCopy = self.tasks;
+        self.$store.commit('setTasks', response.data);
+        self.tasksCopy = response.data;
         window.axios.get('/api/task/timers/active').then(response => {
           if (response.data.id !== undefined) {
             self.$store.commit('setActiveTimer', response.data);
             self.$eventBus.$emit('TIMER_START', response.data)
           }
-        })
+        });
+        self.searchByStatus();
       });
     },
     searchByStatus(status){
-      if (status === "complete") {
-        this.tasks = this.tasks.filter(function(item) {
-          return item.status === "complete";
+      const self = this;
+      self.tasks = self.$store.state.tasks;
+      self.setDashboardSettings();
+      if (status) {
+        self.tasks = self.tasks.filter(function(item) {
+          return item.status === status;
         });
-
-      } else if (status === "ongoing") {
-        this.tasks = this.tasks.filter(function(item) {
-          return item.status === "ongoing";
-        });
-
-      } else if (status === "overdue") {
-        this.tasks = this.tasks.filter(function(item) {
-          return item.status === "overdue";
-        });
-      }  
+      } else {
+        if (self.status.length > 0) {
+          self.tasks = self.tasks.filter(function(item) {
+            return self.status.includes(item.status);
+          });
+        }
+      }
     },
-
     changeStatus(index) {
       const currentTask = this.tasks[index]
 
@@ -283,7 +339,7 @@ export default {
         });
         currentTask.status = newStatus
         this.btnColor = btnColor
-        this.searchByStatus(oldStatus);
+        this.searchByStatus();
       }
     },
 
@@ -348,63 +404,21 @@ export default {
 
       this.editMode = false;
     },
-
-    /* REFACTOR {*/
-    /**
-     * Conditionally pads a number with "0"
-     */
-    _padNumber: number =>  (number > 9) ? number : "0" + number,
-
-    /**
-     * Splits seconds into hours, minutes, and seconds.
-     */
-    _readableTimeFromSeconds: function(seconds) {
-      seconds = parseInt(seconds);
-      const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
-      return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
-      }
-    },
-
-    /**
-     * Redirects user back to login page if logged out
-     */
-    authenticationCheck: function(statusCode) {
-      if (parseInt(statusCode) == 419) {
-        // Logged out
-        this.$router.go("/");
-      }
-    },
-
-    /**
-     * Calculate the amount of time spent on the task using the timer object.
-     */
-    calculateTimeSpent: function (timer) {
-      if (timer.stopped_at) {
-        const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const stopped = moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const seconds = parseInt(moment.duration(stopped.diff(started)).asSeconds())
-        const time = this._readableTimeFromSeconds(seconds);
-        return `${time.hours}:${time.minutes}:${time.seconds}`; // for syntax highlighting: `
-      }
-      return '';
-    },
-
-    /**
-     * Determines if there is an active timer and whether it belongs to the task
-     * passed into the function.
-     */
-    showTimerForTask: function (task, timer) {
-      return this.counter.timer &&
-        this.counter.timer.id === timer.id &&
-        this.counter.timer.task.id === task.id
-    },
-
-    /* REFACTOR }*/
     searchFocus() {
       this.$refs.searchInput.focus();
+    },
+    setDashboardSettings() {
+      const parsed = JSON.stringify(this.status);
+      localStorage.setItem('status', parsed);
+    },
+    getDashboardSettings() {
+      if (localStorage.getItem('status')) {
+        try {
+          this.status = JSON.parse(localStorage.getItem('status'));
+        } catch(e) {
+          localStorage.removeItem('status');
+        }
+      }
     }
   },
   computed: {
@@ -499,5 +513,31 @@ export default {
 .row {
   margin-left: unset;
   border-radius: unset !important;
+}
+
+.v-list {
+  text-transform: uppercase;
+}
+.theme--light.v-chip.status {
+  text-transform: uppercase;
+}
+.theme--light.v-chip.status.complete {
+  color: white;
+  background-color: $task-status-complete;
+}
+.theme--light.v-chip.status.ongoing {
+  color: white;
+  background-color: $task-status-ongoing;
+}
+.theme--light.v-chip.status.overdue {
+  color: white;
+  background-color: $task-status-overdue;
+}
+
+.search-input-container {
+  min-width: 111px; 
+}
+.search-input {
+  margin-left: 5px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 
-  <v-dialog max-width="600px" v-model="dialog">
+  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.mdAndDown" v-model="dialog">
     <v-card>
       <v-card-title class="grey--text">
         <h2 v-if="mode == 'ADD'">Add a New Task</h2>
@@ -52,11 +52,12 @@
           </v-combobox>
           <div v-if="mode == 'UPDATE'">
             <v-combobox
+              class="cmb-statuses"
               v-model="status"
               :items="statuses"
               label="Status"
               chips>
-              <template v-slot:selection="data">
+              <template class="cmb-statuses" v-slot:selection="data">
                 <v-chip
                   :key="JSON.stringify(data.item)"
                   v-bind="data.attrs"
@@ -73,9 +74,13 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTask" :loading="loading">Add task</v-btn>
-          <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTask" :loading="loading">Update task</v-btn>
-          <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="openTimerDialog();"  :loading="loading">Add timer</v-btn>
+          <v-layout row wrap width="100%">
+              <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTask" :loading="loading">Add</v-btn>
+              <v-btn text class="success ml-1 mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTask" :loading="loading">Update</v-btn>
+              <v-btn text class="success ml-1 mx-0 mt-3" v-if="mode == 'UPDATE'" @click="openTimerDialog();"  :loading="loading">Add timer</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
+          </v-layout>
         </v-form>
       </v-card-text>
 
@@ -224,6 +229,9 @@ export default {
 
       }
     },
+    close() {
+      this.dialog = false;
+    },
     openTimerDialog() {
       const self = this;
       self.$store.commit('setActiveTask', this.task);
@@ -250,6 +258,9 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "../../../../../sass/_variables";
+.v-list {
+  text-transform: uppercase;
+}
 .theme--light.v-chip.status {
   text-transform: uppercase;
 }
