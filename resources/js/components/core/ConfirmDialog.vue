@@ -13,7 +13,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <home-snack-bar></home-snack-bar>
   </div>
 </template>
 <script>
@@ -57,6 +56,12 @@ export default {
     close() {
       this.$emit('close');
     },
+    dialogOk() {
+      this.$store.commit('dialogOk');
+    },
+    dialogCancel() {
+      this.$store.commit('dialogCancel');
+    }
   },
 }
 </script>

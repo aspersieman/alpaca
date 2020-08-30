@@ -74,7 +74,7 @@
                   <v-btn @click="$router.push({name:'admin.users.edit',params:{id: item.id}})" class="ma-1" small outlined icon color="info">
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn @click="trash(item)" class="ma-1" small outlined icon color="red">
+                  <v-btn @click="deleteUser(item)" class="ma-1" small outlined icon color="red">
                     <v-icon small>mdi-delete</v-icon>
                   </v-btn>
                 </div>
@@ -197,7 +197,7 @@ export default {
     },700)
   },
   methods: {
-    trash(user) {
+    deleteUser(user) {
       const self = this;
 
       self.$store.commit('showDialog',{
@@ -206,21 +206,15 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this user?",
         okCb: ()=>{
-
           axios.delete('/api/admin/users/' + user.id).then(function(response) {
-
             self.$store.commit('showSnackbar',{
               message: response.data.message,
               color: 'success',
               duration: 3000
             });
-
             self.$eventBus.$emit('USER_DELETED');
-
           }).catch(function (error) {
-
             self.$store.commit('hideLoader');
-
             if (error.response) {
               self.$store.commit('showSnackbar',{
                 message: error.response.data.message,
@@ -240,9 +234,7 @@ export default {
       });
     },
     showDialog(dialog, data) {
-
       const self = this;
-
       switch (dialog){
         case 'user_permissions':
           self.dialogs.showPermissions.items = data;

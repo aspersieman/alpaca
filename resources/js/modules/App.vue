@@ -9,6 +9,7 @@
     </div>
     <vue-progress-bar></vue-progress-bar>
     <home-snack-bar></home-snack-bar>
+    <confirm-dialog></confirm-dialog>
   </v-app>
 </template>
 <script>
@@ -16,14 +17,16 @@ import CoreDrawer from '../components/core/Drawer.vue';
 import CoreAppBar from '../components/core/AppBar.vue';
 import CoreContent from '../components/core/Content.vue';
 import CoreFooter from '../components/core/Footer.vue';
-import HomeSnackBar from './front/home/SnackBar.vue';
+import ConfirmDialog from '../components/core/ConfirmDialog.vue';
+import SnackBar from './front/home/SnackBar.vue';
 export default {
   components: {
-    CoreDrawer,
-    CoreAppBar,
-    CoreContent,
-    CoreFooter,
-    HomeSnackBar
+    'core-drawer': CoreDrawer,
+    'core-app-bar': CoreAppBar,
+    'core-content': CoreContent,
+    'core-footer': CoreFooter,
+    'home-snack-bar': SnackBar,
+    'confirm-dialog': ConfirmDialog
   },
   mounted() {
     const self = this;
