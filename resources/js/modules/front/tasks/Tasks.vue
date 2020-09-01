@@ -431,34 +431,6 @@ export default {
   },
   created() {
     const self = this;
-    const user = {}; //firebase.auth().currentUser;
-    if (user) {
-      var userId = user.uid
-      this.userId = userId
-    } else {
-      // not logged
-    }
-
-    /*
-    var projectsRef = {}; //db.collection('users/'+userId+'/tasks')
-
-    // ORDER DATA BY PRIORITY
-    projectsRef = {}; //projectsRef.orderBy("priority", "desc")
-
-    // GET DATA
-    projectsRef.onSnapshot(res => {
-      const changes = res.docChanges();
-
-      changes.forEach(change => {
-        if (change.type === 'added') {
-          this.tasks.unshift({ // UNSHIF FOR ADD AT THE BEGINNING
-            ...change.doc.data(),
-            id: change.doc.id
-            })
-          }
-        })
-    })
-    */
     self.loadTasks();
   }
 }

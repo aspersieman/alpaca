@@ -41,3 +41,11 @@ export default {
   methods: { }
 }
 </script>
+<style scoped>
+#app {
+  background: linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("/img/logo/llama-jen-transparent-sepia.png");
+  background-repeat: no-repeat, no-repeat;
+  background-size: 491px 911px;
+  background-position: center 20px;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <v-footer
-    class="py-4"
+    class="py-4 main-footer"
     height="auto">
     <v-container class="mx-auto">
       <v-row>
@@ -50,3 +50,8 @@
     }),
   }
 </script>
+<style scoped>
+.main-footer {
+  background: rgba(219, 219, 219, 0.6);
+}
+</style>

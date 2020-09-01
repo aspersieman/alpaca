@@ -1,6 +1,6 @@
 <template>
 
-  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.mdAndDown" v-model="dialog">
+  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.xs" v-model="dialog">
     <v-card>
       <v-card-title class="grey--text">
         <h2 v-if="mode == 'ADD'">Add a New Task</h2>
