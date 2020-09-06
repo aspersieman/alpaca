@@ -1,23 +1,34 @@
 <template>
-  <div>
-    <v-list :dense="dense" :two-line="twoLine" subheader v-if="task.timers.length > 0" class="timers">
-      <template v-for="timer in task.timers">
-        <v-list-item
-          :key="timer.id" 
-          :class="showTimerForTask(task, timer) ? 'active-timer' : ''">
-          <v-list-item-icon class="horizontal-center">
-            <v-icon>access_time</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title v-text="timer.name">{{timer.name}}</v-list-item-title>
-            <v-list-item-subtitle>
+  <div v-if="task.timers.length > 0" class="timers">
+    <v-card text flat v-for="timer in task.timers" :key="timer.id">
+      <div :class="showTimerForTask(task, timer) ? 'active-timer' : ''">
+        <v-layout row wrap class="timer">
+          <v-flex xs1 sm1 md1 lg1>
+            <v-icon class="ml-3">access_time</v-icon>
+          </v-flex>
+          <v-flex xs6 sm3 md3 lg3 class="ml-2">
+            <div class="fs-90">{{timer.name}}</div>
+            <div class="caption">
               {{ dateFormat(timer.created_at) }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-icon>
+            </div>
+          </v-flex>
+          <v-flex sm4 md4 lg4 v-if="$vuetify.breakpoint.smAndUp">
+            <div 
+              :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}">
+              <v-chip
+                v-for="tag in timer.tagged"
+                :key="tag.id"
+                class="ma-2"
+                x-small>
+                {{tag.tag_name}}
+              </v-chip>
+            </div>
+          </v-flex>
+          <v-spacer></v-spacer>
+          <v-flex xs4 sm3 md3 lg3 class="fs-90">
             <div v-if="showTimerForTask(task, timer)">
               {{ $store.state.activeTimerCounter.title }}
-              <v-btn icon v-if="showTimerForTask(task, timer)" class="btn btn-sm btn-secondary" @click="stopTimer()">
+              <v-btn icon v-if="showTimerForTask(task, timer)" @click="stopTimer()">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">stop</v-icon>
@@ -27,13 +38,13 @@
               </v-btn>
             </div>
             <v-layout v-else row>
-              <v-flex class="horizontal-center" v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id">
+              <v-flex class="horizontal-center fs-90" v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id">
                 {{ $store.state.stoppedTimerValue }}
               </v-flex>
-              <v-flex class="horizontal-center" v-else>
+              <v-flex class="horizontal-center fs-90" v-else>
                 {{ calculateTimeSpent(timer) }}
               </v-flex>
-              <v-flex>
+              <v-flex class="horizontal-center">
                 <v-btn icon @click="deleteTimer(task, timer)">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
@@ -52,10 +63,10 @@
                 </v-btn>
               </v-flex>
             </v-layout>
-          </v-list-item-icon>
-        </v-list-item>
-      </template>
-    </v-list>
+          </v-flex>
+        </v-layout>
+      </div>
+    </v-card>
   </div>
 </template>
 <script>
@@ -77,15 +88,8 @@ export default {
       due: null,
       status: null,
       order: null,
-      tags: [],
       timers: []
     },
-    dense: {
-      type: Boolean
-    },
-    twoLine: {
-      type: Boolean
-    }
   },
   created() { },
   mounted() {
@@ -97,8 +101,8 @@ export default {
   methods: {
     openTimerDialog(task, timer) {
       const self = this;
-      self.$store.commit('setActiveTask', task);
-      self.$store.commit('setActiveTimer', timer);
+      self.$store.commit('setSelectedTask', task);
+      self.$store.commit('setSelectedTimer', timer);
       self.$eventBus.$emit('TIMER_UPDATE_DIALOG', true)
     },
 
@@ -158,17 +162,19 @@ export default {
      * Start counting the timer. Tick tock.
      */
     startTimer: function (timer) {
-      // remove 'z' from timezone, moment doesn't like it
-      // when doing maths
-      const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-      const now = moment();
+      if (this.$store.state.activeTimerCounter.timer === null || this.$store.state.activeTimerCounter.timer.id != timer.id) {
+        // remove 'z' from timezone, moment doesn't like it
+        // when doing maths
+        const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        const now = moment();
 
-      this.$store.state.activeTimerCounter.timer = timer
-      this.$store.state.activeTimerCounter.seconds = parseInt(moment.duration(now.diff(started)).asSeconds())
-      this.$store.state.activeTimerCounter.ticker = setInterval(() => {
-        const time = this._readableTimeFromSeconds(++this.$store.state.activeTimerCounter.seconds)
-        this.$store.state.activeTimerCounter.title = `${time.hours}:${time.minutes}:${time.seconds}`
-      }, 1000)
+        this.$store.state.activeTimerCounter.timer = timer
+        this.$store.state.activeTimerCounter.seconds = parseInt(moment.duration(now.diff(started)).asSeconds())
+        this.$store.state.activeTimerCounter.ticker = setInterval(() => {
+          const time = this._readableTimeFromSeconds(++this.$store.state.activeTimerCounter.seconds)
+          this.$store.state.activeTimerCounter.title = `${time.hours}:${time.minutes}:${time.seconds}`
+        }, 1000);
+      }
     },
 
     /**
@@ -183,8 +189,8 @@ export default {
           // Stop the ticker
           clearInterval(this.$store.state.activeTimerCounter.ticker)
 
-          this.$store.commit('setStoppedTimer', response.data);
-          this.$store.commit('setStoppedTimerValue', this.calculateTimeSpent(response.data));
+          this.$store.commit('setStoppedTimer', response.data.data);
+          this.$store.commit('setStoppedTimerValue', this.calculateTimeSpent(response.data.data));
           // Reset the activeTimerCounter and timer string
           this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: null });
           this.$store.state.activeTimerCounter.title = 'Timing...';
@@ -195,17 +201,44 @@ export default {
      * Delete a timer.
      */
     deleteTimer: function (task, timer) {
-      window.axios.delete(`/api/tasks/${task.id}/timer/${timer.id}`)
-        .then(
-          response => {
-            task.timers = task.timers
-              .filter(function(element) {
+      const self = this;
+      self.$store.commit('showDialog',{
+        type: "confirm",
+        icon: 'warning',
+        title: "Confirm deletion",
+        message: "Are you sure you want to delete this timer?",
+        okCb: ()=>{
+          window.axios.delete(`/api/tasks/${task.id}/timer/${timer.id}`)
+            .then(function(response) {
+              task.timers = task.timers.filter(function(element) {
                 return element.id !== timer.id;
               });
-          })
-        .catch(error => {
-          this.authenticationCheck(error.response.status);
-        });
+              self.$store.commit('showSnackbar',{
+                message: response.data.message,
+                color: 'success',
+                duration: 3000
+              });
+              self.$eventBus.$emit('TIMER_DELETED');
+            })
+            .catch(error => {
+              self.$store.commit('hideLoader');
+              if (error.response) {
+                self.$store.commit('showSnackbar',{
+                  message: error.response.data.data.message,
+                  color: 'error',
+                  duration: 10000
+                });
+              } else if (error.request) {
+                console.log(error.request);
+              } else {
+                console.log('Error', error.message);
+              }
+            });
+        },
+        cancelCb: ()=>{
+          console.log("CANCEL");
+        }
+      });
     },
 
     dateFormat(dateValue) {
@@ -225,8 +258,8 @@ export default {
 .active-timer {
   background-color: $selected-light-grey;
   border-left: solid 4px $selected-dark-grey;
-  border-top-right-radius: 30px;
-  border-bottom-right-radius: 30px;
+  border-top-right-radius: 10px !important;
+  border-bottom-right-radius: 10px !important;
 }
 .timers {
   max-width: 500px;
@@ -236,5 +269,9 @@ export default {
 }
 .horizontal-center {
   margin: auto;
+}
+
+.fs-90 {
+ font-size: 0.90rem;
 }
 </style>

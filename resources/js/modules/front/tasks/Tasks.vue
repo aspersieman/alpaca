@@ -1,11 +1,6 @@
 <template>
   <div class="tasks">
     <h1 class="subheading grey--text ml-4">Tasks</h1>
-    <v-snackbar v-model="snackbar" top color="warning" text>
-      <span>Are you sure?</span>
-      <v-btn text color="white" @click="snackbar = false; deleteTask()">Yes</v-btn>
-      <v-btn text color="white" @click="snackbar = false; ">No</v-btn>
-    </v-snackbar>
     <v-container class="my-2">
       <v-layout row class="mb-3" wrap>
         <v-btn 
@@ -80,7 +75,7 @@
       <draggable v-model="tasks" @change="saveOrder" handle=".handle" :disabled="!todos" v-if="this.tasks.length > 0">
       <v-card text flat v-for="(task, index) in searchTasks" :key="task.id">
         <v-layout row wrap :class="`pa-2 task ${task.status}`">
-          <v-flex xs12 sm12 md4 lg4 class="task-column">
+          <v-flex xs12 sm12 md4 lg4>
             <div class="caption grey--text ml-3" v-if="todos">Task Title</div>
             <div class="caption grey--text" v-if="!todos">Task Title</div>
             <div :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}" v-if="!editMode || index != indexToEdit" @click="editMode = !editMode; indexToEdit = index; newName = task.name;">
@@ -91,24 +86,11 @@
             <v-text-field autofocus :color="`${task.status}s`" v-model="newName" v-if="editMode && indexToEdit == index" class="ma-0 pa-0"></v-text-field>
             </v-form>
           </v-flex>
-          <v-flex xs4 sm4 md3 lg2 class="task-column">
-            <div class="caption grey--text ml-3">Due by</div>
+          <v-flex xs5 sm5 md2 lg2>
+            <div class="caption grey--text" :class="{'ml-3': $vuetify.breakpoint.smAndDown}">Due by</div>
             <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">{{ task.due }}</div>
           </v-flex>
-          <v-flex md3 lg2 v-if="$vuetify.breakpoint.mdAndUp" class="task-column">
-            <div class="caption grey--text ml-3" v-if="task.tagged.length > 0">Categories</div>
-            <div 
-              :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}">
-              <v-chip
-                v-for="tag in task.tagged"
-                :key="tag.id"
-                class="ma-2"
-                x-small>
-                {{tag.tag_name}}
-              </v-chip>
-            </div>
-          </v-flex>
-          <v-flex xs4 sm4 md3 lg2 class="pt-0 task-column">
+          <v-flex xs5 sm5 md3 lg3 class="pt-0">
             <div class="mt-0 pt-0">
               <v-btn @click="changeStatus(index)" text small rounded :class="`${task.status} white--text px-0 mx-0 status v-btn--round`">
                 {{ task.status }}
@@ -116,7 +98,7 @@
             </div>
           </v-flex>
           <v-spacer></v-spacer>
-          <v-flex md3 lg2 v-if="$vuetify.breakpoint.mdAndUp" class="task-column">
+          <v-flex md3 lg3 v-if="$vuetify.breakpoint.mdAndUp">
             <div class="mt-0 pt-0">
               <v-btn icon :class="`${task.status}`" @click="openTaskDialog(task);" class="pa-0 ma-0">
                 <v-tooltip bottom>
@@ -126,7 +108,7 @@
                   Edit
                 </v-tooltip>
               </v-btn>
-              <v-btn icon :class="`${task.status}`" @click="snackbar = true; indexToEdit = index;" class="pa-0 ma-0">
+              <v-btn icon :class="`${task.status}`" @click="deleteTask(index)" class="pa-0 ma-0">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">delete</v-icon>
@@ -149,7 +131,7 @@
               </v-btn>
             </div>
           </v-flex>
-          <v-flex xs1 sm1 v-if="$vuetify.breakpoint.smAndDown" class="task-column">
+          <v-flex xs1 sm1 v-if="$vuetify.breakpoint.smAndDown">
             <div>
               <v-menu bottom left>
                 <template v-slot:activator="{ on, attrs }">
@@ -172,7 +154,7 @@
                   </v-list-item>
                   <v-list-item
                     :class="`${task.status}`"
-                    @click="snackbar = true; indexToEdit = index;">
+                    @click="deleteTask(index)">
                     <v-list-item-icon class="horizontal-center">
                       <v-icon>delete</v-icon>
                     </v-list-item-icon>
@@ -191,9 +173,9 @@
               </v-menu>
             </div>
           </v-flex>
-          <v-flex xs12 sm12 md12 lg12 v-if="task.timers.length > 0" class="task-column">
-            <div class="caption grey--text ml-3">Timers</div>
-            <timer :dense="false" :two-line="true" :task="task"></timer>
+          <v-flex xs12 sm12 md12 lg12 v-if="task.timers.length > 0" class="ml-3">
+            <div class="caption grey--text">Timers</div>
+            <div><timer :task="task"></timer></div>
           </v-flex>
         </v-layout>
       </v-card>
@@ -259,28 +241,29 @@ export default {
     openTaskDialog(task) {
       const self = this;
       if (task) {
-        self.$store.commit('setActiveTask', task);
+        self.$store.commit('setSelectedTask', task);
         self.$eventBus.$emit('TASK_UPDATE_DIALOG', true)
       } else {
-        self.$store.commit('setActiveTask', null);
+        self.$store.commit('setSelectedTask', null);
         self.$eventBus.$emit('TASK_ADD_DIALOG', true)
       }
     },
     openTimerDialog(task) {
       const self = this;
-      self.$store.commit('setActiveTask', task);
+      self.$store.commit('setSelectedTask', task);
       self.$eventBus.$emit('TIMER_ADD_DIALOG', true)
     },
     loadTasks() {
+      console.log("loadTasks");
       const self = this;
       window.axios.get('/api/tasks').then(response => {
-        self.tasks = response.data;
-        self.$store.commit('setTasks', response.data);
-        self.tasksCopy = response.data;
+        self.tasks = response.data.data;
+        self.$store.commit('setTasks', response.data.data);
+        self.tasksCopy = response.data.data;
         window.axios.get('/api/task/timers/active').then(response => {
-          if (response.data.id !== undefined) {
-            self.$store.commit('setActiveTimer', response.data);
-            self.$eventBus.$emit('TIMER_START', response.data)
+          if (response.data.data.id !== undefined) {
+            self.$store.commit('setActiveTimer', response.data.data);
+            self.$eventBus.$emit('TIMER_START', response.data.data)
           }
         });
         self.searchByStatus();
@@ -332,7 +315,7 @@ export default {
             .catch(error => {
             console.log(error);
             this.$store.commit('showSnackbar', {
-              message: error.response.data.message,
+              message: error.response.data.data.message,
               color: 'error',
               duration: 3000
           });
@@ -343,25 +326,49 @@ export default {
       }
     },
 
-    deleteTask() {
-      var index = this.indexToEdit;
-      const currentTask = this.tasks[index]
+    deleteTask(index) {
+      const self = this;
 
-      window.axios.delete('/api/tasks/'+parseInt(currentTask.id))
-        .then(
-          response => {
-            this.tasks = this.tasks
-              .filter(function(element) {
-                return element.id !== task.id;
+      self.$store.commit('showDialog',{
+        type: "confirm",
+        icon: 'warning',
+        title: "Confirm deletion",
+        message: "Are you sure you want to delete this task?",
+        okCb: ()=>{
+          const currentTask = self.tasks[index]
+          console.log(currentTask);
+          window.axios.delete('/api/tasks/'+parseInt(currentTask.id))
+            .then(function(response) {
+              self.tasks = self.tasks
+                .filter(function(element) {
+                  return element.id !== currentTask.id;
+                });
+              self.$store.commit('showSnackbar',{
+                message: response.data.message,
+                color: 'success',
+                duration: 3000
               });
-          });
-
-      if (index > -1) {
-        this.tasks.splice(index, 1);
-        this.tasksCopy.splice(index, 1);
-      }
-
-      this.saveOrder();
+              self.$eventBus.$emit('TASK_DELETED');
+            })
+            .catch(error => {
+              self.$store.commit('hideLoader');
+              if (error.response) {
+                self.$store.commit('showSnackbar',{
+                  message: error.response.data.data.message,
+                  color: 'error',
+                  duration: 10000
+                });
+              } else if (error.request) {
+                console.log(error.request);
+              } else {
+                console.log('Error', error.message);
+              }
+            });
+        },
+        cancelCb: ()=>{
+          console.log("CANCEL");
+        }
+      });
     },
 
     saveOrder() {
@@ -376,7 +383,7 @@ export default {
             .catch(error => {
             console.log(error);
             this.$store.commit('showSnackbar', {
-              message: error.response.data.message,
+              message: error.response.data.data.message,
               color: 'error',
               duration: 3000
           });
@@ -395,7 +402,7 @@ export default {
             .catch(error => {
             console.log(error);
             this.$store.commit('showSnackbar', {
-              message: error.response.data.message,
+              message: error.response.data.data.message,
               color: 'error',
               duration: 3000
           });
@@ -437,6 +444,9 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "../../../../sass/_variables";
+.task {
+  border-bottom: 1px solid $border-light-grey;
+}
 .task.complete {
   border-left: 4px solid $task-status-complete;
 }

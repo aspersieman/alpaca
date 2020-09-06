@@ -23,6 +23,7 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
   Route::delete('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@delete');
   Route::put('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@update');
   Route::get('/task/timers/active', 'Front\\TimerController@running');
+  Route::post('/chart/byday', 'Front\\ChartController@byDay');
 });
 
 // admin

@@ -35,6 +35,7 @@ export default new Vuex.Store({
     task: null,
     tasks: [],
     timer: null,
+    activeTimer: null,
     activeTimerCounter: { seconds: 0, timer: null, title: 'Timing...' },
     stoppedTimer: null,
     stoppedTimerValue: ""
@@ -96,14 +97,14 @@ export default new Vuex.Store({
     setImageDialogFile(state, data) {
       state.imageDialogFile = data;
     },
-    setActiveTask(state, task) {
+    setSelectedTask(state, task) {
       state.task = task;
     },
     setTasks(state, tasks) {
       state.tasks = tasks;
     },
     setActiveTimer(state, timer) {
-      state.timer = timer;
+      state.activeTimer = timer;
     },
     setActiveTimerCounter(state, activeTimerCounter) {
       state.activeTimerCounter = activeTimerCounter;
@@ -113,6 +114,9 @@ export default new Vuex.Store({
     },
     setStoppedTimerValue(state, value) {
       state.stoppedTimerValue = value;
+    },
+    setSelectedTimer(state, timer) {
+      state.timer = timer;
     },
   },
   getters: {
@@ -162,14 +166,14 @@ export default new Vuex.Store({
     awardDialog: state => {
       return state.awardDialog;
     },
-    getActiveTask: state => {
+    getSelectedTask: state => {
       return state.task
     },
     getTasks: state => {
       return state.tasks
     },
     getActiveTimer: state => {
-      return state.timer
+      return state.activeTimer
     },
     getActiveTimerCounter: state => {
       return state.activeTimerCounter
@@ -179,6 +183,9 @@ export default new Vuex.Store({
     },
     getStoppedTimerValue: state => {
       return state.stoppedTimerValue
+    },
+    getSelectedTimer: state => {
+      return state.timer
     },
   },
   actions: {

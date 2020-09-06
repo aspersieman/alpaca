@@ -30,26 +30,6 @@
             </template>
             <v-date-picker v-model="due" @input="menu2 = false"></v-date-picker>
           </v-menu>
-          <v-combobox
-            v-model="tags"
-            :items="tagItems"
-            chips
-            clearable
-            label="Categories"
-            multiple
-            prepend-icon="category"
-            solo>
-            <template v-slot:selection="{ attrs, item, select, selected }">
-              <v-chip
-                v-bind="attrs"
-                :input-value="selected"
-                close
-                @click="select"
-                @click:close="removeCategory(item)">
-                <strong>{{ item }}</strong>&nbsp;
-              </v-chip>
-            </template>
-          </v-combobox>
           <div v-if="mode == 'UPDATE'">
             <v-combobox
               class="cmb-statuses"
@@ -105,7 +85,6 @@ export default {
         due: null,
         status: null,
         order: null,
-        tags: []
       },
       mode: '',
       name: '',
@@ -117,8 +96,6 @@ export default {
       ],
       loading: false,
       menu: false,
-      tags: [],
-      tagItems: [],
       timers: [],
       activeTimerString: 'Timing...',
       counter: { seconds: 0, timer: null },
@@ -135,20 +112,10 @@ export default {
     this.$eventBus.$on('TASK_ADD_DIALOG', (value) => {
       this.dialog = value;
       this.mode = 'ADD';
-      this.task = null;
-      this.name = null;
-      this.tags = [];
-      this.due = moment().format('YYYY-MM-DD');
-      this.timers = [];
-      this.status = 'ongoing';
     });
     this.$eventBus.$on('TASK_UPDATE_DIALOG', (value) => {
       this.task = this.$store.state.task;
       this.name = this.$store.state.task.name;
-      const tags = this.$store.state.task.tagged.map(function (item) {
-        return item.tag_name;
-      });
-      this.tags = tags;
       this.due = this.$store.state.task.due;
       this.timers = this.$store.state.task.timers;
       this.status = this.$store.state.task.status;
@@ -167,7 +134,6 @@ export default {
           due: moment(this.due).format('YYYY-MM-DD'),
           status: 'ongoing',
           order: null,
-          tags: this.tags
         };
 
         window.axios.post('/api/tasks', task)
@@ -202,7 +168,6 @@ export default {
           name: this.name,
           due: this.due,
           status: this.status,
-          tags: this.tags
         };
 
         window.axios.put(`/api/tasks/${this.task.id}`, task)
@@ -234,18 +199,16 @@ export default {
     },
     openTimerDialog() {
       const self = this;
-      self.$store.commit('setActiveTask', this.task);
+      self.$store.commit('setSelectedTask', this.task);
       self.$eventBus.$emit('TIMER_ADD_DIALOG', true)
     },
 
     formReset() {
-      this.name = '';
       this.due = moment().format('YYYY-MM-DD');
-      this.tags = [];
-    },
-    removeCategory(item) {
-      this.tags.splice(this.tags.indexOf(item), 1)
-      this.tags = [...this.tags]
+      this.task = null;
+      this.name = null;
+      this.timers = [];
+      this.status = 'ongoing';
     },
   },
   computed: {

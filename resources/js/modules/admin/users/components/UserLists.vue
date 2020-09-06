@@ -233,8 +233,6 @@ export default {
       });
     },
     showDialog(dialog, data) {
-      console.log(dialog);
-      console.log(data);
       const self = this;
       switch (dialog){
         case 'admin.user_permissions':

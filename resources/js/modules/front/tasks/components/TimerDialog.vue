@@ -27,6 +27,30 @@
                 </v-menu>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col>
+                <v-combobox
+                  v-model="tags"
+                  :items="tagItems"
+                  chips
+                  clearable
+                  label="Categories"
+                  multiple
+                  prepend-icon="category"
+                  solo>
+                  <template v-slot:selection="{ attrs, item, select, selected }">
+                    <v-chip
+                      v-bind="attrs"
+                      :input-value="selected"
+                      close
+                      @click="select"
+                      @click:close="removeCategory(item)">
+                      <strong>{{ item }}</strong>&nbsp;
+                    </v-chip>
+                  </template>
+                </v-combobox>
+              </v-col>
+            </v-row>
             <v-row v-if="mode == 'UPDATE'">
               <v-col>
                 <v-menu
@@ -121,7 +145,32 @@ export default {
       dateRules: [
         (v) => (v.length >= 4) || 'Invalid date format',
       ],
+      tags: [],
+      tagItems: [],
     }
+  },
+  mounted() { },
+  created() {
+    const self = this;
+    this.$eventBus.$on('TIMER_ADD_DIALOG', (value) => {
+      this.dialog = value;
+      this.mode = 'ADD';
+      this.formReset();
+    });
+    this.$eventBus.$on('TIMER_UPDATE_DIALOG', (value) => {
+      this.timer = this.$store.state.timer;
+      this.name = this.timer.name;
+      this.startDate = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+      this.startTime = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      this.endTime = this.timer.stopped_at ? moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      this.duration = moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+      this.dialog = value;
+      this.mode = 'UPDATE';
+      const tags = this.$store.state.timer.tagged.map(function (item) {
+        return item.tag_name;
+      });
+      this.tags = tags;
+    });
   },
   methods: {
     addTimer() {
@@ -131,7 +180,8 @@ export default {
         const timer = {
           name: this.name,
           task_id: this.task_id,
-          tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          tags: this.tags
         };
         window.axios.post(`/api/tasks/${task.id}/timers`, timer)
           .then(response => {
@@ -166,10 +216,9 @@ export default {
         const timer = {
           name: this.name,
           started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
-          stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss")
+          stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss"),
+          tags: this.tags
         };
-        console.log(this.duration);
-        console.log(timer);
 
         window.axios.put(`/api/tasks/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
           .then(response => {
@@ -204,26 +253,12 @@ export default {
       this.endTime = '';
       this.duration = '';
       this.timer = null;
+      this.tags = [];
     },
-  },
-  mounted() { },
-  created() {
-    const self = this;
-    this.$eventBus.$on('TIMER_ADD_DIALOG', (value) => {
-      this.dialog = value;
-      this.mode = 'ADD';
-      this.formReset();
-    });
-    this.$eventBus.$on('TIMER_UPDATE_DIALOG', (value) => {
-      this.timer = this.$store.state.timer;
-      this.name = this.timer.name;
-      this.startDate = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
-      this.startTime = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      this.endTime = this.timer.stopped_at ? moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      this.duration = moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-      this.dialog = value;
-      this.mode = 'UPDATE';
-    });
+    removeCategory(item) {
+      this.tags.splice(this.tags.indexOf(item), 1)
+      this.tags = [...this.tags]
+    },
   },
   computed: {
     formattedDate() {

@@ -25,12 +25,14 @@
               max-width="48" />
           </router-link>
           <v-btn
+            v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard">
             Dashboard
           </v-btn>
           <v-btn
+            v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/tasks">

@@ -14,12 +14,12 @@ class Task extends Model
   /**
    * {@inheritDoc}
    */
-  protected $fillable = ['name', 'status', 'due', 'tags', 'user_id'];
+  protected $fillable = ['name', 'status', 'due', 'user_id', 'project_id'];
 
   /**
    * {@inheritDoc}
    */
-  protected $with = ['user'];
+  protected $with = ['user', 'project'];
 
   const STATUSES = [
     'complete',
@@ -35,6 +35,16 @@ class Task extends Model
   public function user()
   {
     return $this->belongsTo(User::class);
+  }
+
+  /**
+   * Get associated project.
+   *
+   * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+   */
+  public function project()
+  {
+    return $this->belongsTo(Project::class);
   }
 
   /**
@@ -102,7 +112,6 @@ class Task extends Model
     $task->name = $data['name'];
     $task->due = $data['due'];
     $task->status = $data['status'];
-    $task->retag($data['tags']);
     $task->save();
     return $task;
   }

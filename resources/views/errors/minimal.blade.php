@@ -55,16 +55,16 @@
             margin: 50 auto;
             width: 100px;
             height: 60px;
-            background:#3399ff;
+            background:#ff4f4f;
             border-radius: 50px 10px 10px 20px;
             position: relative;
             z-index: 5;
             box-shadow: 
-            3px 3px 0 0px #003399,
+            3px 3px 0 0px #c83131,
             /*body*/
-            75px 115px 0 20px #3399ff,
+            75px 115px 0 20px #ff4f4f,
             /*body shadow*/
-            77.5px 120px 0 20px #003399   
+            77.5px 120px 0 20px #c83131   
           }
 
           .h:after{
@@ -81,15 +81,15 @@
             /*main eyelid*/
             3px 5px 0 5px #fff,
             /*main eyelid shadow*/
-            3px 10px 0 10px #003399,
+            3px 10px 0 10px #c83131,
             /*nose*/
             -65px 20px 0 0 #fff,
             /*nose shadow*/
-            -65px 22.5px 0 0 #003399,
+            -65px 22.5px 0 0 #c83131,
             /*mouth*/
             -50px 40px 0 -4px #fff,
             /*mouth shadow*/
-            -50px 42.5px 0 -3px #003399
+            -50px 42.5px 0 -3px #c83131
           }
 
           .h:before{
@@ -97,7 +97,7 @@
             display: block;
             width: 12.5px;
             height: 35px;
-            background:#3399ff;
+            background:#ff4f4f;
             border-radius: 75px 10px 0 10px;
             position: absolute;
             left: 72.5px;
@@ -105,35 +105,35 @@
             z-index: 1; 
             box-shadow:
             /*right ear*/
-            15px -5px 0 0px #3399ff,
+            15px -5px 0 0px #ff4f4f,
             /*right ear shadow*/
-            16.5px -5px 0 0px #003399,
+            16.5px -5px 0 0px #c83131,
             /*neck*/
-            5px 85px 0 12.5px #3399ff,
-            5px 115px 0 12.5px #3399ff,
+            5px 85px 0 12.5px #ff4f4f,
+            5px 115px 0 12.5px #ff4f4f,
             /*neck longer*/
-            10px 87.5px 0 12.5px #003399,
+            10px 87.5px 0 12.5px #c83131,
             /*tail*/
-            110px 120px 0 0 #3399ff,
+            110px 120px 0 0 #ff4f4f,
             /*tail shadow*/
-            112.5px 120px 0 0 #003399,
+            112.5px 120px 0 0 #c83131,
             /*front right leg*/
-            17.5px 212.5px 0 10px #3399ff,
+            17.5px 212.5px 0 10px #ff4f4f,
             /*back right shadow leg*/
-            15px 212.5px 0 10px #003399,
+            15px 212.5px 0 10px #c83131,
             /*front left leg*/
-            0px 205px 0 10px #3399ff,
+            0px 205px 0 10px #ff4f4f,
             /*back right leg*/
-            100px 212.5px 0 10px #3399ff,
+            100px 212.5px 0 10px #ff4f4f,
             /*back right shadow leg*/
-            97.5px 212.5px 0 10px #003399,
+            97.5px 212.5px 0 10px #c83131,
             /*back left leg*/
-            82.5px 205px 0 10px #3399ff   
+            82.5px 205px 0 10px #ff4f4f   
           }
 
           .speech-bubble {
             position: relative;
-            background: #bbdefa;
+            background: #ffa8a8;
             border-radius: .4em;
           }
 
@@ -145,7 +145,7 @@
             width: 0;
             height: 0;
             border: 36px solid transparent;
-            border-left-color: #bbdefa;
+            border-left-color: #ffa8a8;
             border-right: 0;
             border-bottom: 0;
             margin-top: -18px;

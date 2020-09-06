@@ -6,50 +6,59 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 use App\Timer;
 use App\Task;
 
-class TimerController extends Controller
+class TimerController extends FrontController
 {
   public function store(Request $request, int $id)
   {
     $data = $request->validate(['name' => 'required|between:3,100']);
+    $tags = $request['tags'];
 
     $tz = $request->tz ?? config('app.timezone');
     $now = Carbon::now(new \DateTimeZone($tz));
-    $timer = Task::mine()
+    $timer = new Timer();
+    $timer->name = $data['name'];
+    $timer->user_id = Auth::user()->id;
+    $timer->started_at = $now;
+    $task = Task::mine()
       ->findOrFail($id)
       ->timers()
-      ->save(new Timer([
-        'name' => $data['name'],
-        'user_id' => Auth::user()->id,
-        'started_at' => $now,
-      ]));
+      ->save($timer);
+    if (!empty($tags)) {
+      $timer->tag($tags);
+      $timer->save();
+    }
 
-    return $timer->with('task')->find($timer->id);
+    return $this->sendResponseOk($timer->with(['task', 'tagged'])->find($timer->id), "Created.");
   }
 
   public function running()
   {
-    return Timer::with('task')->mine()->running()->first() ?? [];
+    $runningTimer = Timer::with(['task', 'tagged'])->mine()->running()->first() ?? [];
+    return $this->sendResponseOk($runningTimer, "Running timer found ok");
   }
 
   public function stopRunning(Request $request)
   {
     if ($timer = Timer::mine()->running()->first()) {
+      $start = Carbon::createFromFormat('Y-m-d H:s:i', $timer->started_at);
       $tz = $request->tz ?? config('app.timezone');
       $now = Carbon::now(new \DateTimeZone($tz));
+      $timer->duration = $now->diffInSeconds($start);
       $timer->update(['stopped_at' => $now]);
     }
 
-    return $timer;
+    return $this->sendResponseOk($timer, "Timer stopped ok");
   }
 
   public function delete(Request $request, int $id, int $timer_id)
   {
     Timer::destroy($timer_id);
-    return ["status"=>"success"];
+    return $this->sendResponseOk([], "Timer deleted");
   }
 
   public function update(Request $request, int $id, int $timer_id)
@@ -60,6 +69,6 @@ class TimerController extends Controller
       'stopped_at' => 'date'
     ]);
     $data['tags'] = $request->tags;
-    return Timer::put($timer_id, $data);
+    return $this->sendResponseOk(Timer::put($timer_id, $data), "Timer updated ok");
   }
 }

@@ -2,18 +2,21 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Conner\Tagging\Taggable;
 
 class Timer extends Model
 {
+  use \Conner\Tagging\Taggable;
   use SoftDeletes;
 
   /**
    * {@inheritDoc}
    */
   protected $fillable = [
-    'name', 'user_id', 'task_id', 'stopped_at', 'started_at'
+    'name', 'user_id', 'task_id', 'stopped_at', 'started_at', 'tags' 
   ];
 
   /**
@@ -74,7 +77,28 @@ class Timer extends Model
     $timer->name = $data['name'];
     $timer->started_at = $data['started_at'];
     $timer->stopped_at = $data['stopped_at'];
+    $start = Carbon::createFromFormat('Y-m-d H:s:i', $timer->started_at);
+    $end = Carbon::createFromFormat('Y-m-d H:s:i', $timer->stopped_at);
+    $timer->duration = $end->diffInSeconds($start);
+    $timer->retag($data['tags']);
     $timer->save();
     return $timer;
+  }
+
+  public static function byDay($start, $end, array $userIds)
+  {
+    $userIds = $userIds ?? [auth()->user()->id];
+    $times = Timer::select(
+      [
+        \DB::raw("DATE(started_at) AS timer_date"), 
+        \DB::raw("SUM(duration) AS duration")
+      ]
+    )
+      ->where('started_at', '>=', $start)
+      ->where('stopped_at', '<=', $end)
+      ->whereIn('user_id', $userIds)
+      ->groupBy(\DB::raw("DATE(started_at)"))
+      ->get();
+    return $times;
   }
 }

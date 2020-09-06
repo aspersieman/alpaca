@@ -2,16 +2,20 @@
   <div id="home">
     <h1 class="subheading grey--text ml-4">Dashboard</h1>
     <v-container class="my-2">
+      <chart-bar-time-by-day></chart-bar-time-by-day>
       <pie-chart :download="true" :data="[['Blueberry', 44], ['Strawberry', 23]]"></pie-chart>
-      <column-chart :data="[['Sun', 32], ['Mon', 46], ['Tue', 28]]"></column-chart>
     </v-container>
   </div>
 </template>
 <script>
 
+import ChartBarTimeByDay from './components/ChartBarTimeByDay';
+
 export default {
   name: 'Home',
-  components: { },
+  components: {
+    'chart-bar-time-by-day': ChartBarTimeByDay,
+  },
   mounted() {
     const self = this;
     self.$store.commit('setBreadcrumbs',[

@@ -18,11 +18,14 @@ class TaskController extends Controller
 
   public function index()
   {
-    return Task::mine()
-      ->with(['timers', 'tagged'])
-      ->orderBy('order', 'asc')
-      ->get()
-      ->toArray();
+    return $this->sendResponseOk(
+      Task::mine()
+        ->with(['timers.tagged', 'project'])
+        ->orderBy('order', 'asc')
+        ->get()
+        ->toArray(), 
+      "Get tasks ok"
+    );
   }
 
   public function store(Request $request)
@@ -33,7 +36,6 @@ class TaskController extends Controller
       'status' => 'required|in:'.join(',', Task::STATUSES),
       'due' => 'date'
     ]);
-    $tags = $request['tags'];
 
     // merge with the current user ID
     $data = array_merge($data, [
@@ -41,17 +43,17 @@ class TaskController extends Controller
     ]);
 
     $task = Task::create($data);
-    if (!empty($tags)) {
-      $task->tag($tags);
-      $task->save();
-    }
-    return $task ? array_merge($task->toArray(), ['timers' => [], 'tags' => $tags]) : false;
+    $response = $task ? array_merge($task->toArray(), ['timers' => []]) : false;
+    return $this->sendResponseOk(
+      $response,
+      "Task created"
+    );
   }
 
   public function delete(Request $request, int $id)
   {
     Task::destroy($id);
-    return ["status"=>"success"];
+    return $this->sendResponseOk([], "Task deleted");
   }
 
   public function status(Request $request, int $id)
@@ -60,7 +62,7 @@ class TaskController extends Controller
       'status' => 'required|in:'.join(',', Task::STATUSES),
     ]);
     Task::status($id, $request->status);
-    return ["status" => "success"];
+    return $this->sendResponseOk([], "Update task status ok");
   }
 
   public function name(Request $request, int $id)
@@ -69,13 +71,13 @@ class TaskController extends Controller
       'name' => 'required|between:2,20',
     ]);
     Task::name($id, $request->name);
-    return ["status" => "success"];
+    return $this->sendResponseOk([], "Update task name ok");
   }
 
   public function order(Request $request)
   {
     $updated = Task::order($request->tasks);
-    return ["status" => "success", "updated" => $updated];
+    return $this->sendResponseOk(["updated" => $updated], "Update task order ok");
   }
 
   public function update(Request $request, int $id)
@@ -85,7 +87,6 @@ class TaskController extends Controller
       'status' => 'required|in:'.join(',', Task::STATUSES),
       'due' => 'date'
     ]);
-    $data['tags'] = $request->tags;
-    return Task::put($id, $data);
+    return $this->sendResponseOk(Task::put($id, $data), "Update task ok");
   }
 }
