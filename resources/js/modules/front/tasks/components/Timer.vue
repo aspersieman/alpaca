@@ -1,62 +1,129 @@
 <template>
-  <div v-if="task.timers.length > 0" class="timers">
-    <v-card text flat v-for="timer in task.timers" :key="timer.id">
+  <div 
+    v-if="task.timers.length > 0"
+    class="timers"
+  >
+    <v-card 
+      v-for="timer in task.timers" 
+      :key="timer.id"
+      text 
+      flat 
+    >
       <div :class="showTimerForTask(task, timer) ? 'active-timer' : ''">
-        <v-layout row wrap class="timer">
-          <v-flex xs1 sm1 md1 lg1>
-            <v-icon class="ml-3">access_time</v-icon>
+        <v-layout
+          row
+          wrap
+          class="timer"
+        >
+          <v-flex 
+            xs1
+            sm1
+            md1
+            lg1
+          >
+            <v-icon class="ml-3">
+              access_time
+            </v-icon>
           </v-flex>
-          <v-flex xs6 sm3 md3 lg3 class="ml-2">
-            <div class="fs-90">{{timer.name}}</div>
+          <v-flex
+            xs6
+            sm3
+            md3
+            lg3
+            class="ml-2"
+          >
+            <div class="fs-90 ellipsis">
+              {{ timer.name }}
+            </div>
             <div class="caption">
-              {{ dateFormat(timer.created_at) }}
+              {{ dateFormat(timer.started_at, true) }}
             </div>
           </v-flex>
-          <v-flex sm4 md4 lg4 v-if="$vuetify.breakpoint.smAndUp">
+          <v-flex
+            v-if="$vuetify.breakpoint.smAndUp"
+            sm4
+            md4
+            lg4
+          >
             <div 
-              :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}">
+              :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}"
+            >
               <v-chip
                 v-for="tag in timer.tagged"
                 :key="tag.id"
                 class="ma-2"
-                x-small>
-                {{tag.tag_name}}
+                x-small
+              >
+                {{ tag.tag_name }}
               </v-chip>
             </div>
           </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex xs4 sm3 md3 lg3 class="fs-90">
+          <v-spacer />
+          <v-flex
+            xs4
+            sm3
+            md3
+            lg3 
+            class="fs-90"
+          >
             <div v-if="showTimerForTask(task, timer)">
               {{ $store.state.activeTimerCounter.title }}
-              <v-btn icon v-if="showTimerForTask(task, timer)" @click="stopTimer()">
+              <v-btn 
+                v-if="showTimerForTask(task, timer)" 
+                icon 
+                @click="stopTimer()"
+              >
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">stop</v-icon>
+                  <template #activator="{ on }">
+                    <v-icon v-on="on">
+                      stop_circle
+                    </v-icon>
                   </template>
                   Stop timer
                 </v-tooltip>
               </v-btn>
             </div>
-            <v-layout v-else row>
-              <v-flex class="horizontal-center fs-90" v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id">
+            <v-layout 
+              v-else 
+              row
+            >
+              <v-flex
+                v-if="$store.state.stoppedTimer && $store.state.stoppedTimer.id == timer.id"
+                class="horizontal-center fs-90"
+              >
                 {{ $store.state.stoppedTimerValue }}
               </v-flex>
-              <v-flex class="horizontal-center fs-90" v-else>
+              <v-flex
+                v-else
+                class="horizontal-center fs-90"
+              >
                 {{ calculateTimeSpent(timer) }}
               </v-flex>
               <v-flex class="horizontal-center">
-                <v-btn icon @click="deleteTimer(task, timer)">
+                <v-btn 
+                  icon
+                  @click="deleteTimer(task, timer)"
+                >
                   <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">delete</v-icon>
+                    <template #activator="{ on }">
+                      <v-icon v-on="on">
+                        delete
+                      </v-icon>
                     </template>
                     Delete timer
                   </v-tooltip>
                 </v-btn>
-                <v-btn icon @click="openTimerDialog(task, timer)">
+                <v-btn
+                  icon
+                  @click="openTimerDialog(task, timer)"
+                >
                   <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">edit</v-icon>
+                    <template
+                      #activator="{ on }"
+                    >
+                      <v-icon v-on="on">
+                        edit
+                      </v-icon>
                     </template>
                     Edit timer
                   </v-tooltip>
@@ -70,11 +137,25 @@
   </div>
 </template>
 <script>
-import TimerDialog from './TimerDialog';
+
+import moment from 'moment';
 
 export default {
-  components: {
-    TimerDialog
+  components: { },
+  props: {
+    task: {
+      required: true,
+      type: Object,
+      default: function() {
+        return {
+          name: null,
+          due: null,
+          status: null,
+          order: null,
+          timers: []
+        }
+      }
+    },
   },
   data() {
     return {
@@ -82,19 +163,9 @@ export default {
       timers: [],
     }
   },
-  props: {
-    task: {
-      name: null,
-      due: null,
-      status: null,
-      order: null,
-      timers: []
-    },
-  },
-  created() { },
   mounted() {
     const self = this;
-    this.$eventBus.$on('TIMER_START', (value) => {
+    this.$eventBus.$on('timer-start', (value) => {
       self.startTimer(value);
     });
   },
@@ -103,7 +174,7 @@ export default {
       const self = this;
       self.$store.commit('setSelectedTask', task);
       self.$store.commit('setSelectedTimer', timer);
-      self.$eventBus.$emit('TIMER_UPDATE_DIALOG', true)
+      self.$eventBus.$emit('timer-update-dialog', true)
     },
 
     /**
@@ -218,7 +289,7 @@ export default {
                 color: 'success',
                 duration: 3000
               });
-              self.$eventBus.$emit('TIMER_DELETED');
+              self.$eventBus.$emit('timer-deleted');
             })
             .catch(error => {
               self.$store.commit('hideLoader');
@@ -241,25 +312,22 @@ export default {
       });
     },
 
-    dateFormat(dateValue) {
-      return moment(dateValue).format('YYYY-MM-DD')
+    dateFormat(dateValue, time = false) {
+      if (time) {
+        return moment(dateValue).format('YYYY-MM-DD @ HH:mm:SS');
+      } else {
+        return moment(dateValue).format('YYYY-MM-DD');
+      }
     },
   },
-  computed: {
-    getActiveTimerString() {
-      return ;
-    }
-  }
 }
 </script>
 
 <style scoped lang="scss">
-@import "../../../../../sass/_variables";
+@import "../../../../../sass/index";
+
 .active-timer {
   background-color: $selected-light-grey;
-  border-left: solid 4px $selected-dark-grey;
-  border-top-right-radius: 10px !important;
-  border-bottom-right-radius: 10px !important;
 }
 .timers {
   max-width: 500px;
@@ -273,5 +341,9 @@ export default {
 
 .fs-90 {
  font-size: 0.90rem;
+}
+
+.caption {
+  white-space: nowrap;
 }
 </style>

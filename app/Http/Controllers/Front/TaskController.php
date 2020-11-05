@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Front;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+
 use App\Task;
 use App\Http\Controllers\Controller;
 
@@ -16,15 +18,18 @@ class TaskController extends Controller
     $this->middleware('auth');
   }
 
-  public function index()
+  public function index($statuses = null)
   {
+    $statuses = !empty($statuses) ? explode(',', $statuses) : Task::STATUSES;
+    $tasks = Task::mine()
+      ->with(['timers.tagged', 'project'])
+      ->whereIn('status', $statuses)
+      ->orderBy('order', 'asc')
+      ->get()
+      ->toArray();
     return $this->sendResponseOk(
-      Task::mine()
-        ->with(['timers.tagged', 'project'])
-        ->orderBy('order', 'asc')
-        ->get()
-        ->toArray(), 
-      "Get tasks ok"
+      $tasks,
+      "Get tasks (".count($tasks).") ok"
     );
   }
 

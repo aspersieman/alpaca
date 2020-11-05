@@ -1,12 +1,23 @@
 <template>
-  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.xs" v-model="dialog">
+  <v-dialog
+    v-model="dialog"
+    max-width="600px"
+    :fullscreen="$vuetify.breakpoint.xs"
+  >
     <v-card>
       <v-card-title class="grey--text">
-        <h2 v-if="mode == 'ADD'">Add a New Timer</h2>
-        <h2 v-if="mode == 'UPDATE'">Update Timer</h2>
+        <h2 v-if="mode == 'ADD'">
+          Add a New Timer
+        </h2>
+        <h2 v-if="mode == 'UPDATE'">
+          Update Timer
+        </h2>
       </v-card-title>
       <v-card-text>
-        <v-form class="px-3" ref="form">
+        <v-form
+          ref="form"
+          class="px-3"
+        >
           <v-container>
             <v-row>
               <v-col>
@@ -14,15 +25,18 @@
                   :close-on-content-click="false"
                   :nudge-right="40"
                   transition="scale-transition"
-                  offset-y>
-                  <template v-slot:activator="{ on, attrs }">
+                  offset-y
+                >
+                  <template
+                    #activator="{ on, attrs }"
+                  >
                     <v-text-field
                       v-model="name"
                       label="Description"
                       v-bind="attrs"
                       autofocus
-                      v-on="on">
-                    </v-text-field>
+                      v-on="on"
+                    />
                   </template>
                 </v-menu>
               </v-col>
@@ -37,14 +51,18 @@
                   label="Categories"
                   multiple
                   prepend-icon="category"
-                  solo>
-                  <template v-slot:selection="{ attrs, item, select, selected }">
+                  solo
+                >
+                  <template
+                    #selection="{ attrs, item, select, selected }"
+                  >
                     <v-chip
                       v-bind="attrs"
                       :input-value="selected"
                       close
                       @click="select"
-                      @click:close="removeCategory(item)">
+                      @click:close="removeCategory(item)"
+                    >
                       <strong>{{ item }}</strong>&nbsp;
                     </v-chip>
                   </template>
@@ -57,20 +75,24 @@
                   v-model="dateMenu"
                   :close-on-content-click="false"
                   transition="scale-transition"
-                  offset-y>
-                  <template v-slot:activator="{ on, attrs }">
+                  offset-y
+                >
+                  <template #activator="{ on, attrs }">
                     <v-text-field
+                      v-model="startDate"
                       :rules="dateRules"
                       :value="formattedDate"
-                      v-model="startDate"
                       label="Date"
                       prepend-icon="event"
                       readonly
                       v-bind="attrs"
-                      v-on="on">
-                    </v-text-field>
+                      v-on="on"
+                    />
                   </template>
-                  <v-date-picker v-model="startDate" @input="menu = false"></v-date-picker>
+                  <v-date-picker
+                    v-model="startDate"
+                    @input="menu = false"
+                  />
                 </v-menu>
               </v-col>
               <v-col>
@@ -81,8 +103,9 @@
                   :nudge-right="40"
                   :return-value.sync="startTime"
                   transition="scale-transition"
-                  offset-y>
-                  <template v-slot:activator="{ on, attrs }">
+                  offset-y
+                >
+                  <template #activator="{ on, attrs }">
                     <v-text-field
                       v-model="startTime"
                       label="Start time"
@@ -90,14 +113,14 @@
                       readonly
                       v-bind="attrs"
                       v-on="on"
-                      ></v-text-field>
+                    />
                   </template>
                   <v-time-picker
                     v-if="startTimeMenu"
                     v-model="startTime"
                     full-width
                     @click:minute="$refs.menu.save(startTime)"
-                    ></v-time-picker>
+                  />
                 </v-menu>
               </v-col>
               <v-col>
@@ -106,26 +129,54 @@
                   label="Duration"
                   type="number"
                   hint="minutes"
-                  persistent-hint>
-                </v-text-field>
+                  persistent-hint
+                />
               </v-col>
             </v-row>
-            <v-spacer></v-spacer>
-            <v-layout row wrap width="100%">
-              <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTimer" :loading="loading">Add timer</v-btn>
-              <v-btn text class="success mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTimer" :loading="loading">Update timer</v-btn>
-              <v-spacer></v-spacer>
-              <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
+            <v-spacer />
+            <v-layout
+              row
+              wrap 
+              width="100%"
+            >
+              <v-btn
+                v-if="mode == 'ADD'"
+                text
+                class="success mx-0 mt-3"
+                :loading="loading"
+                @click="addTimer"
+              >
+                Add timer
+              </v-btn>
+              <v-btn
+                v-if="mode == 'UPDATE'"
+                text
+                class="success mx-0 mt-3"
+                :loading="loading"
+                @click="updateTimer"
+              >
+                Update timer
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                text
+                class="error mx-0 mt-3"
+                :loading="loading"
+                @click="close();"
+              >
+                Cancel
+              </v-btn>
             </v-layout>
           </v-container>
         </v-form>
       </v-card-text>
-
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+
+import moment from 'moment';
 
 export default {
 
@@ -149,27 +200,31 @@ export default {
       tagItems: [],
     }
   },
-  mounted() { },
+  computed: {
+    formattedDate() {
+      return this.startDate ? moment(this.startDate).format('YYYY-MM-DD') : ''
+    }
+  },
   created() {
     const self = this;
-    this.$eventBus.$on('TIMER_ADD_DIALOG', (value) => {
-      this.dialog = value;
-      this.mode = 'ADD';
-      this.formReset();
+    this.$eventBus.$on('timer-add-dialog', (value) => {
+      self.dialog = value;
+      self.mode = 'ADD';
+      self.formReset();
     });
-    this.$eventBus.$on('TIMER_UPDATE_DIALOG', (value) => {
-      this.timer = this.$store.state.timer;
-      this.name = this.timer.name;
-      this.startDate = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
-      this.startTime = this.timer.started_at ? moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      this.endTime = this.timer.stopped_at ? moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      this.duration = moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-      this.dialog = value;
-      this.mode = 'UPDATE';
-      const tags = this.$store.state.timer.tagged.map(function (item) {
+    self.$eventBus.$on('timer-update-dialog', (value) => {
+      self.timer = self.$store.state.timer;
+      self.name = self.timer.name;
+      self.startDate = self.timer.started_at ? moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+      self.startTime = self.timer.started_at ? moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      self.endTime = self.timer.stopped_at ? moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      self.duration = moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+      self.dialog = value;
+      self.mode = 'UPDATE';
+      const tags = self.$store.state.timer.tagged.map(function (item) {
         return item.tag_name;
       });
-      this.tags = tags;
+      self.tags = tags;
     });
   },
   methods: {
@@ -186,7 +241,7 @@ export default {
         window.axios.post(`/api/tasks/${task.id}/timers`, timer)
           .then(response => {
             self.$store.commit('setActiveTimer', response.data);
-            this.$eventBus.$emit('TIMER_ADDED');
+            this.$eventBus.$emit('timer-added');
             this.loading = false;
             this.dialog = false;
             this.formReset();
@@ -225,12 +280,13 @@ export default {
           this.loading = false;
           this.dialog = false;
           this.formReset();
-          this.$eventBus.$emit('TIMER_UPDATED');
+          this.$eventBus.$emit('timer-updated');
           this.$store.commit('showSnackbar',{
             message: "Timer updated",
             color: 'success',
             duration: 1000
           });
+          return response;
         })
           .catch(error => {
           console.log(error);
@@ -259,11 +315,6 @@ export default {
       this.tags.splice(this.tags.indexOf(item), 1)
       this.tags = [...this.tags]
     },
-  },
-  computed: {
-    formattedDate() {
-      return this.startDate ? moment(this.startDate).format('YYYY-MM-DD') : ''
-    }
   }
 }
 </script>

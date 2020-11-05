@@ -12,12 +12,20 @@
   "devDependencies": {
     "@mdi/font": "^4.9.95",
     "axios": "^0.18.1",
+    "babel-eslint": "^10.1.0",
+    "bash-language-server": "^1.17.0",
     "bootstrap-sass": "^3.3.7",
     "cross-env": "^5.2.1",
+    "eslint": "^7.12.1",
+    "eslint-plugin-html": "^6.1.0",
+    "eslint-plugin-vue": "^7.1.0",
+    "javascript-typescript-langserver": "^2.11.3",
     "jquery": "^3.5.0",
     "laravel-mix": "^2.1",
     "lodash": "^4.17.4",
     "sass": "^1.26.5",
+    "typescript-language-server": "^0.4.0",
+    "vls": "^0.5.5",
     "vue": "^2.6.11"
   },
   "dependencies": {

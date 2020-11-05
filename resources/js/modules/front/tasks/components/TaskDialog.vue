@@ -109,11 +109,11 @@ export default {
   },
   mounted() { },
   created() {
-    this.$eventBus.$on('TASK_ADD_DIALOG', (value) => {
+    this.$eventBus.$on('task-add-dialog', (value) => {
       this.dialog = value;
       this.mode = 'ADD';
     });
-    this.$eventBus.$on('TASK_UPDATE_DIALOG', (value) => {
+    this.$eventBus.$on('task-update-dialog', (value) => {
       this.task = this.$store.state.task;
       this.name = this.$store.state.task.name;
       this.due = this.$store.state.task.due;
@@ -141,7 +141,7 @@ export default {
           this.loading = false;
           this.dialog = false;
           this.formReset();
-          this.$eventBus.$emit('TASK_ADDED');
+          this.$eventBus.$emit('task-added');
           this.$store.commit('showSnackbar',{
             message: "Task added",
             color: 'success',
@@ -175,7 +175,7 @@ export default {
           this.loading = false;
           this.dialog = false;
           this.formReset();
-          this.$eventBus.$emit('TASK_UPDATED');
+          this.$eventBus.$emit('task-updated');
           this.$store.commit('showSnackbar',{
             message: "Task updated",
             color: 'success',

@@ -145,3 +145,9 @@ html, body {
   /*back left leg*/
   82.5px 205px 0 10px  $brand-primary   
 }
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

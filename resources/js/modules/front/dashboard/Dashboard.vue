@@ -20,7 +20,7 @@ export default {
     const self = this;
     self.$store.commit('setBreadcrumbs',[
       {label:'Dashboard',name:'dashboard'}
-    ]);
+      ]);
   },
 }
 </script>

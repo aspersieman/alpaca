@@ -1,185 +1,371 @@
 <template>
   <div class="tasks">
-    <h1 class="subheading grey--text ml-4">Tasks</h1>
     <v-container class="my-2">
-      <v-layout row class="mb-3" wrap>
-        <v-btn 
-          style="display: none;"
-          v-shortkey.once="['ctrl', 'alt', '/']"
-          @shortkey="searchFocus()">
-          Search focus
-        </v-btn>
-        <v-flex class="search-input-container" xs3 md3 lg3>
-          <v-text-field
-            v-model="search"
-            outlined
-            clearable
-            label="Search"
-            dense
-            class="search-input"
-            ref="searchInput"
-            type="text">
-          </v-text-field>
-        </v-flex>
-        <v-flex xs6 md6 lg5>
-          <div class="cmb-statuses">
-            <v-combobox
-              v-model="status"
-              :items="statuses"
-              multiple
-              label="Status"
-              class="search-input"
-              @change="searchByStatus()"
-              outlined
-              clearable
-              dense
-              chips>
-              <template v-slot:selection="data">
-                <v-chip
-                  :key="JSON.stringify(data.item)"
-                  :small="$vuetify.breakpoint.mdAndUp"
-                  :x-small="$vuetify.breakpoint.smAndDown"
-                  v-bind="data.attrs"
-                  :input-value="data.selected"
-                  :disabled="data.disabled"
-                  @click:close="data.parent.selectItem(data.item)"
-                  :class="`status ${data.item}`">
-                  {{ data.item }}
-                </v-chip>
-              </template>
-            </v-combobox>
-          </div>
-        </v-flex>
-        <v-spacer></v-spacer>
-        <v-flex xs2 md1 lg1>
+      <v-layout 
+        row 
+        class="mb-3" 
+        wrap
+      >
+        <h1 class="subheading grey--text ml-4">
+          Tasks
+        </h1>
+        <v-spacer />
+        <v-flex
+          xs2
+          md1
+          lg1
+        >
           <base-btn
+            v-shortkey.once="['ctrl', 'alt', 't']"
             class="mr-0"
             square
             title="Add new Task"
-            v-shortkey.once="['ctrl', 'alt', 't']"
             @shortkey="openTaskDialog()" 
-            @click="openTaskDialog()">
+            @click="openTaskDialog()"
+          >
             <v-icon>add</v-icon>
           </base-btn>
         </v-flex>
       </v-layout>
-
-      <v-layout row justify-center v-if="this.tasks.length == 0">
-        <v-layout column align-center>
-          <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here </span>
-          <v-img src="img/logo/llama_emoji.png" width="120px"></v-img>
-          <v-btn text color="primary" class="display-1" @click="openTaskDialog()">Add new Task</v-btn>
-        </v-layout>
-      </v-layout>
-
-      <draggable v-model="tasks" @change="saveOrder" handle=".handle" :disabled="!todos" v-if="this.tasks.length > 0">
-      <v-card text flat v-for="(task, index) in searchTasks" :key="task.id">
-        <v-layout row wrap :class="`pa-2 task ${task.status}`">
-          <v-flex xs12 sm12 md4 lg4>
-            <div class="caption grey--text ml-3" v-if="todos">Task Title</div>
-            <div class="caption grey--text" v-if="!todos">Task Title</div>
-            <div :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}" v-if="!editMode || index != indexToEdit" @click="editMode = !editMode; indexToEdit = index; newName = task.name;">
-              <v-icon size="20" class="handle" v-if="todos">drag_indicator</v-icon>
-              {{ task.name }}
-            </div>
-            <v-form @submit.prevent="updateName(index)">
-            <v-text-field autofocus :color="`${task.status}s`" v-model="newName" v-if="editMode && indexToEdit == index" class="ma-0 pa-0"></v-text-field>
-            </v-form>
-          </v-flex>
-          <v-flex xs5 sm5 md2 lg2>
-            <div class="caption grey--text" :class="{'ml-3': $vuetify.breakpoint.smAndDown}">Due by</div>
-            <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">{{ task.due }}</div>
-          </v-flex>
-          <v-flex xs5 sm5 md3 lg3 class="pt-0">
-            <div class="mt-0 pt-0">
-              <v-btn @click="changeStatus(index)" text small rounded :class="`${task.status} white--text px-0 mx-0 status v-btn--round`">
-                {{ task.status }}
-              </v-btn>
-            </div>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex md3 lg3 v-if="$vuetify.breakpoint.mdAndUp">
-            <div class="mt-0 pt-0">
-              <v-btn icon :class="`${task.status}`" @click="openTaskDialog(task);" class="pa-0 ma-0">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">edit</v-icon>
+      <v-tabs
+        v-model="activeTab"
+        background-color="transparent"
+        light
+      >
+        <v-tab>
+          Active
+        </v-tab>
+        <v-tab>
+          Complete
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items v-model="activeTab">
+        <v-tab-item>
+          <v-layout 
+            row 
+            class="mb-1 mt-1" 
+            wrap
+          >
+            <v-btn 
+              v-shortkey.once="['ctrl', 'alt', '/']"
+              style="display: none;"
+              @shortkey="searchFocus()"
+            >
+              Search focus
+            </v-btn>
+            <v-flex 
+              class="search-input-container"
+              xs3
+              md3
+              lg3
+            >
+              <v-text-field
+                ref="searchInput"
+                v-model="search"
+                outlined
+                clearable
+                dense
+                label="Search"
+                class="search-input"
+                type="text"
+              />
+            </v-flex>
+            <v-flex
+              xs6
+              md6
+              lg5
+            >
+              <div class="cmb-statuses">
+                <v-combobox
+                  v-model="status"
+                  outlined
+                  clearable
+                  dense
+                  chips
+                  :items="statuses"
+                  multiple
+                  label="Status"
+                  class="search-input"
+                  @change="searchByStatus()"
+                >
+                  <template
+                    #selection="data"
+                  >
+                    <v-chip
+                      :key="JSON.stringify(data.item)"
+                      :small="$vuetify.breakpoint.mdAndUp"
+                      :x-small="$vuetify.breakpoint.smAndDown"
+                      :class="`status ${data.item}`"
+                      :input-value="data.selected"
+                      :disabled="data.disabled"
+                      v-bind="data.attrs"
+                      @click:close="data.parent.selectItem(data.item)"
+                    >
+                      {{ data.item }}
+                    </v-chip>
                   </template>
-                  Edit
-                </v-tooltip>
-              </v-btn>
-              <v-btn icon :class="`${task.status}`" @click="deleteTask(index)" class="pa-0 ma-0">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">delete</v-icon>
-                  </template>
-                  Delete
-                </v-tooltip>
-              </v-btn>
+                </v-combobox>
+              </div>
+            </v-flex>
+          </v-layout>
+
+          <v-layout
+            v-if="tasks.length == 0"
+            row
+            justify-center
+          >
+            <v-layout
+              column 
+              align-center
+            >
+              <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here </span>
+              <v-img 
+                src="img/logo/llama_emoji.png" 
+                width="120px"
+              />
               <v-btn
-                v-if="$store.state.activeTimerCounter.seconds == 0"
-                icon
-                :class="`${task.status}`"
-                @click="openTimerDialog(task);"
-                class="pa-0 ma-0">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">more_time</v-icon>
-                  </template>
-                  Add timer
-                </v-tooltip>
+                text
+                color="primary"
+                class="display-1"
+                @click="openTaskDialog()"
+              >
+                Add new Task
               </v-btn>
-            </div>
-          </v-flex>
-          <v-flex xs1 sm1 v-if="$vuetify.breakpoint.smAndDown">
-            <div>
-              <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    light
-                    icon
-                    v-bind="attrs"
-                    v-on="on">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item
-                    :class="`${task.status}`"
-                    @click="openTaskDialog(task);">
-                    <v-list-item-icon class="horizontal-center">
-                      <v-icon>edit</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Edit</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    :class="`${task.status}`"
-                    @click="deleteTask(index)">
-                    <v-list-item-icon class="horizontal-center">
-                      <v-icon>delete</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Delete</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    :class="`${task.status}`"
-                    v-if="$store.state.activeTimerCounter.seconds == 0"
-                    @click="openTimerDialog(task);">
-                    <v-list-item-icon class="horizontal-center">
-                      <v-icon>more_time</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Add timer</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </div>
-          </v-flex>
-          <v-flex xs12 sm12 md12 lg12 v-if="task.timers.length > 0" class="ml-3">
-            <div class="caption grey--text">Timers</div>
-            <div><timer :task="task"></timer></div>
-          </v-flex>
-        </v-layout>
-      </v-card>
-      </draggable>
+            </v-layout>
+          </v-layout>
+
+          <draggable
+            v-if="tasks.length > 0"
+            v-model="tasks"
+            handle=".handle"
+            :disabled="!todos"
+            @change="saveOrder"
+          >
+            <v-card
+              v-for="(task, index) in searchTasks"
+              :key="task.id"
+              text
+              flat
+            >
+              <v-layout
+                row
+                wrap
+                :class="`pa-2 task ${task.status}`"
+              >
+                <v-flex
+                  xs12
+                  sm12
+                  md4
+                  lg4
+                >
+                  <div
+                    v-if="todos"
+                    class="caption grey--text ml-3"
+                  >
+                    Task Title
+                  </div>
+                  <div
+                    v-if="!todos"
+                    class="caption grey--text"
+                  >
+                    Task Title
+                  </div>
+                  <div
+                    v-if="!editMode || index != indexToEdit" 
+                    :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}"
+                    @click="editMode = !editMode; indexToEdit = index; newName = task.name;"
+                  >
+                    <div class="ellipsis">
+                      <v-icon
+                        v-if="todos"
+                        size="20"
+                        class="handle"
+                      >
+                        drag_indicator
+                      </v-icon>
+                      {{ task.name }}
+                    </div>
+                  </div>
+                  <v-form @submit.prevent="updateName(index)">
+                    <v-text-field
+                      v-if="editMode && indexToEdit == index"
+                      v-model="newName"
+                      autofocus
+                      :color="`${task.status}s`"
+                      class="ma-0 pa-0"
+                    />
+                  </v-form>
+                </v-flex>
+                <v-flex
+                  xs5
+                  sm5
+                  md2
+                  lg2
+                >
+                  <div
+                    class="caption grey--text"
+                    :class="{'ml-3': $vuetify.breakpoint.smAndDown}"
+                  >
+                    Due by
+                  </div>
+                  <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">
+                    {{ task.due }}
+                  </div>
+                </v-flex>
+                <v-flex
+                  xs5
+                  sm5
+                  md3
+                  lg3 
+                  class="pt-0"
+                >
+                  <div class="mt-0 pt-0">
+                    <v-btn
+                      text
+                      small
+                      rounded
+                      :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
+                      @click="changeStatus(index)"
+                    >
+                      {{ task.status }}
+                    </v-btn>
+                  </div>
+                </v-flex>
+                <v-spacer />
+                <v-flex
+                  v-if="$vuetify.breakpoint.mdAndUp"
+                  md3
+                  lg3
+                >
+                  <div class="mt-0 pt-0">
+                    <v-btn
+                      icon
+                      class="pa-0 ma-0"
+                      :class="`${task.status}`"
+                      @click="openTaskDialog(task);"
+                    >
+                      <v-tooltip bottom>
+                        <template 
+                          #activator="{ on }"
+                        >
+                          <v-icon v-on="on">
+                            edit
+                          </v-icon>
+                        </template>
+                        Edit
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      :class="`${task.status}`"
+                      class="pa-0 ma-0"
+                      @click="deleteTask(index)"
+                    >
+                      <v-tooltip bottom>
+                        <template
+                          #activator="{ on }"
+                        >
+                          <v-icon v-on="on">
+                            delete
+                          </v-icon>
+                        </template>
+                        Delete
+                      </v-tooltip>
+                    </v-btn>
+                    <v-btn
+                      v-if="$store.state.activeTimerCounter.seconds == 0"
+                      icon
+                      :class="`${task.status}`"
+                      class="pa-0 ma-0"
+                      @click="openTimerDialog(task);"
+                    >
+                      <v-tooltip bottom>
+                        <template #activator="{ on }">
+                          <v-icon v-on="on">
+                            more_time
+                          </v-icon>
+                        </template>
+                        Add timer
+                      </v-tooltip>
+                    </v-btn>
+                  </div>
+                </v-flex>
+                <v-flex
+                  v-if="$vuetify.breakpoint.smAndDown"
+                  xs1
+                  sm1
+                >
+                  <div>
+                    <v-menu
+                      bottom
+                      left
+                    >
+                      <template #activator="{ on, attrs }">
+                        <v-btn
+                          light
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item
+                          :class="`${task.status}`"
+                          @click="openTaskDialog(task);"
+                        >
+                          <v-list-item-icon class="horizontal-center">
+                            <v-icon>edit</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-title>Edit</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                          :class="`${task.status}`"
+                          @click="deleteTask(index)"
+                        >
+                          <v-list-item-icon class="horizontal-center">
+                            <v-icon>delete</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-title>Delete</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item
+                          v-if="$store.state.activeTimerCounter.seconds == 0"
+                          :class="`${task.status}`"
+                          @click="openTimerDialog(task);"
+                        >
+                          <v-list-item-icon class="horizontal-center">
+                            <v-icon>more_time</v-icon>
+                          </v-list-item-icon>
+                          <v-list-item-title>Add timer</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </div>
+                </v-flex>
+                <v-flex
+                  v-if="task.timers.length > 0"
+                  xs12
+                  sm12
+                  md12
+                  lg12
+                  class="ml-3"
+                >
+                  <div class="caption grey--text">
+                    Timers
+                  </div>
+                  <div>
+                    <timer :task="task" />
+                  </div>
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </draggable>
+        </v-tab-item>
+        <v-tab-item>
+          Other things
+        </v-tab-item>
+      </v-tabs-items>
     </v-container>
     <task-dialog @taskAdded="snackbar=true" />
     <timer-dialog @timerAdded="snackbar=true" />
@@ -206,7 +392,6 @@ export default {
       todos: true,
       userId: '',
       btnColor: '',
-      snackbar: false,
       editMode: false,
       newName: "",
       indexToEdit: 0,
@@ -224,6 +409,14 @@ export default {
         'overdue'
       ],
       newValues: [],
+      activeTab: null
+    }
+  },
+  computed: {
+    searchTasks() {
+      return this.tasks.filter(task => {
+        return task.name.toLowerCase().includes(this.search);
+      });
     }
   },
   mounted() {
@@ -232,38 +425,42 @@ export default {
     self.$store.commit('setBreadcrumbs',[
       {label:'Tasks',to:{name:'tasks'}},
     ]);
-    self.$eventBus.$on(['TASK_ADDED','TASK_UPDATED','TASK_DELETED','TIMER_ADDED', 'TIMER_UPDATED'],()=>{
-      self.saveOrder();
+    self.$eventBus.$on(['task-added','task-updated','task-deleted','timer-added', 'timer-updated'],()=>{
       self.loadTasks();  
     });
+  },
+  created() {
+    const self = this;
+    self.loadTasks();
   },
   methods: {
     openTaskDialog(task) {
       const self = this;
       if (task) {
         self.$store.commit('setSelectedTask', task);
-        self.$eventBus.$emit('TASK_UPDATE_DIALOG', true)
+        self.$eventBus.$emit('task-update-dialog', true)
       } else {
         self.$store.commit('setSelectedTask', null);
-        self.$eventBus.$emit('TASK_ADD_DIALOG', true)
+        self.$eventBus.$emit('task-add-dialog', true)
       }
     },
     openTimerDialog(task) {
       const self = this;
       self.$store.commit('setSelectedTask', task);
-      self.$eventBus.$emit('TIMER_ADD_DIALOG', true)
+      self.$eventBus.$emit('timer-add-dialog', true)
     },
-    loadTasks() {
+    loadTasks(statuses = 'ongoing,overdue') {
       console.log("loadTasks");
+      console.log(statuses);
       const self = this;
-      window.axios.get('/api/tasks').then(response => {
+      window.axios.get('/api/tasks/'+statuses).then(response => {
         self.tasks = response.data.data;
         self.$store.commit('setTasks', response.data.data);
         self.tasksCopy = response.data.data;
         window.axios.get('/api/task/timers/active').then(response => {
           if (response.data.data.id !== undefined) {
             self.$store.commit('setActiveTimer', response.data.data);
-            self.$eventBus.$emit('TIMER_START', response.data.data)
+            self.$eventBus.$emit('timer-start', response.data.data)
           }
         });
         self.searchByStatus();
@@ -288,7 +485,6 @@ export default {
     changeStatus(index) {
       const currentTask = this.tasks[index]
 
-      var oldStatus = currentTask.status;
       var newStatus = null;
       var btnColor = null;
       switch (currentTask.status) {
@@ -310,8 +506,7 @@ export default {
 
       if (newStatus) {
         window.axios.post(`/api/tasks/${currentTask.id}/status`, { status: newStatus })
-            .then(response => {
-          })
+            .then()
             .catch(error => {
             console.log(error);
             this.$store.commit('showSnackbar', {
@@ -348,7 +543,7 @@ export default {
                 color: 'success',
                 duration: 3000
               });
-              self.$eventBus.$emit('TASK_DELETED');
+              self.$eventBus.$emit('task-deleted');
             })
             .catch(error => {
               self.$store.commit('hideLoader');
@@ -379,7 +574,7 @@ export default {
       }
       if (tasks.length > 1) {
         window.axios.post(`/api/tasks/order`, { "tasks": tasks })
-            .then(response => {})
+            .then()
             .catch(error => {
             console.log(error);
             this.$store.commit('showSnackbar', {
@@ -397,7 +592,8 @@ export default {
       if (currentTask.name != this.newName) {
         window.axios.post(`/api/tasks/${currentTask.id}/name`, { name: this.newName })
             .then(response => {
-            currentTask.name = this.newName
+            currentTask.name = this.newName;
+            return response;
           })
             .catch(error => {
             console.log(error);
@@ -427,23 +623,11 @@ export default {
         }
       }
     }
-  },
-  computed: {
-    searchTasks() {
-      if (this.search === null) this.search = "";
-      return this.tasks.filter(task => {
-        return task.name.toLowerCase().includes(this.search);
-      });
-    }
-  },
-  created() {
-    const self = this;
-    self.loadTasks();
   }
 }
 </script>
 <style scoped lang="scss">
-@import "../../../../sass/_variables";
+@import "../../../../sass/index";
 .task {
   border-bottom: 1px solid $border-light-grey;
 }
