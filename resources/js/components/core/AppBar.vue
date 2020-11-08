@@ -3,14 +3,17 @@
     <v-app-bar 
       app 
       light
-      clipped-left>
+      clipped-left
+    >
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.smAndDown || this.$store.getters.menu.length > 0"
-        @click="this.toggleDrawer" />
+        @click="toggleDrawer" 
+      />
       <v-toolbar-title
-        class="toolbar-title">
+        class="toolbar-title"
+      >
         <router-link to="/">
-          {{this.$store.state.appName}}
+          {{ this.$store.state.appName }}
         </router-link>
       </v-toolbar-title>
       <v-container class="mx-auto py-0 main-container">
@@ -22,27 +25,38 @@
               contain
               height="48"
               width="48"
-              max-width="48" />
+              max-width="48"
+            />
           </router-link>
           <v-btn
             v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
-            to="/dashboard">
+            to="/dashboard"
+          >
             Dashboard
           </v-btn>
           <v-btn
             v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
-            to="/tasks">
+            to="/tasks"
+          >
             Tasks
+          </v-btn>
+          <v-btn
+            v-if="this.$store.getters.isLoggedIn"
+            class="d-none d-sm-flex appbar-button"
+            text
+            to="/reports"
+          >
+            Reports
           </v-btn>
           <v-spacer />
           <v-text-field
+            v-if="canSearch"
             class="hidden-sm-and-down"
             append-icon="mdi-magnify"
-            v-if="canSearch"
             flat
             hide-details
             outlined
@@ -55,14 +69,16 @@
             class="d-none d-sm-flex"
             text
             link
-            v-on:click="clickLogin('/login')">
+            @click="clickLogin('/login')"
+          >
             Login
           </v-btn>
           <v-btn
             v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex"
             text
-            v-on:click="clickLogout('/logout','/')">
+            @click="clickLogout('/logout','/')"
+          >
             Logout
           </v-btn>
         </v-row>
@@ -73,7 +89,6 @@
 <script>
 // Utilities
 import {
-  mapGetters,
   mapMutations,
 } from 'vuex';
 

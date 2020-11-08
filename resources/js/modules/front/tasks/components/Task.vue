@@ -3,6 +3,7 @@
     <v-card
       text
       flat
+      class="transparent"
     >
       <v-layout
         row
@@ -405,6 +406,10 @@ export default {
 
 .handle {
   cursor: move;
+}
+
+.transparent {
+  background-color: transparent;
 }
 </style>
 
