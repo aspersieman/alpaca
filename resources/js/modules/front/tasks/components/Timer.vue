@@ -115,7 +115,7 @@
                 </v-btn>
                 <v-btn
                   icon
-                  @click="openTimerDialog(task, timer)"
+                  @click="openTimerUpdateDialog(task, timer)"
                 >
                   <v-tooltip bottom>
                     <template
@@ -139,9 +139,11 @@
 <script>
 
 import moment from 'moment';
+import TimerMixin from '../mixins/TimerMixin';
 
 export default {
   components: { },
+  mixins: [ TimerMixin ],
   props: {
     task: {
       required: true,
@@ -159,7 +161,6 @@ export default {
   },
   data() {
     return {
-      newValues: [],
       timers: [],
     }
   },
@@ -170,13 +171,6 @@ export default {
     });
   },
   methods: {
-    openTimerDialog(task, timer) {
-      const self = this;
-      self.$store.commit('setSelectedTask', task);
-      self.$store.commit('setSelectedTimer', timer);
-      self.$eventBus.$emit('timer-update-dialog', true)
-    },
-
     /**
      * Conditionally pads a number with "0"
      */
