@@ -18,18 +18,40 @@ class TaskController extends Controller
     $this->middleware('auth');
   }
 
-  public function index($statuses = null)
+  public function index()
   {
-    $statuses = !empty($statuses) ? explode(',', $statuses) : Task::STATUSES;
     $tasks = Task::mine()
       ->with(['timers.tagged', 'project'])
-      ->whereIn('status', $statuses)
       ->orderBy('order', 'asc')
       ->get()
       ->toArray();
     return $this->sendResponseOk(
       $tasks,
       "Get tasks (".count($tasks).") ok"
+    );
+  }
+
+  public function current()
+  {
+    $tasks = Task::mine()
+      ->with(['timers.tagged', 'project'])
+      ->whereRaw(
+        '
+        (
+            tasks.status IN ("ongoing", "overdue")
+            OR (
+              DATE(tasks.updated_at) = CURDATE()
+            )
+        )
+        AND tasks.deleted_at IS NULL
+        '
+      )
+      ->orderBy('order', 'asc')
+      ->get()
+      ->toArray();
+    return $this->sendResponseOk(
+      $tasks,
+      "Get current tasks (".count($tasks).") ok"
     );
   }
 
@@ -73,7 +95,7 @@ class TaskController extends Controller
   public function name(Request $request, int $id)
   {
     $data = $request->validate([
-      'name' => 'required|between:2,20',
+      'name' => 'required|between:2,100',
     ]);
     Task::name($id, $request->name);
     return $this->sendResponseOk([], "Update task name ok");
@@ -88,7 +110,7 @@ class TaskController extends Controller
   public function update(Request $request, int $id)
   {
     $data = $request->validate([
-      'name' => 'required|between:2,20',
+      'name' => 'required|between:2,100',
       'status' => 'required|in:'.join(',', Task::STATUSES),
       'due' => 'date'
     ]);

@@ -5,6 +5,12 @@
       flat
       class="transparent"
     >
+      <v-icon
+        size="20"
+        class="handle"
+      >
+        drag_indicator
+      </v-icon>
       <v-layout
         row
         wrap
@@ -17,7 +23,7 @@
           lg4
         >
           <div
-            class="caption grey--text ml-3"
+            class="caption grey--text ml-2"
           >
             Task Title
           </div>
@@ -26,13 +32,7 @@
             :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}"
             @click="editMode = !editMode; newName = task.name;"
           >
-            <div class="ellipsis">
-              <v-icon
-                size="20"
-                class="handle"
-              >
-                drag_indicator
-              </v-icon>
+            <div class="ellipsis ml-2">
               {{ task.name }}
             </div>
           </div>
@@ -405,6 +405,11 @@ export default {
 }
 
 .handle {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  bottom: 50%;
+  vertical-align: middle;
   cursor: move;
 }
 

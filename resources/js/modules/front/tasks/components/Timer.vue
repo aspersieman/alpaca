@@ -161,7 +161,6 @@ export default {
   },
   data() {
     return {
-      timers: [],
     }
   },
   mounted() {

@@ -11,7 +11,8 @@ Route::get('/api/menu','Front\\MenuController@index')->name('front.menu');
 
 Route::prefix('/api')->middleware(['auth'])->group(function()
 {
-  Route::get('/tasks/{statuses?}', 'Front\\TaskController@index');
+  Route::get('/tasks/current', 'Front\\TaskController@current');
+  Route::get('/tasks', 'Front\\TaskController@index');
   Route::post('/tasks', 'Front\\TaskController@store');
   Route::post('/tasks/order', 'Front\\TaskController@order');
   Route::delete('/tasks/{id}', 'Front\\TaskController@delete');
@@ -22,7 +23,7 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
   Route::post('/tasks/{id}/name', 'Front\\TaskController@name');
   Route::delete('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@delete');
   Route::put('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@update');
-  Route::get('/task/timers/active', 'Front\\TimerController@running');
+  Route::get('/tasks/timers/active', 'Front\\TimerController@running');
   Route::post('/chart/byday', 'Front\\ChartController@byDay');
 });
 

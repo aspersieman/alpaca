@@ -1,80 +1,143 @@
 <template>
-
-  <v-dialog max-width="600px" :fullscreen="$vuetify.breakpoint.xs" v-model="dialog">
+  <v-dialog
+    v-model="dialog"
+    max-width="600px"
+    :fullscreen="$vuetify.breakpoint.xs"
+  >
     <v-card>
       <v-card-title class="grey--text">
-        <h2 v-if="mode == 'ADD'">Add a New Task</h2>
-        <h2 v-if="mode == 'UPDATE'">Update Task</h2>
+        <h2 v-if="mode == 'ADD'">
+          Add a New Task
+        </h2>
+        <h2 v-if="mode == 'UPDATE'">
+          Update Task
+        </h2>
       </v-card-title>
       <v-card-text>
-        <v-form class="px-3" ref="form">
-          <v-text-field label="Title" v-model="name" prepend-icon="edit" autofocus></v-text-field>
+        <v-form
+          ref="form"
+          class="px-3"
+        >
+          <v-text-field
+            v-model="name"
+            label="Title"
+            prepend-icon="edit"
+            autofocus
+          />
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
             :nudge-right="40"
             transition="scale-transition"
             offset-y
-            min-width="290px">
-            <template v-slot:activator="{ on, attrs }">
+            min-width="290px"
+          >
+            <template #activator="{ on, attrs }">
               <v-text-field
+                v-model="due"
                 :rules="dateRules"
                 :value="formattedDate"
-                v-model="due"
                 label="Due date"
                 prepend-icon="event"
                 readonly
                 v-bind="attrs"
-                v-on="on">
-              </v-text-field>
+                v-on="on"
+              />
             </template>
-            <v-date-picker v-model="due" @input="menu2 = false"></v-date-picker>
+            <v-date-picker
+              v-model="due"
+              @input="menu2 = false"
+            />
           </v-menu>
           <div v-if="mode == 'UPDATE'">
             <v-combobox
-              class="cmb-statuses"
               v-model="status"
+              class="cmb-statuses"
               :items="statuses"
               label="Status"
-              chips>
-              <template class="cmb-statuses" v-slot:selection="data">
+              chips
+            >
+              <template
+                #selection="data"
+                class="cmb-statuses"
+              >
                 <v-chip
                   :key="JSON.stringify(data.item)"
                   v-bind="data.attrs"
                   :input-value="data.selected"
                   :disabled="data.disabled"
+                  :class="`status ${data.item}`"
                   @click:close="data.parent.selectItem(data.item)"
-                  :class="`status ${data.item}`">
+                >
                   {{ data.item }}
                 </v-chip>
               </template>
             </v-combobox>
-            <timer :dense="true" :two-line="true" :task="task"></timer>
+            <timer 
+              v-if="task"
+              :dense="true"
+              :two-line="true"
+              :task="task"
+            />
           </div>
 
-          <v-spacer></v-spacer>
+          <v-spacer />
 
-          <v-layout row wrap width="100%">
-              <v-btn text class="success mx-0 mt-3" v-if="mode == 'ADD'" @click="addTask" :loading="loading">Add</v-btn>
-              <v-btn text class="success ml-1 mx-0 mt-3" v-if="mode == 'UPDATE'" @click="updateTask" :loading="loading">Update</v-btn>
-              <v-btn text class="success ml-1 mx-0 mt-3" v-if="mode == 'UPDATE'" @click="openTimerDialog();"  :loading="loading">Add timer</v-btn>
-              <v-spacer></v-spacer>
-              <v-btn text class="error mx-0 mt-3" @click="close();" :loading="loading">Cancel</v-btn>
+          <v-layout
+            row 
+            wrap
+            width="100%"
+          >
+            <v-btn
+              v-if="mode == 'ADD'"
+              text
+              class="success mx-0 mt-3"
+              :loading="loading"
+              @click="addTask"
+            >
+              Add
+            </v-btn>
+            <v-btn
+              v-if="mode == 'UPDATE'"
+              text
+              class="success ml-1 mx-0 mt-3"
+              :loading="loading"
+              @click="updateTask"
+            >
+              Update
+            </v-btn>
+            <v-btn
+              v-if="mode == 'UPDATE'"
+              text
+              class="success ml-1 mx-0 mt-3"
+              :loading="loading"
+              @click="openTimerDialog();"
+            >
+              Add timer
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              text
+              class="error mx-0 mt-3"
+              :loading="loading"
+              @click="close();"
+            >
+              Cancel
+            </v-btn>
           </v-layout>
         </v-form>
       </v-card-text>
-
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import timer from './Timer';
-import TimerDialog from './TimerDialog';
+import Timer from './Timer';
+import moment from 'moment';
 
 export default {
   components: {
-    timer
+    Timer
   },
   data() {
     return {
@@ -107,21 +170,26 @@ export default {
       ]
     }
   },
-  mounted() { },
+  computed: {
+    formattedDate() {
+      return this.due ? moment(this.due).format('YYYY-MM-DD') : ''
+    }
+  },
   created() {
-    this.$eventBus.$on('task-add-dialog', (value) => {
-      this.dialog = value;
-      this.mode = 'ADD';
+    const self = this;
+    self.$eventBus.$on('task-add-dialog', (value) => {
+      self.dialog = value;
+      self.mode = 'ADD';
     });
-    this.$eventBus.$on('task-update-dialog', (value) => {
-      this.task = this.$store.state.task;
-      this.name = this.$store.state.task.name;
-      this.due = this.$store.state.task.due;
-      this.timers = this.$store.state.task.timers;
-      this.status = this.$store.state.task.status;
+    self.$eventBus.$on('task-update-dialog', (value) => {
+      self.task = self.$store.state.task;
+      self.name = self.$store.state.task.name;
+      self.due = self.$store.state.task.due;
+      self.timers = self.$store.state.task.timers || [];
+      self.status = self.$store.state.task.status;
 
-      this.dialog = value;
-      this.mode = 'UPDATE';
+      self.dialog = value;
+      self.mode = 'UPDATE';
     });
   },
   methods: {
@@ -147,6 +215,7 @@ export default {
             color: 'success',
             duration: 1000
           });
+          return response;
         })
           .catch(error => {
           console.log(error);
@@ -181,6 +250,7 @@ export default {
             color: 'success',
             duration: 1000
           });
+          return response;
         })
           .catch(error => {
           console.log(error);
@@ -200,7 +270,7 @@ export default {
     openTimerDialog() {
       const self = this;
       self.$store.commit('setSelectedTask', this.task);
-      self.$eventBus.$emit('TIMER_ADD_DIALOG', true)
+      self.$eventBus.$emit('timer-add-dialog', true)
     },
 
     formReset() {
@@ -211,12 +281,6 @@ export default {
       this.status = 'ongoing';
     },
   },
-  computed: {
-    formattedDate() {
-      return this.due ? moment(this.due).format('YYYY-MM-DD') : ''
-    }
-  },
-
 }
 </script>
 <style scoped lang="scss">

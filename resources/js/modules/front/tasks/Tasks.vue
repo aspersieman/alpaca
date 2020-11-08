@@ -210,15 +210,14 @@ export default {
     self.loadTasks();
   },
   methods: {
-    loadTasks(statuses = 'ongoing,overdue') {
+    loadTasks() {
       console.log("loadTasks");
-      console.log(statuses);
       const self = this;
-      window.axios.get('/api/tasks/'+statuses).then(response => {
+      window.axios.get('/api/tasks/current').then(response => {
         self.tasks = response.data.data;
         self.$store.commit('setTasks', response.data.data);
         self.tasksCopy = response.data.data;
-        window.axios.get('/api/task/timers/active').then(response => {
+        window.axios.get('/api/tasks/timers/active').then(response => {
           if (response.data.data.id !== undefined) {
             self.$store.commit('setActiveTimer', response.data.data);
             self.$eventBus.$emit('timer-start', response.data.data)

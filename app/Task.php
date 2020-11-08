@@ -4,11 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Conner\Tagging\Taggable;
 
 class Task extends Model
 {
-  use \Conner\Tagging\Taggable;
   use SoftDeletes;
 
   /**
@@ -75,7 +73,8 @@ class Task extends Model
    */
   public static function status($id, $status)
   {
-    return Task::where('id', $id)
+    return Task::withTrashed()
+      ->where('id', $id)
       ->update(['status' => $status]);
   }
 
@@ -86,7 +85,8 @@ class Task extends Model
    */
   public static function name($id, $name)
   {
-    return Task::where('id', $id)
+    return Task::withTrashed()
+      ->where('id', $id)
       ->update(['name' => $name]);
   }
 
@@ -108,7 +108,8 @@ class Task extends Model
 
   public static function put($id, $data)
   {
-    $task = Task::where('id', $id)->first();
+    $task = Task::withTrashed()
+      ->find($id);
     $task->name = $data['name'];
     $task->due = $data['due'];
     $task->status = $data['status'];
