@@ -1,16 +1,17 @@
 <template>
   <div>
-    <column-chart :data="chartData"></column-chart>
+    <column-chart :data="chartData" />
   </div>
 </template>
 <script>
 
+import moment from 'moment';
+
 export default {
   name: 'ChartBarWeeklyTime',
-  computed: { },
   data() {
     return {
-      start: moment().subtract(7,'d').format('YYYY-MM-DD'),
+      start: moment().subtract(50,'d').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
       userIds: [APP_GLOBALS.AUTH_USER],
       chartData: []

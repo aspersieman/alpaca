@@ -1,9 +1,14 @@
 <template>
   <div id="home">
-    <h1 class="subheading grey--text ml-4">Dashboard</h1>
+    <h1 class="subheading grey--text ml-4">
+      Dashboard
+    </h1>
     <v-container class="my-2">
-      <chart-bar-time-by-day></chart-bar-time-by-day>
-      <pie-chart :download="true" :data="[['Blueberry', 44], ['Strawberry', 23]]"></pie-chart>
+      <chart-bar-time-by-day />
+      <pie-chart
+        :download="true" 
+        :data="[['Blueberry', 44], ['Strawberry', 23]]"
+      />
     </v-container>
   </div>
 </template>

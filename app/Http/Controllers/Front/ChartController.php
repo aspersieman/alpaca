@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Task;
 use App\Timer;
 
+use Illuminate\Support\Facades\Log;
+
 class ChartController extends FrontController
 {
   /**
@@ -26,7 +28,9 @@ class ChartController extends FrontController
   public function byDay(Request $request)
   {
     $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime('-20 days')));
+    Log::info("start: ".$start);
     $end = $request['end'] ?? new \DateTime('NOW');
+    Log::info("end: ".$end);
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timeByDay = Timer::byDay($start, $end, $userIds)->toArray();
     $times = [];
