@@ -1,5 +1,6 @@
 <template>
   <div class="tasks">
+    <notes-drawer />
     <v-container class="my-2">
       <v-layout 
         row 
@@ -144,13 +145,15 @@ import TimerDialog from './components/TimerDialog';
 import Task from './components/Task';
 import draggable from 'vuedraggable';
 import TaskMixin from './mixins/TaskMixin';
+import NotesDrawer from '../../../components/notes/NotesDrawer';
 
 export default {
   components: {
     draggable,
     TaskDialog,
     TimerDialog,
-    Task
+    Task,
+    NotesDrawer
   },
   mixins: [ TaskMixin ],
   data() {
