@@ -204,6 +204,15 @@
                   </v-list-item-icon>
                   <v-list-item-title>Add timer</v-list-item-title>
                 </v-list-item>
+                <v-list-item
+                  :class="`${task.status}`"
+                  @click.stop="openNotesDrawer()"
+                >
+                  <v-list-item-icon class="horizontal-center">
+                    <v-icon>note_add</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Add note</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </div>
