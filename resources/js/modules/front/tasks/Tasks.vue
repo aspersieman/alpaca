@@ -16,16 +16,17 @@
           md1
           lg1
         >
-          <base-btn
+          <v-btn
             v-shortkey.once="['ctrl', 'alt', 't']"
-            class="mr-0"
-            square
+            class="primary lighten-1"
+            dark
             title="Add new Task"
             @shortkey="openTaskDialog()" 
             @click="openTaskDialog()"
           >
+            New task
             <v-icon>add</v-icon>
-          </base-btn>
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout 

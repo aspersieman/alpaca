@@ -1,35 +1,40 @@
 <template>
   <div>
-    <v-container class="fill-height">
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-btn
-          color="pink"
-          dark
-          @click.stop="drawer = !drawer"
-        >
-          Notes
-        </v-btn>
-      </v-row>
-    </v-container>
-
     <v-navigation-drawer
-      v-model="drawer"
+      ref="drawer"
       app
-      temporary
       right
       hide-overlay
+      :value="navigation.shown"
+      :width="navigation.width"
     >
-      <v-list-item>
+      <div class="toggle">
+        <v-btn
+          ref="resizeButton"
+          fab
+          x-small
+          light
+        >
+          <v-icon>drag_indicator</v-icon>
+        </v-btn>
+      </div>
+      <v-list-item fixed>
         <v-list-item-avatar>
-          <v-icon>notes</v-icon>
+          <v-icon>note</v-icon>
         </v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title>Notes</v-list-item-title>
+          <v-list-item-subtitle>{{ task.name }}</v-list-item-subtitle>
         </v-list-item-content>
+        <v-btn
+          icon
+          light
+          x-small
+          @click="close()"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
       </v-list-item>
 
       <v-divider />
@@ -37,7 +42,7 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <list-notes 
+            <notes-list 
               :notes="notes" 
             />
           </v-list-item-content>
@@ -46,45 +51,197 @@
       <template
         #append
       >
-        <div class="pa-2">
-          <create-note @create-note="createNote" />
-        </div>
+        <note-create @create-note="addNote" />
       </template>
     </v-navigation-drawer>
   </div>
 </template>
 
 <script>
-import ListNotes from './ListNotes';
-import CreateNote from './CreateNotes';
+import NotesList from './NotesList';
+import NoteCreate from './NoteCreate';
+
 export default {
   components: {
-    ListNotes,
-    CreateNote,
+    NotesList,
+    NoteCreate,
   },
   data() {
-    return {
-      drawer: null,
-      notes: [{
-        title: 'Lunch at 12PM',
-        description: 'Call Robert to remember him.'
-      }, {
-        title: 'Gym with Jane',
-        description: 'She is needing your motivation...'
-      }, {
-        title: 'Call mom',
-        description: 'Ask her about the cats?'
-      }],
+    return { 
+      notes: [],
+      task: {
+        id: null,
+        name: null,
+        due: null,
+        status: null,
+        order: null,
+        timers: []
+      },
+      navigation: {
+        shown: false,
+        width: 250,
+        borderSize: 3
+      }
     };
   },
+  created() {
+    const self = this;
+    self.$eventBus.$on('notes-drawer-toggle', (value) => {
+      if (value == true) {
+        self.notes = this.getNotes();
+        self.task = this.$store.state.task;
+      } else {
+        self.notes = [];
+        self.task = {
+          name: null,
+          due: null,
+          status: null,
+          order: null,
+          timers: []
+        };
+      }
+      self.navigation.shown = value;
+    });
+    self.$eventBus.$on('note-deleted', (note) => {
+      self.notes = this.getNotes()
+        .filter(function(element) {
+          return element.id !== note.id;
+        });
+    });
+    self.$eventBus.$on('note-updated', (note) => {
+      self.notes = this.getNotes();
+      const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
+      self.notes[noteIndex].name = note.name;
+      self.notes[noteIndex].content = note.content;
+    });
+  },
   mounted() {
-    console.log("NotesDrawer");
+    this.setBorderWidth();
+    this.setEvents();
   },
   methods: {
-    createNote(note) {
-      this.notes.push(note);
-      alert('Note created!');
+    getNotes() {
+      return this.$store.state.notes;
     },
+
+    addNote(note) {
+      console.log("addNote");
+      console.log(note);
+      if(note.name != '') {
+        this.loading = true;
+        
+        const newNote = {
+          name: note.name,
+          content: note.content,
+          task_id: note.task_id
+        };
+
+        window.axios.post('/api/notes', newNote)
+          .then(response => {
+          this.loading = false;
+          this.dialog = false;
+          this.$eventBus.$emit('note-added');
+          let notes = this.getNotes();
+          notes.push(newNote);
+          this.$store.commit('setNotes', notes);
+          this.$store.commit('showSnackbar',{
+            message: "Note added",
+            color: 'success',
+            duration: 1000
+          });
+          return response;
+        })
+          .catch(error => {
+          console.log(error);
+          this.$store.commit('showSnackbar',{
+            message: error.response.data.message,
+            color: 'error',
+            duration: 3000
+          });
+          this.loading = false;
+        });
+
+      }
+    },
+
+    setBorderWidth() {
+      let i = this.$refs.drawer.$el.querySelector(
+        ".v-navigation-drawer__border"
+      );
+      i.style.width = this.navigation.borderSize + "px";
+      i.style.cursor = "ew-resize";
+      i.style.backgroundColor = "#ebebeb";
+    },
+
+    setEvents() {
+      const minSize = this.navigation.borderSize;
+      const el = this.$refs.drawer.$el;
+      const drawerBorder = el.querySelector(".v-navigation-drawer__border");
+      const resizeButton = this.$refs.resizeButton.$el;
+      const direction = el.classList.contains("v-navigation-drawer--right")
+        ? "right"
+        : "left";
+
+      function resize(e) {
+        document.body.style.cursor = "ew-resize";
+        let f =
+          direction === "right"
+            ? document.body.scrollWidth - e.clientX
+            : e.clientX;
+        el.style.width = f + "px";
+      }
+
+      drawerBorder.addEventListener(
+        "mousedown",
+        (e) => {
+          if (e.offsetX < minSize) {
+            el.style.transition = "initial";
+            document.addEventListener("mousemove", resize, false);
+          }
+        },
+        false
+      );
+
+      resizeButton.addEventListener(
+        "mousedown",
+        () => {
+          el.style.transition = "initial";
+          document.addEventListener("mousemove", resize, false);
+        },
+        false
+      );
+
+      document.addEventListener(
+        "mouseup",
+        () => {
+          el.style.transition = "";
+          this.navigation.width = el.style.width;
+          document.body.style.cursor = "";
+          document.removeEventListener("mousemove", resize, false);
+        },
+        false
+      );
+    },
+
+    close () {
+      this.$eventBus.$emit('notes-drawer-toggle', false);
+    }
   },
 }
 </script>
+<style scoped>
+.toggle {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  bottom: 50%;
+  vertical-align: middle;
+  cursor: move;
+  z-index: 1;
+  cursor: ew-resize;
+}
+
+.toggle button {
+  cursor: ew-resize;
+}
+</style>

@@ -138,6 +138,21 @@
                 Add timer
               </v-tooltip>
             </v-btn>
+            <v-btn
+              icon
+              :class="`${task.status}`"
+              class="pa-0 ma-0"
+              @click.stop="openNotesDrawer()"
+            >
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-icon v-on="on">
+                    note_add
+                  </v-icon>
+                </template>
+                Add note
+              </v-tooltip>
+            </v-btn>
           </div>
         </v-flex>
         <v-flex
@@ -232,11 +247,12 @@ export default {
       type: Object,
       default: function() {
         return {
+          id: null,
           name: null,
           due: null,
           status: null,
           order: null,
-          timers: []
+          timers: [],
         }
       }
     }
@@ -246,6 +262,7 @@ export default {
       newValues: [],
       timers: [],
       editMode: false,
+      drawer: false,
     }
   },
   mounted() {
@@ -261,7 +278,6 @@ export default {
         message: "Are you sure you want to delete this task?",
         okCb: ()=>{
           const currentTask = self.task;
-          console.log(currentTask);
           window.axios.delete('/api/tasks/'+parseInt(currentTask.id))
             .then(function(response) {
               self.$store.commit('setSelectedTask', currentTask);
@@ -324,7 +340,7 @@ export default {
               message: error.response.data.data.message,
               color: 'error',
               duration: 3000
-          });
+            });
         });
         currentTask.status = newStatus
         self.btnColor = btnColor
@@ -353,6 +369,14 @@ export default {
 
       this.editMode = false;
     },
+
+    openNotesDrawer() {
+      const self = this;
+      self.drawer = !self.drawer;
+      self.$store.commit('setNotes', self.task.notes);
+      self.$store.commit('setSelectedTask', self.task);
+      self.$eventBus.$emit('notes-drawer-toggle', true);
+    }
   },
 }
 </script>

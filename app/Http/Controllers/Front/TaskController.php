@@ -34,7 +34,7 @@ class TaskController extends Controller
   public function current()
   {
     $tasks = Task::mine()
-      ->with(['timers.tagged', 'project'])
+      ->with(['timers.tagged', 'project', 'notes'])
       ->whereRaw(
         '
         (

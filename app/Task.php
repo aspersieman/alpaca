@@ -56,6 +56,16 @@ class Task extends Model
   }
 
   /**
+   * Get associated notes.
+   *
+   * @return \Illuminate\Database\Eloquent\Relations\HasMany
+   */
+  public function notes()
+  {
+    return $this->hasMany(Note::class);
+  }
+
+  /**
    * Get my tasks
    *
    * @param  \Illuminate\Database\Eloquent\Builder $query

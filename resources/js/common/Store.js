@@ -35,6 +35,7 @@ export default new Vuex.Store({
     task: null,
     tasks: [],
     timer: null,
+    notes: [],
     activeTimer: null,
     activeTimerCounter: { seconds: 0, timer: null, title: 'Timing...' },
     stoppedTimer: null,
@@ -118,6 +119,9 @@ export default new Vuex.Store({
     setSelectedTimer(state, timer) {
       state.timer = timer;
     },
+    setNotes(state, notes) {
+      state.notes = notes;
+    },
   },
   getters: {
     //logged in user
@@ -187,10 +191,13 @@ export default new Vuex.Store({
     getSelectedTimer: state => {
       return state.timer
     },
+    getNotes: state => {
+      return state.notes
+    },
   },
   actions: {
     loadMenu({commit}) {
-      axios.get("/api/menu").then(menu => {
+      window.axios.get("/api/menu").then(menu => {
         commit("setMenu", menu.data);
       }).catch(error => {
         throw new Error(`API ${error}`);

@@ -5,61 +5,80 @@
   >
     <div 
       v-show="!showEditForm"
-      class="content"
     >
       <v-card-title
         class="text-subtitle-2"
       >
-        {{ note.title }}
+        {{ note.name }}
       </v-card-title>
-      <div class="meta italic">
-        {{ note.description }}
-      </div>
-      <div class="extra content">
-        <span
-          class="right floated edit icon"
-          @click="showForm"
+      <v-card-text>
+        <div class="text-sm-caption">
+          {{ note.content }}
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          class="text-sm-caption"
+          icon
+          x-small
+          @click="formShow()"
         >
-          <v-icon>edit</v-icon>
-        </span>
-        <span
-          class="right floated trash icon"
+          <v-icon>
+            edit
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="text-sm-caption"
+          icon
+          x-small
           @click="deleteNote(note)"
         >
-          <v-icon>trash</v-icon>
-        </span>
-      </div>
+          <v-icon>
+            delete
+          </v-icon>
+        </v-btn>
+      </v-card-actions>
     </div>
     <div
       v-show="showEditForm"
-      class="content"
     >
-      <div class="ui form">
-        <div class="field">
-          <label>Title</label>
-          <input
-            v-model="noteTitle"
-            type="text"
-            value="note.title"
-          >
-        </div>
-        <div class="field">
-          <label>Description</label>
-          <input
-            v-model="noteDescription"
-            type="text"
-            value="note.description"
-          >
-        </div>
-        <div class="ui two buttons">
-          <button
-            class="ui basic button"
-            @click="hideForm"
-          >
-            Close X
-          </button>
-        </div>
-      </div>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="noteName"
+                dense
+                :loading="loading"
+                label="Title"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-textarea
+                v-model="noteContent"
+                dense
+                :loading="loading"
+                label="Content"
+                rows="3"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn
+                class="success mx-0 mt-3"
+                :loading="loading"
+                @click="updateNote()"
+              >
+                Done
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
     </div>
   </v-card>
 </template>
@@ -72,28 +91,111 @@ export default {
       type: Object,
       default: function() {
         return {
-          title: null,
-          description: null
+          id: null,
+          name: null,
+          content: null,
+          task_id: null
         }
       }
     }
   },
   data() {
     return {
-      noteTitle: '',
-      noteDescription: '',
+      noteName: '',
+      noteContent: '',
       showEditForm: false,
+      loading: false
     };
   },
   methods: {
     deleteNote(note) {
-      this.$emit('delete-note', note);
+      const self = this;
+
+      self.$store.commit('showDialog',{
+        type: "confirm",
+        icon: 'warning',
+        title: "Confirm deletion",
+        message: "Are you sure you want to delete this note?",
+        okCb: ()=>{
+          const currentTask = self.task;
+          window.axios.delete('/api/notes/'+parseInt(note.id))
+            .then(function(response) {
+              self.$store.commit('setSelectedTask', currentTask);
+              self.$store.commit('showSnackbar',{
+                message: response.data.message,
+                color: 'success',
+                duration: 3000
+              });
+              self.noteName =  '';
+              self.noteContent = '';
+              self.$eventBus.$emit('note-deleted', note);
+            })
+            .catch(error => {
+              self.$store.commit('hideLoader');
+              if (error.response) {
+                self.$store.commit('showSnackbar',{
+                  message: error.response.data.data.message,
+                  color: 'error',
+                  duration: 10000
+                });
+              } else if (error.request) {
+                console.log(error.request);
+              } else {
+                console.log('Error', error.message);
+              }
+            });
+        },
+        cancelCb: ()=>{
+          console.log("CANCEL");
+        }
+      });
     },
-    showForm() {
+
+    formShow() {
+      this.formReset();
+      this.noteName = this.note.name;
+      this.noteContent = this.note.content;
       this.showEditForm = true;
     },
-    hideForm() {
-      this.showEditForm = false;
+
+    formReset() {
+      this.noteName = '';
+      this.noteContent = '';
+    },
+
+    updateNote() {
+      const note = {
+        id: this.note.id,
+        name: this.noteName,
+        content: this.noteContent
+      };
+      if(note.name.length > 0) {
+        this.loading = true;
+        
+        window.axios.put(`/api/notes/${note.id}`, note)
+          .then(response => {
+          this.loading = false;
+          this.formReset();
+          this.$eventBus.$emit('note-updated', note);
+          this.$store.commit('showSnackbar',{
+            message: "Note updated",
+            color: 'success',
+            duration: 1000
+          });
+          this.showEditForm = false;
+          return response;
+        })
+          .catch(error => {
+          console.log(error);
+          this.$store.commit('showSnackbar',{
+            message: error.response.data.message,
+            color: 'error',
+            duration: 3000
+          });
+          this.loading = false;
+        });
+
+      }
     },
   },
 };

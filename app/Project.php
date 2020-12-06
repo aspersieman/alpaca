@@ -85,11 +85,11 @@ class Project extends Model
 
   public static function put($id, $data)
   {
-    $task = Task::where('id', $id)->first();
-    $task->name = $data['name'];
-    $task->due = $data['due'];
-    $task->status = $data['status'];
-    $task->save();
-    return $task;
+    $project = Project::where('id', $id)->first();
+    $project->name = $data['name'];
+    $project->due = $data['due'];
+    $project->status = $data['status'];
+    $project->save();
+    return $project;
   }
 }
