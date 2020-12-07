@@ -172,7 +172,7 @@ export default {
       if(note.name.length > 0) {
         this.loading = true;
         
-        window.axios.put(`/api/notes/${note.id}`, note)
+        window.axios.put(`/api/notes/`+parseInt(note.id), note)
           .then(response => {
           this.loading = false;
           this.formReset();
