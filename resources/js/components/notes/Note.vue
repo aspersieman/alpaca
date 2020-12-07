@@ -12,7 +12,9 @@
         {{ note.name }}
       </v-card-title>
       <v-card-text>
-        <div class="text-sm-caption show-whitespace">{{ note.content }}</div>
+        <div class="text-sm-caption">
+          {{ note.content.replace(/(?:\r\n|\r|\n)/g, '<br />'); }}
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -205,9 +207,5 @@ export default {
 }
 .note-card {
   margin-bottom:3px;
-}
-.show-whitespace {
-  white-space: pre-wrap; 
-  word-wrap: break-word;
 }
 </style>
