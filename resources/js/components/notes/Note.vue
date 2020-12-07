@@ -12,7 +12,7 @@
         {{ note.name }}
       </v-card-title>
       <v-card-text>
-        <div class="text-sm-caption">
+        <div class="text-sm-caption show-whitespace">
           {{ note.content }}
         </div>
       </v-card-text>
@@ -207,5 +207,8 @@ export default {
 }
 .note-card {
   margin-bottom:3px;
+}
+.show-whitespace {
+  white-space: pre;
 }
 </style>
