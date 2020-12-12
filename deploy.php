@@ -64,7 +64,13 @@ host('lekkerllama.com')
 // Tasks
 desc("Build resources");
 task('build', function () {
-  run('cd {{release_path}} && npm install && npm run production');
+  run('npm install');
+  run('npm run production');
+})->local();
+
+desc("Upload resources");
+task('upload', function () {
+    upload(__DIR__ . "/public", '{{release_path}}');
 });
 
 desc("Setup deployment");
@@ -86,7 +92,6 @@ task('deploy:setup', function () {
   if (!empty($tag)) { $version = "$tag"; }
   if (!empty($revision)) { $version = "$revision"; }
   set('version', $version);
-  run("mysql -uroot -r -e \"CREATE DATABASE IF NOT EXISTS {{dbName}}\"");
 });
 
 task('set_version', function () {
@@ -100,6 +105,7 @@ after('cleanup', 'artisan:up');
 after('artisan:optimize', 'set_version');
 after('deploy:symlink', 'artisan:migrate');
 after('deploy:update_code', 'build');
+after('build', 'upload');
 
 // Migrate database before symlink new release.
 before('deploy:prepare', 'deploy:setup');
