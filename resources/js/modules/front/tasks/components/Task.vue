@@ -274,8 +274,7 @@ export default {
       drawer: false,
     }
   },
-  mounted() {
-  },
+  mounted() { },
   methods: {
     openNotesDrawer() {
       const self = this;

@@ -43,8 +43,7 @@ Route::prefix('/api/admin')->namespace('Admin')->middleware(['auth'])->group(fun
 });
 
 // Match all other routes to the SPA
-Route::get('/{vue_capture?}', function () {
-  return view('welcome', [
-    'auth_user' => Auth::user()
-  ]);
-})->where('vue_capture', '^(?!storage).*$'); 
+Route::get(
+  '/{vue_capture?}',
+  'Front\\HomeController@index'
+)->where('vue_capture', '^(?!storage).*$');

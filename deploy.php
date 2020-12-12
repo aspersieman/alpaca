@@ -66,11 +66,22 @@ desc("Build resources");
 task('build', function () {
   run('npm install');
   run('npm run production');
+  run('rm ./public/storage');
+})->local();
+
+desc("Clean storage");
+task('clean_storage', function() {
+});
+
+desc("Install vendor packages");
+task('deploy:vendors', function() {
+  run('composer install');
 })->local();
 
 desc("Upload resources");
 task('upload', function () {
     upload(__DIR__ . "/public", '{{release_path}}');
+    upload(__DIR__ . "/vendor", '{{release_path}}');
 });
 
 desc("Setup deployment");
