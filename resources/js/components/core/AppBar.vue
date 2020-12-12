@@ -53,6 +53,7 @@
             Reports
           </v-btn>
           <v-spacer />
+          <timer-active />
           <v-text-field
             v-if="canSearch"
             class="hidden-sm-and-down"
@@ -93,9 +94,13 @@ import {
 } from 'vuex';
 
 import methods from '../../common/Methods';
+import TimerActive from '../timer/TimerActive';
 
 export default {
   name: 'CoreAppBar',
+  components: {
+    TimerActive
+  },
   data() {
     return {
       canSearch: false,

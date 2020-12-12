@@ -10,6 +10,7 @@
 
 <script type = "text/javascript" >
 import Note from './Note';
+
 export default {
   components: {
     Note

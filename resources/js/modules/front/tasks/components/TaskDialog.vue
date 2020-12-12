@@ -134,11 +134,15 @@
 <script>
 import Timer from './Timer';
 import moment from 'moment';
+import TaskMixin from '../mixins/TaskMixin';
 
 export default {
   components: {
     Timer
   },
+  mixins: [ 
+    TaskMixin
+  ],
   data() {
     return {
       dialog: false,

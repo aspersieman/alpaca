@@ -37,7 +37,28 @@ export default new Vuex.Store({
     timer: null,
     notes: [],
     activeTimer: null,
-    activeTimerCounter: { seconds: 0, timer: null, title: 'Timing...' },
+    activeTimerCounter: {
+      seconds: 0,
+      timer: {
+        id: null,
+        name: null,
+        task_id: null, 
+        user_id: null,
+        started_at: null,
+        stopped_at: null, 
+        duration: 0,
+        created_at: null,
+        updated_at: null,
+      },
+      title: 'Timing...',
+      task: {
+        id: null,
+        name: null,
+        due: null,
+        status: null,
+        order: null,
+      }
+    },
     stoppedTimer: null,
     stoppedTimerValue: ""
   },

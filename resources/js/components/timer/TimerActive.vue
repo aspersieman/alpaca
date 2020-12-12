@@ -1,0 +1,102 @@
+<template>
+  <div
+    v-if="isActiveTimer()"
+  >
+    <v-bottom-sheet inset>
+      <template #activator="{ on, attrs }">
+        {{ timerTime }}
+        <v-btn
+          class="timer-button"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon>
+            access_time
+          </v-icon>
+          Active Timer
+        </v-btn>
+      </template>
+      <v-card tile>
+        <v-list>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title
+                class="ellipsis"
+              >
+                Task: {{ taskName }}
+              </v-list-item-title>
+              <v-list-item-subtitle
+                class="ellipsis caption"
+              >
+                Timer: {{ timerName }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle
+                class="caption"
+              >
+                {{ timerStarted }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+
+            <v-spacer />
+
+            {{ timerTime }}
+            <v-list-item-icon>
+              <v-btn
+                class="success"
+                @click="stopTimer()"
+              >
+                Stop
+              </v-btn>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-bottom-sheet>
+  </div>
+</template>
+<script>
+
+import TimerMixin from '../../modules/front/tasks/mixins/TimerMixin';
+
+export default {
+  components: { },
+  mixins: [ TimerMixin ],
+  data() {
+    return {
+    }
+  },
+  computed: {
+    taskName: function() {
+      return this.$store.state.activeTimerCounter.task.name;
+    },
+    timerName: function() {
+      return this.$store.state.activeTimerCounter.timer.name;
+    },
+    timerTime: function() {
+      return this.$store.state.activeTimerCounter.title;
+    },
+    timerStarted: function() {
+      return this.dateFormat(this.$store.state.activeTimerCounter.timer.started_at, true);
+    },
+    showTimer: function() {
+      return this.$store.state.activeTimerCounter != null;
+    }
+  },
+  mounted() {
+    this.setActiveTimer();
+    this.$eventBus.$on('timer-start', (timer) => {
+      this.startTimer(timer);
+    });
+  },
+  methods: { },
+}
+</script>
+
+<style scoped lang="scss">
+@import "../../../sass/index";
+
+.timer-button {
+  background-color: $active-green !important;
+}
+</style>
+

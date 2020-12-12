@@ -146,6 +146,7 @@ import TimerDialog from './components/TimerDialog';
 import Task from './components/Task';
 import draggable from 'vuedraggable';
 import TaskMixin from './mixins/TaskMixin';
+import TimerMixin from './mixins/TimerMixin';
 import NotesDrawer from '../../../components/notes/NotesDrawer';
 
 export default {
@@ -156,7 +157,10 @@ export default {
     Task,
     NotesDrawer
   },
-  mixins: [ TaskMixin ],
+  mixins: [ 
+    TaskMixin,
+    TimerMixin
+  ],
   data() {
     return {
       tasks: [],
@@ -210,27 +214,10 @@ export default {
     });
   },
   created() {
-    const self = this;
-    self.loadTasks();
+    this.loadTasks();
+    this.setActiveTimer();
   },
   methods: {
-    loadTasks() {
-      console.log("loadTasks");
-      const self = this;
-      window.axios.get('/api/tasks/current').then(response => {
-        self.tasks = response.data.data;
-        self.$store.commit('setTasks', response.data.data);
-        self.tasksCopy = response.data.data;
-        window.axios.get('/api/tasks/timers/active').then(response => {
-          if (response.data.data.id !== undefined) {
-            self.$store.commit('setActiveTimer', response.data.data);
-            self.$eventBus.$emit('timer-start', response.data.data)
-          }
-        });
-        self.searchByStatus();
-      });
-    },
-
     searchByStatus(status) {
       const self = this;
       self.tasks = self.$store.state.tasks;
@@ -245,26 +232,6 @@ export default {
             return self.status.includes(item.status);
           });
         }
-      }
-    },
-
-    saveOrder() {
-      var tasks = [];
-      for (let index = 0; index < this.tasks.length; index++) {
-        const currentTask = this.tasks[index];
-        tasks.push({ "id": currentTask.id, "order": index });
-      }
-      if (tasks.length > 1) {
-        window.axios.post(`/api/tasks/order`, { "tasks": tasks })
-            .then()
-            .catch(error => {
-            console.log(error);
-            this.$store.commit('showSnackbar', {
-              message: error.response.data.data.message,
-              color: 'error',
-              duration: 3000
-          });
-        });
       }
     },
 

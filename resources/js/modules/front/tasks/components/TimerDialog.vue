@@ -177,9 +177,10 @@
 <script>
 
 import moment from 'moment';
+import TimerMixin from '../mixins/TimerMixin';
 
 export default {
-
+  mixins: [ TimerMixin ],
   data() {
     return {
       mode: 'ADD',
@@ -228,77 +229,6 @@ export default {
     });
   },
   methods: {
-    addTimer() {
-      const task = this.$store.state.task;
-      const self = this;
-      if(this.name.length > 0) {
-        const timer = {
-          name: this.name,
-          task_id: this.task_id,
-          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          tags: this.tags
-        };
-        window.axios.post(`/api/tasks/${task.id}/timers`, timer)
-          .then(response => {
-            self.$store.commit('setActiveTimer', response.data);
-            this.$eventBus.$emit('timer-added');
-            this.loading = false;
-            this.dialog = false;
-            this.formReset();
-            this.$store.commit('showSnackbar',{
-              message: "Timer added",
-              color: 'success',
-              duration: 1000
-            });
-          })
-          .catch(error => {
-          console.log(error);
-          self.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-          });
-        this.loading = true;
-      }
-    },
-    updateTimer() {
-      if(this.name.length > 0 && this.startDate.length >= 4) {
-        this.loading = true;
-        
-        const started_at = moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
-        const timer = {
-          name: this.name,
-          started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
-          stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss"),
-          tags: this.tags
-        };
-
-        window.axios.put(`/api/tasks/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
-          .then(response => {
-          this.loading = false;
-          this.dialog = false;
-          this.formReset();
-          this.$eventBus.$emit('timer-updated');
-          this.$store.commit('showSnackbar',{
-            message: "Timer updated",
-            color: 'success',
-            duration: 1000
-          });
-          return response;
-        })
-          .catch(error => {
-          console.log(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-        });
-      }
-    },
     close() {
       this.dialog = false;
     },
