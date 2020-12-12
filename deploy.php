@@ -6,6 +6,9 @@
  * EXAMPLE: export DEP_USER=username && ./vendor/bin/dep deploy --tag=1.0.3 --env=true // this will deploy 1.0.3 and install your local .env file on the destination server
  *
  * NOTE:
+ *  - If you want to install your local .env file add the --env parameter. If a .env file isn't found on the shared folder on the deploy target this deployment will fail 
+ *  - If you want more output append the param -vvv
+ *
  * Setup:
  *  ensure your ssh-agent is running. If you're deploying from vagrant, run:
  *    cp ~/.ssh /path/to/vagrant/dir/ //on your host machine. This makes your ssh keys available to deployer to install in vagrant
@@ -23,6 +26,11 @@ use Deployer\Task\Context;
 use Symfony\Component\Console\Input\InputArgument;
 
 require 'recipe/laravel.php';
+
+$user = getenv('DEP_USER') ?? null;
+if (empty($user)) {
+  die("'DEP_USER' env variable required".PHP_EOL);
+}
 
 set('dbName', 'alpaca');
 set('dbUser', 'root');
@@ -50,11 +58,13 @@ set('allow_anonymous_stats', false);
 // Hosts
 host('lekkerllama.com')
   ->set('deploy_path', '/var/www/html/deployer/alpaca')
+  ->user($user)
   ->roles('production');
 
 // Tasks
+desc("Build resources");
 task('build', function () {
-  run('cd {{release_path}} && build');
+  run('cd {{release_path}} && npm install && npm run production');
 });
 
 desc("Setup deployment");
@@ -89,6 +99,7 @@ after('deploy:failed', 'artisan:up');
 after('cleanup', 'artisan:up');
 after('artisan:optimize', 'set_version');
 after('deploy:symlink', 'artisan:migrate');
+after('deploy:update_code', 'build');
 
 // Migrate database before symlink new release.
 before('deploy:prepare', 'deploy:setup');
