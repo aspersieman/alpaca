@@ -3,6 +3,7 @@
     v-model="dialog"
     max-width="600px"
     :fullscreen="$vuetify.breakpoint.xs"
+    :retain-focus="false"
   >
     <v-card>
       <v-card-title class="grey--text">
@@ -198,23 +199,24 @@ export default {
   },
   methods: {
     addTask() {
-      if(this.name.length > 0 && this.due.length >= 4) {
-        this.loading = true;
+      const self = this;
+      if(self.name.length > 0 && self.due.length >= 4) {
+        self.loading = true;
         
         const task = {
-          name: this.name,
-          due: moment(this.due).format('YYYY-MM-DD'),
+          name: self.name,
+          due: moment(self.due).format('YYYY-MM-DD'),
           status: 'ongoing',
           order: null,
         };
 
         window.axios.post('/api/tasks', task)
           .then(response => {
-          this.loading = false;
-          this.dialog = false;
-          this.formReset();
-          this.$eventBus.$emit('task-added');
-          this.$store.commit('showSnackbar',{
+          self.loading = false;
+          self.dialog = false;
+          self.formReset();
+          self.$eventBus.$emit('task-added');
+          self.$store.commit('showSnackbar',{
             message: "Task added",
             color: 'success',
             duration: 1000
@@ -223,33 +225,34 @@ export default {
         })
           .catch(error => {
           console.log(error);
-          this.$store.commit('showSnackbar',{
+          self.$store.commit('showSnackbar',{
             message: error.response.data.message,
             color: 'error',
             duration: 3000
           });
-          this.loading = false;
+          self.loading = false;
         });
 
       }
     },
     updateTask() {
-      if(this.name.length > 0 && this.due.length >= 4) {
-        this.loading = true;
+      const self = this;
+      if(self.name.length > 0 && self.due.length >= 4) {
+        self.loading = true;
         
         const task = {
-          name: this.name,
-          due: this.due,
-          status: this.status,
+          name: self.name,
+          due: self.due,
+          status: self.status,
         };
 
-        window.axios.put(`/api/tasks/${this.task.id}`, task)
+        window.axios.put(`/api/tasks/${self.task.id}`, task)
           .then(response => {
-          this.loading = false;
-          this.dialog = false;
-          this.formReset();
-          this.$eventBus.$emit('task-updated');
-          this.$store.commit('showSnackbar',{
+          self.loading = false;
+          self.dialog = false;
+          self.formReset();
+          self.$eventBus.$emit('task-updated');
+          self.$store.commit('showSnackbar',{
             message: "Task updated",
             color: 'success',
             duration: 1000
@@ -258,19 +261,19 @@ export default {
         })
           .catch(error => {
           console.log(error);
-          this.$store.commit('showSnackbar',{
+          self.$store.commit('showSnackbar',{
             message: error.response.data.message,
             color: 'error',
             duration: 3000
           });
-          this.loading = false;
+          self.loading = false;
         });
-
       }
     },
     close() {
       this.dialog = false;
     },
+
     openTimerDialog() {
       const self = this;
       self.$store.commit('setSelectedTask', this.task);

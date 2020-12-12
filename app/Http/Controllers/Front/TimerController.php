@@ -15,7 +15,7 @@ class TimerController extends FrontController
 {
   public function store(Request $request, int $id)
   {
-    $data = $request->validate(['name' => 'required|between:3,100']);
+    $data = $request->validate(['name' => 'required|between:2,100']);
     $tags = $request['tags'];
 
     $tz = $request->tz ?? config('app.timezone');
@@ -64,7 +64,7 @@ class TimerController extends FrontController
   public function update(Request $request, int $id, int $timer_id)
   {
     $data = $request->validate([
-      'name' => 'required|between:3,100',
+      'name' => 'required|between:2,100',
       'started_at' => 'date',
       'stopped_at' => 'date'
     ]);

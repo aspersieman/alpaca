@@ -10,24 +10,6 @@
         <h1 class="subheading grey--text ml-4">
           Tasks
         </h1>
-        <v-spacer />
-        <v-flex
-          xs2
-          md1
-          lg1
-        >
-          <v-btn
-            v-shortkey.once="['ctrl', 'alt', 't']"
-            class="primary lighten-1"
-            dark
-            title="Add new Task"
-            @shortkey="openTaskDialog()" 
-            @click="openTaskDialog()"
-          >
-            New task
-            <v-icon>add</v-icon>
-          </v-btn>
-        </v-flex>
       </v-layout>
       <v-layout 
         row 
@@ -134,15 +116,20 @@
           :task="task" 
         />
       </draggable>
+      <v-btn
+        fab
+        dark
+        small
+        class="task-add-button-mobile primary hidden-lg-and-up"
+        @click="openTaskDialog()"
+      >
+        <v-icon>add</v-icon>
+      </v-btn>
     </v-container>
-    <task-dialog @taskAdded="snackbar=true" />
-    <timer-dialog @timerAdded="snackbar=true" />
   </div>
 </template>
 
 <script>
-import TaskDialog from './components/TaskDialog';
-import TimerDialog from './components/TimerDialog';
 import Task from './components/Task';
 import draggable from 'vuedraggable';
 import TaskMixin from './mixins/TaskMixin';
@@ -152,8 +139,6 @@ import NotesDrawer from '../../../components/notes/NotesDrawer';
 export default {
   components: {
     draggable,
-    TaskDialog,
-    TimerDialog,
     Task,
     NotesDrawer
   },
@@ -288,5 +273,13 @@ export default {
 }
 .search-input {
   margin-left: 5px;
+}
+
+.task-add-button-mobile {
+  bottom: 5px;
+  right: 0;
+  position: sticky;
+  margin-left: 10px;
+  float: right;
 }
 </style>

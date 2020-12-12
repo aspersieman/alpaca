@@ -53,6 +53,18 @@
             Reports
           </v-btn>
           <v-spacer />
+          <v-btn
+            v-if="this.$store.getters.isLoggedIn"
+            v-shortkey.once="['ctrl', 'alt', 't']"
+            class="primary lighten-1 hidden-md-and-down"
+            dark
+            title="Add new Task"
+            @shortkey="openTaskDialog()" 
+            @click="openTaskDialog()"
+          >
+            New task
+            <v-icon>add</v-icon>
+          </v-btn>
           <timer-active />
           <v-text-field
             v-if="canSearch"
@@ -83,6 +95,8 @@
             Logout
           </v-btn>
         </v-row>
+        <task-dialog @taskAdded="snackbar=true" />
+        <timer-dialog @timerAdded="snackbar=true" />
       </v-container>
     </v-app-bar>
   </div>
@@ -93,14 +107,22 @@ import {
   mapMutations,
 } from 'vuex';
 
-import methods from '../../common/Methods';
 import TimerActive from '../timer/TimerActive';
+import TaskDialog from '../../modules/front/tasks/components/TaskDialog';
+import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
+import methods from '../../common/Methods';
+import TaskMixin from '../../modules/front/tasks/mixins/TaskMixin';
 
 export default {
   name: 'CoreAppBar',
   components: {
-    TimerActive
+    TimerActive,
+    TaskDialog,
+    TimerDialog
   },
+  mixins: [ 
+    TaskMixin
+  ],
   data() {
     return {
       canSearch: false,

@@ -10,10 +10,10 @@
           v-bind="attrs"
           v-on="on"
         >
+          Active Timer
           <v-icon>
             access_time
           </v-icon>
-          Active Timer
         </v-btn>
       </template>
       <v-card tile>

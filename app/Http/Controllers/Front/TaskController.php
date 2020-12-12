@@ -59,7 +59,7 @@ class TaskController extends Controller
   {
     // returns validated data as array
     $data = $request->validate([
-      'name' => 'required|between:2,20',
+      'name' => 'required|between:2,100',
       'status' => 'required|in:'.join(',', Task::STATUSES),
       'due' => 'date'
     ]);
