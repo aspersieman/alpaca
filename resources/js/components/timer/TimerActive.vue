@@ -91,7 +91,9 @@ export default {
     }
   },
   mounted() {
-    this.setActiveTimer();
+    if (this.$store.getters.isLoggedIn) {
+      this.setActiveTimer();
+    }
     this.$eventBus.$on('timer-start', (timer) => {
       this.startTimer(timer);
     });

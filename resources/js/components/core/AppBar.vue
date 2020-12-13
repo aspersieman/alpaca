@@ -56,7 +56,7 @@
           <v-btn
             v-if="this.$store.getters.isLoggedIn"
             v-shortkey.once="['ctrl', 'alt', 't']"
-            class="primary lighten-1 hidden-md-and-down"
+            class="primary lighten-1 hidden-sm-and-down"
             dark
             title="Add new Task"
             @shortkey="openTaskDialog()" 
@@ -75,14 +75,11 @@
           >
             Login
           </v-btn>
-          <v-btn
+          <v-spacer />
+          <avatar 
             v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex"
-            text
-            @click="clickLogout('/logout','/')"
-          >
-            Logout
-          </v-btn>
+          />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
         <timer-dialog @timerAdded="snackbar=true" />
@@ -99,6 +96,7 @@ import {
 import TimerActive from '../timer/TimerActive';
 import TaskDialog from '../../modules/front/tasks/components/TaskDialog';
 import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
+import Avatar from './Avatar';
 import methods from '../../common/Methods';
 import TaskMixin from '../../modules/front/tasks/mixins/TaskMixin';
 
@@ -107,7 +105,8 @@ export default {
   components: {
     TimerActive,
     TaskDialog,
-    TimerDialog
+    TimerDialog,
+    Avatar
   },
   mixins: [ 
     TaskMixin
@@ -120,7 +119,6 @@ export default {
   mounted() {
     var self = this;
     self.clickLogin = methods.clickLogin;
-    self.clickLogout = methods.clickLogout;
   },
   methods: {
     ...mapMutations(['toggleDrawer']),

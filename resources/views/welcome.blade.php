@@ -24,9 +24,9 @@
 
   <!-- app js values -->
   <script type="application/javascript">
-    var APP_GLOBALS = {};
-    APP_GLOBALS.APP_URL = '{{env('APP_URL')}}';
-    APP_GLOBALS.AUTH_USER = {!! json_encode($auth_user); !!};
+    window.APP_GLOBALS = {};
+    window.APP_GLOBALS.APP_URL = '{{env('APP_URL')}}';
+    window.APP_GLOBALS.AUTH_USER = {!! json_encode($auth_user); !!};
   </script>
 </head>
 <body>
