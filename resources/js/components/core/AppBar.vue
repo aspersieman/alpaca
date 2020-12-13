@@ -29,7 +29,7 @@
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
-            v-if="this.$store.getters.isLoggedIn"
+            v-if="show && this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard"
@@ -45,7 +45,7 @@
             Tasks
           </v-btn>
           <v-btn
-            v-if="this.$store.getters.isLoggedIn"
+            v-if="show && this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/reports"
@@ -66,17 +66,6 @@
             <v-icon>add</v-icon>
           </v-btn>
           <timer-active />
-          <v-text-field
-            v-if="canSearch"
-            class="hidden-sm-and-down"
-            append-icon="mdi-magnify"
-            flat
-            hide-details
-            outlined
-            dense
-            style="max-width: 300px;"
-          />
-          &nbsp;
           <v-btn
             v-if="!this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex"
@@ -125,8 +114,7 @@ export default {
   ],
   data() {
     return {
-      canSearch: false,
-      canCards: false,
+      show: false
     }
   },
   mounted() {
