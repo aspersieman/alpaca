@@ -50,5 +50,6 @@ export default {
   background-repeat: no-repeat, no-repeat;
   background-size: 491px 911px;
   background-position: center 20px;
+  background-attachment: fixed;
 }
 </style>

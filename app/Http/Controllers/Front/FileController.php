@@ -61,9 +61,9 @@ class FileController extends FrontController
   {
     $token = $request->get('file_token');
 
-    $res = $this->fileService->downloadFile($id,$token);
+    $result = $this->fileService->downloadFile($id,$token);
 
-    if($res) return $res;
+    if($result) return $result;
 
     return view('errors.403');
   }

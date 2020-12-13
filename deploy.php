@@ -80,8 +80,13 @@ task('deploy:vendors', function() {
 
 desc("Upload resources");
 task('upload', function () {
-    upload(__DIR__ . "/public", '{{release_path}}');
-    upload(__DIR__ . "/vendor", '{{release_path}}');
+  upload(__DIR__ . "/public", '{{release_path}}');
+  upload(__DIR__ . "/vendor", '{{release_path}}');
+});
+
+desc("Maintenance mode with message");
+task('artisan:down', function () {
+  run('if [ -f {{release_path}}/artisan ]; then /usr/bin/php {{release_path}}/artisan down --message="Down for maintenance. Back shortly"; fi');
 });
 
 desc("Setup deployment");

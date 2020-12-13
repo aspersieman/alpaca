@@ -1,29 +1,54 @@
 <template>
-    <div class="component-wrap">
-        <v-card>
-            <v-form v-model="valid" ref="fileGroupFormAdd" lazy-validation>
-                <v-container grid-list-md>
-                    <v-layout row wrap>
-                        <v-flex xs12>
-                            <div class="body-2 white--text">File Group Details</div>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-text-field label="Group Name" v-model="name" :rules="nameRules"></v-text-field>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-textarea label="Group Description" v-model="description" :rules="descriptionRules"></v-textarea>
-                        </v-flex>
-                        <v-flex xs12>
-                            <v-btn @click="save()" :disabled="!valid" color="primary">Save</v-btn>
-                        </v-flex>
-                    </v-layout>
-                </v-container>
-            </v-form>
-        </v-card>
-    </div>
+  <div class="component-wrap">
+    <v-card>
+      <v-form
+        ref="fileGroupFormAdd"
+        v-model="valid"
+        lazy-validation
+      >
+        <v-container grid-list-md>
+          <v-layout
+            row
+            wrap
+          >
+            <v-flex xs12>
+              <div class="body-2 white--text">
+                File group details
+              </div>
+            </v-flex>
+            <v-flex xs12>
+              <v-text-field
+                v-model="name"
+                label="Group name"
+                :rules="nameRules"
+              />
+            </v-flex>
+            <v-flex xs12>
+              <v-textarea
+                v-model="description"
+                label="Group description"
+                :rules="descriptionRules"
+              />
+            </v-flex>
+            <v-flex xs12>
+              <v-btn
+                :disabled="!valid"
+                color="primary"
+                @click="save()"
+              >
+                Save
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-form>
+    </v-card>
+  </div>
 </template>
 
 <script>
+import methods from '../../../../common/Methods';
+
 export default {
   data() {
     return {
@@ -39,11 +64,7 @@ export default {
       ],
     }
   },
-  mounted() {
-    console.log('pages.files.components.FileGroupAdd.vue');
-
-    const self = this;
-  },
+  mounted() { },
   methods: {
     save() {
       const self = this;
@@ -55,7 +76,7 @@ export default {
 
       self.isLoading = true;
 
-      axios.post('/api/admin/file-groups',payload).then(function(response) {
+      window.axios.post('/api/admin/file-groups',payload).then(function(response) {
         self.$store.commit('showSnackbar',{
           message: response.data.message,
           color: 'success',
@@ -63,11 +84,9 @@ export default {
         });
 
         self.isLoading = false;
-        self.$eventBus.$emit('FILE_GROUP_ADDED');
+        self.$eventBus.$emit('file-group-added');
 
-        // reset
         self.$refs.fileGroupFormAdd.reset();
-
       }).catch(function (error) {
         self.isLoading = false;
         if (error.response) {
@@ -77,9 +96,9 @@ export default {
             duration: 3000
           });
         } else if (error.request) {
-          console.log(error.request);
+          methods.debug(error.request);
         } else {
-          console.log('Error', error.message);
+          console.error('Error', error.message);
         }
       });
     }

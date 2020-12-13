@@ -1,15 +1,47 @@
 <template>
   <div>
-    <v-dialog v-show="showDialog" v-model="showDialog" absolute max-width="450px">
+    <v-dialog
+      v-show="showDialog"
+      v-model="showDialog"
+      absolute
+      max-width="450px"
+    >
       <v-card>
         <v-card-title>
-          <div class="headline"><v-icon v-if="dialogIcon">{{dialogIcon}}</v-icon> {{ dialogTitle }}</div>
+          <div class="headline">
+            <v-icon v-if="dialogIcon">
+              {{ dialogIcon }}
+            </v-icon>
+            {{ dialogTitle }}
+          </div>
         </v-card-title>
         <v-card-text>{{ dialogMessage }}</v-card-text>
         <v-card-actions v-if="dialogType=='confirm'">
-          <v-spacer></v-spacer>
-          <v-btn color="orange darken-1" text @click.native="dialogCancel">Cancel</v-btn>
-          <v-btn color="green darken-1" text @click.native="dialogOk">Ok</v-btn>
+          <v-spacer />
+          <v-btn
+            color="orange darken-1"
+            text
+            @click.native="dialogCancel"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click.native="dialogOk"
+          >
+            Ok
+          </v-btn>
+        </v-card-actions>
+        <v-card-actions v-else-if="dialogType=='ok'">
+          <v-spacer />
+          <v-btn
+            color="green darken-1"
+            text
+            @click.native="dialogOk"
+          >
+            Ok
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -28,7 +60,9 @@ export default {
         return this.$store.getters.showDialog;
       },
       set(val) {
-        if(!val) store.commit('hideDialog');
+        if(!val) {
+          self.$store.commit('hideDialog');
+        }
       }
     },
     dialogType() {
@@ -48,10 +82,10 @@ export default {
     getFullUrl(file, width, action) {
       let w = width || window.innerHeight;
       let act = action || 'resize';
-      return APP_GLOBALS.APP_URL +`/files/`+file.id+`/preview?w=`+w+`&action=`+act;
+      return window.APP_GLOBALS.APP_URL +`/files/`+file.id+`/preview?w=`+w+`&action=`+act;
     },
     downloadFile(file) {
-      window.open(APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
+      window.open(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
     },
     close() {
       this.$emit('close');

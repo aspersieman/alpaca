@@ -1,131 +1,274 @@
 <template>
   <div class="component-wrap">
-    <!-- search -->
     <v-card class="pt-3">
       <div class="d-flex flex-row">
         <div class="flex-grow-1 pa-2">
-          <v-btn @click="$router.push({name:'admin.users.create'})" class="primary lighten-1" dark>
-            New User
-            <v-icon right dark>add</v-icon>
+          <v-btn
+            class="primary lighten-1"
+            dark
+            @click="$router.push({name:'admin.users.create'})"
+          >
+            New user
+            <v-icon
+              right
+              dark
+            >
+              add
+            </v-icon>
           </v-btn>
         </div>
         <div class="flex-grow-1 pa-2">
-          <v-btn @click="$router.push({name:'admin.users.groups.list'})" class="primary lighten-1 float-right" dark>
-            Manage Groups <v-icon right dark>group</v-icon>
+          <v-btn
+            class="primary lighten-1 float-right"
+            dark
+            @click="$router.push({name:'admin.users.groups.list'})"
+          >
+            Manage groups
+            <v-icon
+              right
+              dark
+            >
+              group
+            </v-icon>
           </v-btn>
-          <v-btn @click="$router.push({name:'admin.users.permissions.list'})" class="primary lighten-1 float-right mr-2" dark>
-            Manage Permissions <v-icon right dark>vpn_key</v-icon>
+          <v-btn
+            class="primary lighten-1 float-right mr-2"
+            dark
+            @click="$router.push({name:'admin.users.permissions.list'})"
+          >
+            Manage permissions
+            <v-icon
+              right
+              dark
+            >
+              vpn_key
+            </v-icon>
           </v-btn>
         </div>
       </div>
       <div class="d-flex flex-lg-row flex-sm-column">
         <div class="flex-grow-1 pa-2">
-          <v-text-field filled prepend-icon="search" label="Filter By Name" v-model="filters.name"></v-text-field>
+          <v-text-field
+            v-model="filters.name"
+            filled
+            prepend-icon="search"
+            label="Filter by name"
+          />
         </div>
         <div class="flex-grow-1 pa-2">
-          <v-text-field filled prepend-icon="search" label="Filter By Email" v-model="filters.email"></v-text-field>
+          <v-text-field
+            v-model="filters.email"
+            filled
+            prepend-icon="search"
+            label="Filter by email"
+          />
         </div>
         <div class="flex-grow-1 pa-2">
-          <v-autocomplete filled
-             multiple
-             chips
-             deletable-chips
-             clearable
-             prepend-icon="filter_list"
-             label="Filter By Groups"
-             :items="filters.groupOptions"
-             item-text="name"
-             item-value="id"
-             v-model="filters.groupId"
-             ></v-autocomplete>
+          <v-autocomplete
+            v-model="filters.groupId"
+            filled
+            multiple
+            chips
+            deletable-chips
+            clearable
+            prepend-icon="filter_list"
+            label="Filter by groups"
+            :items="filters.groupOptions"
+            item-text="name"
+            item-value="id"
+          />
         </div>
       </div>
     </v-card>
-    <!-- /search -->
-    <v-divider class="pb-2"/>
-
-      <!-- data table -->
-      <v-data-table
-               hide-default-header
-               v-bind:headers="headers"
-               :options.sync="pagination"
-               :items="items"
-               :server-items-length="totalItems"
-               class="elevation-1">
-        <template v-slot:header="{props:{headers}}">
-          <thead>
-            <tr>
-              <th v-for="header in headers">
-                <div v-if="header.value=='name'" :class="`text-${header.align}`"><v-icon>mdi-person</v-icon> {{header.text}}</div>
-                <div v-else-if="header.value=='email'" :class="`text-${header.align}`"><v-icon>mdi-email</v-icon> {{header.text}}</div>
-                <div v-else-if="header.value=='permissions'" :class="`text-${header.align}`"><v-icon>mdi-vpn_key</v-icon> {{header.text}}</div>
-                <div v-else-if="header.value=='groups'" :class="`text-${header.align}`"><v-icon>mdi-group</v-icon> {{header.text}}</div>
-                <div v-else-if="header.value=='last_login'" :class="`text-${header.align}`"><v-icon>mdi-av_timer</v-icon> {{header.text}}</div>
-                <div v-else :class="`text-${header.align}`">{{header.text}}</div>
-              </th>
-            </tr>
-          </thead>
-        </template>
-        <template v-slot:body="{items}">
-          <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td>
-                <div class="ml-n1 my-1 d-flex justify-space-between align-content-space-around flex-wrap">
-                  <v-btn @click="$router.push({name:'admin.users.edit',params:{id: item.id}})" class="ma-1" small outlined icon color="info">
-                    <v-icon small>mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-btn @click="deleteUser(item)" class="ma-1" small outlined icon color="red">
-                    <v-icon small>mdi-delete</v-icon>
-                  </v-btn>
-                </div>
-              </td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.email }}</td>
-              <td>
-                <v-btn small @click="showDialog('admin.user_permissions',item.permissions)" outlined rounded color="grey" dark>Show</v-btn>
-              </td>
-              <td>
-                <v-chip v-for="group in item.groups" :key="group.id" outlined color="grey">
-                  {{group.name}}
-                </v-chip>
-              </td>
-              <td>{{ $appFormatters.formatDate(item.last_login) }}</td>
-              <td class="text-center">
-                <v-avatar outlined>
-                  <v-icon v-if="item.active!=null" class="green--text">check_circle</v-icon>
-                  <v-icon class="grey--text" v-else>error_outline</v-icon>
-                </v-avatar>
-              </td>
-            </tr>
-          </tbody>
-        </template>
-      </v-data-table>
-
-      <v-divider class="py-5"/>
-      <!-- dialog for show permissions -->
-      <v-dialog v-model="dialogs.showPermissions.show" absolute max-width="300px">
-        <v-card>
-          <v-card-title>
-            <div class="headline"><v-icon>vpn_key</v-icon> User Permissions</div>
-          </v-card-title>
-          <v-card-text>
-            <v-chip v-for="(permission,key) in dialogs.showPermissions.items" :key="key" class="ma-1" :class="{'green':(permission.value==1),'red':(permission.value==-1),'blue':(permission.value==0)}">
-              <v-avatar v-if="permission.value==-1" class="red darken-4" title="Deny">
-                <v-icon>block</v-icon>
+    <v-divider class="pb-2" />
+    <v-data-table
+      hide-default-header
+      :headers="headers"
+      :options.sync="pagination"
+      :items="items"
+      :server-items-length="totalItems"
+      class="elevation-1"
+    >
+      <template #header="{props:{headers}}">
+        <thead>
+          <tr>
+            <th
+              v-for="header in headers"
+              :key="header.text"
+            >
+              <div
+                v-if="header.value=='name'"
+                :class="`text-${header.align}`"
+              >
+                <v-icon>mdi-person</v-icon> 
+                {{ header.text }}
+              </div>
+              <div 
+                v-else-if="header.value=='email'"
+                :class="`text-${header.align}`"
+              >
+                <v-icon>mdi-email</v-icon> 
+                {{ header.text }}
+              </div>
+              <div 
+                v-else-if="header.value=='permissions'" 
+                :class="`text-${header.align}`"
+              >
+                <v-icon>mdi-vpn_key</v-icon>
+                {{ header.text }}
+              </div>
+              <div
+                v-else-if="header.value=='groups'"
+                :class="`text-${header.align}`"
+              >
+                <v-icon>mdi-group</v-icon>
+                {{ header.text }}
+              </div>
+              <div
+                v-else-if="header.value=='last_login'"
+                :class="`text-${header.align}`"
+              >
+                <v-icon>mdi-av_timer</v-icon>
+                {{ header.text }}
+              </div>
+              <div 
+                v-else
+                :class="`text-${header.align}`"
+              >
+                {{ header.text }}
+              </div>
+            </th>
+          </tr>
+        </thead>
+      </template>
+      <template #body="{items}">
+        <tbody>
+          <tr
+            v-for="item in items"
+            :key="item.id"
+          >
+            <td>
+              <div class="ml-n1 my-1 d-flex justify-space-between align-content-space-around flex-wrap">
+                <v-btn
+                  class="ma-1"
+                  small
+                  outlined
+                  icon
+                  color="info"
+                  @click="$router.push({name:'admin.users.edit',params:{id: item.id}})"
+                >
+                  <v-icon small>
+                    mdi-pencil
+                  </v-icon>
+                </v-btn>
+                <v-btn 
+                  class="ma-1"
+                  small
+                  outlined
+                  icon
+                  color="red"
+                  @click="deleteUser(item)"
+                >
+                  <v-icon small>
+                    mdi-delete
+                  </v-icon>
+                </v-btn>
+              </div>
+            </td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.email }}</td>
+            <td>
+              <v-btn
+                small
+                outlined
+                rounded
+                color="grey"
+                dark
+                @click="showDialog('admin.user_permissions',item.permissions)"
+              >
+                Show
+              </v-btn>
+            </td>
+            <td>
+              <v-chip 
+                v-for="group in item.groups"
+                :key="group.id"
+                outlined
+                color="grey"
+              >
+                {{ group.name }}
+              </v-chip>
+            </td>
+            <td>{{ $appFormatters.formatDate(item.last_login) }}</td>
+            <td class="text-center">
+              <v-avatar outlined>
+                <v-icon
+                  v-if="item.active!=null"
+                  class="green--text"
+                >
+                  check_circle
+                </v-icon>
+                <v-icon
+                  v-else
+                  class="grey--text" 
+                >
+                  error_outline
+                </v-icon>
               </v-avatar>
-              <v-avatar v-if="permission.value==1" class="green darken-4" title="Allow">
-                <v-icon>check_circle</v-icon>
-              </v-avatar>
-              <v-avatar v-if="permission.value==0" class="blue darken-4" title="Inherit">
-                <v-icon>swap_horiz</v-icon>
-              </v-avatar>
-              {{permission.title}}
-            </v-chip>
-            <p v-if="dialogs.showPermissions.items.length==0">No permissions</p>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-
+            </td>
+          </tr>
+        </tbody>
+      </template>
+    </v-data-table>
+    <v-divider class="py-5" />
+    <v-dialog
+      v-model="dialogs.showPermissions.show"
+      absolute
+      max-width="300px"
+    >
+      <v-card>
+        <v-card-title>
+          <div class="headline">
+            User permissions
+            <v-icon>vpn_key</v-icon>
+          </div>
+        </v-card-title>
+        <v-card-text>
+          <v-chip 
+            v-for="(permission,key) in dialogs.showPermissions.items"
+            :key="key"
+            class="ma-1"
+            :class="{'green':(permission.value==1),'red':(permission.value==-1),'blue':(permission.value==0)}"
+          >
+            <v-avatar
+              v-if="permission.value==-1"
+              class="red darken-4"
+              title="Deny"
+            >
+              <v-icon>block</v-icon>
+            </v-avatar>
+            <v-avatar
+              v-if="permission.value==1"
+              class="green darken-4"
+              title="Allow"
+            >
+              <v-icon>check_circle</v-icon>
+            </v-avatar>
+            <v-avatar
+              v-if="permission.value==0"
+              class="blue darken-4"
+              title="Inherit"
+            >
+              <v-icon>swap_horiz</v-icon>
+            </v-avatar>
+            {{ permission.title }}
+          </v-chip>
+          <p v-if="dialogs.showPermissions.items.length==0">
+            No permissions
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -163,37 +306,37 @@ export default {
       }
     }
   },
-  mounted() {
-    const self = this;
-
-    self.loadGroups(()=>{});
-
-    self.$eventBus.$on(['USER_ADDED','USER_UPDATED','USER_DELETED','GROUP_ADDED'],()=>{
-      self.loadUsers(()=>{});
-    });
-
-    self.$store.commit('setBreadcrumbs',[
-      {label:'Users',to:{name:'admin.users.list'}},
-    ]);
-  },
   watch: {
     pagination: {
       handler () {
         this.loadUsers(()=>{});
       },
     },
-    'filters.name':_.debounce(function(){
+    'filters.name': window._.debounce(function(){
       const self = this;
       self.loadUsers(()=>{});
     },700),
-    'filters.email':_.debounce(function(){
+    'filters.email': window._.debounce(function(){
       const self = this;
       self.loadUsers(()=>{});
     },700),
-    'filters.groupId':_.debounce(function(){
+    'filters.groupId': window._.debounce(function(){
       const self = this;
       self.loadUsers(()=>{});
     },700)
+  },
+  mounted() {
+    const self = this;
+
+    self.loadGroups(()=>{});
+
+    self.$eventBus.$on(['user-added','user-updated','user-deleted','group-added'],()=>{
+      self.loadUsers(()=>{});
+    });
+
+    self.$store.commit('setBreadcrumbs',[
+      {label:'Users',to:{name:'admin.users.list'}},
+    ]);
   },
   methods: {
     deleteUser(user) {
@@ -205,13 +348,13 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this user?",
         okCb: ()=>{
-          axios.delete('/api/admin/users/' + user.id).then(function(response) {
+          window.axios.delete('/api/admin/users/' + user.id).then(function(response) {
             self.$store.commit('showSnackbar',{
               message: response.data.message,
               color: 'success',
               duration: 3000
             });
-            self.$eventBus.$emit('USER_DELETED');
+            self.$eventBus.$emit('user-deleted');
           }).catch(function (error) {
             self.$store.commit('hideLoader');
             if (error.response) {
@@ -254,7 +397,7 @@ export default {
         per_page: self.pagination.itemsPerPage
       };
 
-      axios.get('/api/admin/users',{params: params}).then(function(response) {
+      window.axios.get('/api/admin/users',{params: params}).then(function(response) {
         self.items = response.data.data.data;
         self.totalItems = response.data.data.total;
         self.pagination.totalItems = response.data.data.total;
@@ -269,7 +412,7 @@ export default {
         paginate: 'no'
       };
 
-      axios.get('/api/admin/groups',{params: params}).then(function(response) {
+      window.axios.get('/api/admin/groups',{params: params}).then(function(response) {
         self.filters.groupOptions = response.data.data;
         cb();
       });

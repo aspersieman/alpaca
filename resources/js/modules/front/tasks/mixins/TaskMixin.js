@@ -31,13 +31,13 @@ export default {
       }
       if (tasks.length > 1) {
         window.axios.post(`/api/tasks/order`, { "tasks": tasks })
-            .then()
-            .catch(error => {
-            console.log(error);
-            this.$store.commit('showSnackbar', {
-              message: error.response.data.data.message,
-              color: 'error',
-              duration: 3000
+          .then()
+          .catch(error => {
+          console.log(error);
+          this.$store.commit('showSnackbar', {
+            message: error.response.data.data.message,
+            color: 'error',
+            duration: 3000
           });
         });
       }

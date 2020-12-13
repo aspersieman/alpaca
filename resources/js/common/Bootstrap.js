@@ -1,6 +1,6 @@
 
-window._ = require('lodash');
 window.moment = require('moment');
+window._ = require('lodash');
 window.Dropzone = require('dropzone');
 
 /**
@@ -11,9 +11,10 @@ window.Dropzone = require('dropzone');
 
 try {
     window.$ = window.jQuery = require('jquery');
-
     require('bootstrap-sass');
-} catch (e) {}
+} catch (e) {
+  console.error('Coult not load bootstrap-sass');
+}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
