@@ -154,10 +154,12 @@ export default {
     },
 
     dateFormat(dateValue, time = false) {
+      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (time) {
-        return moment(dateValue).format('YYYY-MM-DD @ HH:mm:SS');
+        const date = moment(dateValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        return moment.tz(date, tz).format('YYYY-MM-DD @ HH:mm:SS');
       } else {
-        return moment(dateValue).format('YYYY-MM-DD');
+        return moment.tz(dateValue, tz).format('YYYY-MM-DD');
       }
     },
 

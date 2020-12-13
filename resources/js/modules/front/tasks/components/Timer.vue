@@ -184,17 +184,7 @@ export default {
       self.startTimer(timer);
     });
   },
-  methods: {
-    /**
-     * Redirects user back to login page if logged out
-     */
-    authenticationCheck: function(statusCode) {
-      if (parseInt(statusCode) == 419) {
-        // Logged out
-        this.$router.go("/");
-      }
-    },
-  },
+  methods: { },
 }
 </script>
 
