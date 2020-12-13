@@ -9,6 +9,16 @@
         v-if="$vuetify.breakpoint.smAndDown || this.$store.getters.menu.length > 0"
         @click="toggleDrawer" 
       />
+      <router-link to="/">
+        <v-img
+          :src="require('../../../img/logo/llama_emoji.png')"
+          class="mr-5"
+          contain
+          height="48"
+          width="48"
+          max-width="48"
+        />
+      </router-link>
       <v-toolbar-title
         class="toolbar-title"
       >
@@ -18,16 +28,6 @@
       </v-toolbar-title>
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
-          <router-link to="/">
-            <v-img
-              :src="require('../../../img/logo/llama_emoji.png')"
-              class="mr-5"
-              contain
-              height="48"
-              width="48"
-              max-width="48"
-            />
-          </router-link>
           <v-btn
             v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
@@ -146,9 +146,8 @@ export default {
 </script>
 <style scoped>
 .toolbar-title {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
+  width: 100px;
+  min-width: 100px;
 } 
 .main-container {
   margin-left: unset !important;

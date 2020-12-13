@@ -4,17 +4,25 @@
   >
     <v-bottom-sheet inset>
       <template #activator="{ on, attrs }">
-        {{ timerTime }}
-        <v-btn
-          class="timer-button"
-          v-bind="attrs"
-          v-on="on"
+        <div
+          :class="{'timer-button-block': $vuetify.breakpoint.mdAndUp}"
         >
-          Active Timer
-          <v-icon>
-            access_time
-          </v-icon>
-        </v-btn>
+          <v-btn
+            class="timer-button"
+            v-bind="attrs"
+            v-on="on"
+          >
+            Active Timer
+            <v-icon>
+              access_time
+            </v-icon>
+          </v-btn>
+          <span
+            class="hidden-md-and-down"
+          >
+            {{ timerTime }}
+          </span>
+        </div>
       </template>
       <v-card tile>
         <v-list>
@@ -97,6 +105,13 @@ export default {
 
 .timer-button {
   background-color: $active-green !important;
+}
+
+.timer-button-block {
+  border: solid 1px $active-green;
+  margin: 2px;
+  padding: 5px;
+  border-radius: 4px;
 }
 </style>
 
