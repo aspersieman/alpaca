@@ -127,7 +127,7 @@
                         duration: 3000
                     });
                     self.$store.commit('hideLoader');
-                    self.$eventBus.$emit('GROUP_UPDATED');
+                    self.$eventBus.$emit('group-updated');
 
                 }).catch(function (error) {
 

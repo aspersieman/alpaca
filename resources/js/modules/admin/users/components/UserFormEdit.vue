@@ -155,7 +155,7 @@
                 self.loadGroups(()=>{});
             });
 
-            self.$eventBus.$on(['GROUP_ADDED'],()=>{
+            self.$eventBus.$on(['group-added'],()=>{
                 self.loadGroups(()=>{});
             });
 

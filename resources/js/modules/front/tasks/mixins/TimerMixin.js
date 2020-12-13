@@ -228,16 +228,16 @@ export default {
 
         window.axios.put(`/api/tasks/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
           .then(response => {
-          this.loading = false;
-          this.dialog = false;
-          this.formReset();
-          this.$eventBus.$emit('timer-updated');
-          this.$store.commit('showSnackbar',{
-            message: "Timer updated",
-            color: 'success',
-            duration: 1000
-          });
-          return response;
+            this.loading = false;
+            this.dialog = false;
+            this.formReset();
+            this.$store.commit('showSnackbar',{
+              message: "Timer updated",
+              color: 'success',
+              duration: 1000
+            });
+            this.$eventBus.$emit('timer-updated');
+            return response;
         })
           .catch(error => {
           console.log(error);
