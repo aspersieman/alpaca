@@ -66,7 +66,7 @@ desc("Build resources");
 task('build', function () {
   run('npm install');
   run('npm run production');
-  run('rm ./public/storage');
+  run('rm -f ./public/storage');
 })->local();
 
 desc("Clean storage");
