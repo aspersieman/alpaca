@@ -30,7 +30,6 @@
           <div
             v-if="!editMode" 
             :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}"
-            @click="editMode = !editMode; newName = task.name;"
           >
             <div class="ellipsis ml-2">
               {{ task.name }}
@@ -142,15 +141,15 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click.stop="openNotesDrawer()"
+              @click="openNotesDrawer()"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
                   <v-icon v-on="on">
-                    note_add
+                    note
                   </v-icon>
                 </template>
-                Add note
+                Notes
               </v-tooltip>
             </v-btn>
           </div>
@@ -211,7 +210,7 @@
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>note_add</v-icon>
                   </v-list-item-icon>
-                  <v-list-item-title>Add note</v-list-item-title>
+                  <v-list-item-title>Notes</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -271,14 +270,12 @@ export default {
       newValues: [],
       timers: [],
       editMode: false,
-      drawer: false,
     }
   },
   mounted() { },
   methods: {
     openNotesDrawer() {
       const self = this;
-      self.drawer = !self.drawer;
       self.$store.commit('setNotes', self.task.notes);
       self.$store.commit('setSelectedTask', self.task);
       self.$eventBus.$emit('notes-drawer-toggle', true);

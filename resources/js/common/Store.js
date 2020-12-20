@@ -36,6 +36,7 @@ export default new Vuex.Store({
     tasks: [],
     timer: null,
     notes: [],
+    notesDrawer: false,
     activeTimer: null,
     activeTimerCounter: {
       seconds: 0,
@@ -143,6 +144,9 @@ export default new Vuex.Store({
     setNotes(state, notes) {
       state.notes = notes;
     },
+    setNotesDrawer(state, value) {
+      state.notesDrawer = value;
+    },
   },
   getters: {
     //logged in user
@@ -214,6 +218,9 @@ export default new Vuex.Store({
     },
     getNotes: state => {
       return state.notes
+    },
+    getNotesDrawer: state => {
+      return state.notesDrawer
     },
   },
   actions: {

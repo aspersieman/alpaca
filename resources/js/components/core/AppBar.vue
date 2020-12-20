@@ -78,7 +78,7 @@
           <v-spacer />
           <avatar 
             v-if="this.$store.getters.isLoggedIn"
-            class="d-none d-sm-flex"
+            class="d-sm-flex"
           />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
