@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Conner\Tagging\Taggable;
 
+use Illuminate\Support\Facades\Log;
+
 class Timer extends Model
 {
   use \Conner\Tagging\Taggable;
@@ -77,8 +79,8 @@ class Timer extends Model
     $timer->name = $data['name'];
     $timer->started_at = $data['started_at'];
     $timer->stopped_at = $data['stopped_at'];
-    $start = Carbon::createFromFormat('Y-m-d H:s:i', $timer->started_at);
-    $end = Carbon::createFromFormat('Y-m-d H:s:i', $timer->stopped_at);
+    $start = Carbon::createFromFormat('Y-m-d H:i:s', $timer->started_at);
+    $end = Carbon::createFromFormat('Y-m-d H:i:s', $timer->stopped_at);
     $timer->duration = $end->diffInSeconds($start);
     $timer->retag($data['tags']);
     $timer->save();
@@ -103,7 +105,26 @@ class Timer extends Model
     return $times;
   }
 
-  public static function byDate($start, $end, array $userIds)
+  public static function byTag($start, $end, array $userIds)
+  {
+    $userIds = $userIds ?? [auth()->user()->id];
+    $times = Timer::select(
+      [
+        "tagging_tagged.tag_name", 
+        \DB::raw("SUM(duration) AS duration")
+      ]
+    )
+      ->join('tagging_tagged', 'tagging_tagged.taggable_id', '=', 'timers.id')
+      ->where('started_at', '>=', $start)
+      ->where('stopped_at', '<=', $end)
+      ->whereNotNull('stopped_at')
+      ->whereIn('user_id', $userIds)
+      ->groupBy("tagging_tagged.tag_name")
+      ->get();
+    return $times;
+  }
+
+  public static function byTimer($start, $end, array $userIds)
   {
     $userIds = $userIds ?? [auth()->user()->id];
     $timers = Timer::select(

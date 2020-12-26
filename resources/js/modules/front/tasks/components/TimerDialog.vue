@@ -118,7 +118,7 @@
                   <v-time-picker
                     v-if="startTimeMenu"
                     v-model="startTime"
-                    full-width
+                    width="290"
                     @click:minute="$refs.menu.save(startTime)"
                   />
                 </v-menu>
@@ -249,8 +249,5 @@ export default {
 }
 </script>
 <style scoped>
-.mw-150 {
-  max-width: 150px;
-}
 </style>
 

@@ -14,15 +14,17 @@
           </v-icon>
         </v-avatar>
         <h3 class="title">
-          Timeline
+          Timer timeline
         </h3>
       </v-card-title>
       <v-card-subtitle
         class="pa-2 grey lighten-3"
       >
-        Timeline of recent timers
+        Timeline of time logged by date range
       </v-card-subtitle>
-      <v-container>
+      <v-container
+        v-if="showDateRange"
+      >
         <v-row>
           <v-col align="center">
             <v-menu
@@ -46,13 +48,13 @@
                 />
               </template>
               <v-date-picker
-                v-model="dates"
+                value="dates"
                 light
                 range
               />
             </v-menu>
             <base-btn-primary
-              @click="getTimelineData()"
+              @click="getData()"
             >
               Go
             </base-btn-primary>
@@ -71,11 +73,15 @@
           :color="timelineItemColour(index)"
           small
         >
-          <strong> {{ dateTimeFormat(timer.started_at, "ddd, D MMM") }} </strong>
+          <strong
+            v-if="timer.dateStarted != null"
+          >
+            {{ timer.dateStarted }}
+          </strong>
           <v-row class="pt-1">
             <v-col cols="4">
               <span class="caption">
-                {{ dateTimeFormat(timer.started_at, "HH:mm") }} - {{ dateTimeFormat(timer.stopped_at, "HH:mm") }}
+                {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
                 ({{ calculateTimeSpent(timer) }})
               </span>
             </v-col>
@@ -102,29 +108,45 @@
       </v-timeline>
     </v-card-text>
     <v-card-subtitle
-      class="timeline-footer"
+      class="chart-footer"
     >
-      Total time: 12:34:56
+      Total time: {{ totalTime }}
     </v-card-subtitle>
   </v-card>
 </template>
 <script>
 
 import TimerMixin from '../../../../mixins/TimerMixin';
-import methods from '../../../../common/Methods';
 
 export default {
   components: { },
   mixins: [
     TimerMixin
   ],
-  props: { },
+  props: {
+    showDateRange: {
+      required: false,
+      type: Boolean,
+      default: function() {
+        return true
+      }
+    },
+    dates: {
+      required: false,
+      type: Array,
+      default: function() {
+        return [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ]
+      }
+    }
+  },
   data() {
     return {
       dateRangeMenu: false,
-      dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
       loading: false,
-      timers: []
+      timers: [],
+      days: [],
+      totalDuration: 0,
+      totalTime: "00:00:00"
     }
   },
   computed: {
@@ -133,11 +155,11 @@ export default {
     },
   },
   created() {
-    this.getTimelineData();
+    this.getData();
   },
   mounted() { },
   methods: {
-    getTimelineData() {
+    getData() {
       const self = this;
       self.loading = true;
       const params = {
@@ -145,22 +167,26 @@ export default {
         end: self.dates[1],
         userIds: self.userIds
       };
-      window.axios.post('/api/chart/timersbydate', params).then(response => {
-        self.timers = response.data;
+      window.axios.post('/api/chart/bytimer', params).then(response => {
+        let timers = response.data;
+        timers.forEach(timer => {
+          let dateStarted = this.$appFormatters.dateTimeFormat(timer.started_at, "ddd, D MMM")
+          timer.dateStarted = null;
+          if (!self.days.includes(dateStarted)) {
+            self.days.push(dateStarted);
+            timer.dateStarted = dateStarted;
+          }
+          self.totalDuration += timer.duration;
+          self.timers.push(timer);
+        });
+        self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds');
         self.loading = false;
-        methods.debug(self.timers);
       });
-    },
-    dateTimeFormat(dateTime, format) {
-      return methods.dateTimeFormat(dateTime, format)
     },
     timelineItemColour(index) {
       const mod = index % 2;
       return mod === 1 ? 'teal lighten-3' : 'pink';
     },
-    duration(seconds) {
-      return window.moment().startOf('day').seconds(seconds).format('HH:mm:ss');
-    }
   },
 }
 </script>
@@ -168,20 +194,7 @@ export default {
 <style scoped lang="scss">
 @import "../../../../../sass/index";
 
-.timeline-date-select {
-  padding-left: 3px;
-}
-
 .timeline-card {
-  max-width: 400px;
   min-width: 340px;
-}
-
-.date-range-input {
-  max-width: 215px;
-}
-
-.timeline-footer {
-  background-color: $selected-light-grey;
 }
 </style>

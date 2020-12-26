@@ -3,24 +3,59 @@
     id="dasboard"
     class="page_wrap_vue pa-3"
   >
-    <h1 class="subheading grey--text ml-4">
-      Dashboard
-    </h1>
-    <v-container 
-      fluid
-      class="dashboard-container"
+    <v-layout 
+      row 
+      class="mb-3" 
+      wrap
     >
+      <v-avatar>
+        <v-icon>
+          dashboard
+        </v-icon>
+      </v-avatar>
+      <h1 class="subheading grey--text ml-4">
+        Dashboard
+      </h1>
+    </v-layout>
+    <v-container fluid>
+      <v-row>
+        <v-col align="center">
+          <v-spacer />
+        </v-col>
+        <v-col align="center">
+          <v-container fluid>
+            <v-row>
+              <v-col>
+                <date-range-picker />
+              </v-col>
+              <v-col>
+                <base-btn-primary
+                  @click="search()"
+                >
+                  Go
+                </base-btn-primary>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+        <v-col align="center">
+          <v-spacer />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col>
-          <timeline />
+          <chart-timer-timeline
+            :show-date-range="showDateRange"
+          />
         </v-col>
         <v-col>
-          <chart-bar-time-by-day />
+          <chart-bar-time-by-day
+            :show-date-range="showDateRange"
+          />
         </v-col>
         <v-col>
-          <pie-chart
-            :download="true" 
-            :data="[['Blueberry', 44], ['Strawberry', 23]]"
+          <chart-pie-time-by-tag
+            :show-date-range="showDateRange"
           />
         </v-col>
       </v-row>
@@ -30,18 +65,28 @@
 <script>
 
 import ChartBarTimeByDay from './components/ChartBarTimeByDay';
-import Timeline from './components/Timeline';
+import ChartPieTimeByTag from './components/ChartPieTimeByTag';
+import ChartTimerTimeline from './components/ChartTimerTimeline';
+import DateRangePicker from './components/DateRangePicker';
 
 export default {
-  name: 'Home',
+  name: 'Dashboard',
   components: {
-    'chart-bar-time-by-day': ChartBarTimeByDay,
-    Timeline
+    ChartBarTimeByDay,
+    ChartPieTimeByTag,
+    ChartTimerTimeline,
+    DateRangePicker
+  },
+  data() {
+    return {
+      showDateRange: false,
+    }
   },
   mounted() { },
+  methods: {
+    search() {
+      console.log("searching...");
+    }
+  }
 }
 </script>
-<style scoped lang="scss">
-@import "../../../../sass/index";
-
-</style>

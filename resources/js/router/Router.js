@@ -116,15 +116,11 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  methods.debug(from);
-  methods.debug(to);
   store.commit("showLoader");
   next();
 });
 
 router.afterEach((to, from) => {
-  methods.debug(from);
-  methods.debug(to);
   setTimeout(()=>{
     store.commit("hideLoader");
   },1000);

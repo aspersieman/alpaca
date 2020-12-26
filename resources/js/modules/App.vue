@@ -46,7 +46,7 @@ export default {
           && err.response.config 
           && !err.response.config.__isRetryRequest
           && self.$route.name != 'index') {
-          self.$router.push('index'); 
+          self.$router.push('/'); 
         }
       });
     });

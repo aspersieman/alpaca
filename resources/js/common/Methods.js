@@ -41,9 +41,4 @@ export default {
       console.log(message);
     }
   },
-  dateTimeFormat(dateTimeValue, format) {
-    let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const date = window.moment(dateTimeValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
-    return window.moment.tz(date, tz).format(format);
-  },
 }

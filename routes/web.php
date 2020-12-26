@@ -25,7 +25,8 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
   Route::put('/tasks/{id}/timer/{timer_id}', 'Front\\TimerController@update');
   Route::get('/tasks/timers/active', 'Front\\TimerController@running');
   Route::post('/chart/byday', 'Front\\ChartController@byDay');
-  Route::post('/chart/timersbydate', 'Front\\ChartController@timersByDate');
+  Route::post('/chart/bytag', 'Front\\ChartController@byTag');
+  Route::post('/chart/bytimer', 'Front\\ChartController@byTimer');
   Route::post('/notes', 'Front\\NoteController@store');
   Route::delete('/notes/{id}', 'Front\\NoteController@delete');
   Route::put('/notes/{id}', 'Front\\NoteController@update');
