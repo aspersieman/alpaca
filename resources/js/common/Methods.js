@@ -3,11 +3,11 @@ export default {
       window.location.href = loginUrl;
   },
   clickLogout: function(logoutUrl, afterLogoutRedirectUrl) {
-    axios.post(logoutUrl).then(()=>{
+    window.axios.post(logoutUrl).then(()=>{
       window.location.href = afterLogoutRedirectUrl;
     }).catch(err => {
       window.location.href = afterLogoutRedirectUrl;
-      console.log(err)
+      console.log(err);
     })
   },
   getCanvasBreakpoint: function(width) {
@@ -40,5 +40,10 @@ export default {
     if (process.env.NODE_ENV === 'development') {
       console.log(message);
     }
-  }
+  },
+  dateTimeFormat(dateTimeValue, format) {
+    let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const date = window.moment(dateTimeValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
+    return window.moment.tz(date, tz).format(format);
+  },
 }

@@ -53,6 +53,16 @@ class MenuController extends FrontController
           'visible'=>true,
         ]),
         new MenuItem([
+          'group_requirements' => [],
+          'permission_requirements' => ['superuser'],
+          'label'=>'Reports',
+          'nav_type' => MenuItem::$NAV_TYPE_NAV,
+          'icon'=>'query_stats',
+          'route_type'=>'vue',
+          'route_name'=>'reports',
+          'visible'=>true,
+        ]),
+        new MenuItem([
           'label' => 'divider1',
           'nav_type' => MenuItem::$NAV_TYPE_DIVIDER
         ]),

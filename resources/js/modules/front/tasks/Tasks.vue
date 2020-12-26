@@ -7,6 +7,11 @@
         class="mb-3" 
         wrap
       >
+        <v-avatar>
+          <v-icon>
+            task_alt
+          </v-icon>
+        </v-avatar>
         <h1 class="subheading grey--text ml-4">
           Tasks
         </h1>
@@ -132,8 +137,8 @@
 <script>
 import Task from './components/Task';
 import draggable from 'vuedraggable';
-import TaskMixin from './mixins/TaskMixin';
-import TimerMixin from './mixins/TimerMixin';
+import TaskMixin from '../../../mixins/TaskMixin';
+import TimerMixin from '../../../mixins/TimerMixin';
 import NotesDrawer from '../../../components/notes/NotesDrawer';
 
 export default {

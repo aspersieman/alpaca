@@ -29,7 +29,7 @@
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
-            v-if="show && this.$store.getters.isLoggedIn"
+            v-if="$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard"
@@ -37,7 +37,7 @@
             Dashboard
           </v-btn>
           <v-btn
-            v-if="this.$store.getters.isLoggedIn"
+            v-if="$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/tasks"
@@ -45,7 +45,7 @@
             Tasks
           </v-btn>
           <v-btn
-            v-if="show && this.$store.getters.isLoggedIn"
+            v-if="this.$store.getters.isLoggedIn"
             class="d-none d-sm-flex appbar-button"
             text
             to="/reports"
@@ -53,18 +53,18 @@
             Reports
           </v-btn>
           <v-spacer />
-          <v-btn
+          <base-btn-primary
             v-if="this.$store.getters.isLoggedIn"
             v-shortkey.once="['ctrl', 'alt', 't']"
-            class="primary lighten-1 hidden-sm-and-down"
+            class="hidden-sm-and-down"
             dark
             title="Add new Task"
+            icon="add"
             @shortkey="openTaskDialog()" 
             @click="openTaskDialog()"
           >
             New task
-            <v-icon>add</v-icon>
-          </v-btn>
+          </base-btn-primary>
           <timer-active />
           <v-btn
             v-if="!this.$store.getters.isLoggedIn"
@@ -78,7 +78,7 @@
           <v-spacer />
           <avatar 
             v-if="this.$store.getters.isLoggedIn"
-            class="d-sm-flex"
+            class="d-none d-sm-flex"
           />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
@@ -98,7 +98,7 @@ import TaskDialog from '../../modules/front/tasks/components/TaskDialog';
 import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
 import Avatar from './Avatar';
 import methods from '../../common/Methods';
-import TaskMixin from '../../modules/front/tasks/mixins/TaskMixin';
+import TaskMixin from '../../mixins/TaskMixin';
 
 export default {
   name: 'CoreAppBar',

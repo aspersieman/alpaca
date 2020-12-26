@@ -91,7 +91,6 @@ export default {
   computed: {
     drawerState: {
       get() {
-        console.log("GET drawerState: "+this.$store.getters.getNotesDrawer);
         return this.$store.getters.getNotesDrawer; 
       },
       set(state) {
@@ -118,7 +117,6 @@ export default {
           timers: []
         };
       }
-      console.log('notes-drawer-toggle: '+value);
       this.$store.commit('setNotesDrawer', value);
     });
     self.$eventBus.$on('note-deleted', (note) => {
@@ -275,7 +273,6 @@ export default {
     },
 
     close () {
-      console.log("close");
       this.$eventBus.$emit('notes-drawer-toggle', false);
     },
 

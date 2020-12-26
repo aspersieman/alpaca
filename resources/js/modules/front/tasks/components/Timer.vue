@@ -36,7 +36,7 @@
               {{ timer.name }}
             </div>
             <div class="caption">
-              {{ dateFormat(timer.started_at, true) }}
+              {{ timerFormat(timer.started_at, true) }}
             </div>
           </v-flex>
           <v-flex
@@ -154,7 +154,7 @@
 </template>
 <script>
 
-import TimerMixin from '../mixins/TimerMixin';
+import TimerMixin from '../../../../mixins/TimerMixin';
 
 export default {
   components: { },

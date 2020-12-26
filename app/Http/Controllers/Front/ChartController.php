@@ -28,9 +28,7 @@ class ChartController extends FrontController
   public function byDay(Request $request)
   {
     $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime('-20 days')));
-    Log::info("start: ".$start);
     $end = $request['end'] ?? new \DateTime('NOW');
-    Log::info("end: ".$end);
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timeByDay = Timer::byDay($start, $end, $userIds)->toArray();
     $times = [];
@@ -38,5 +36,14 @@ class ChartController extends FrontController
       $times[] = [$day['timer_date'], $day['duration']];
     }
     return $times;
+  }
+
+  public function timersByDate(Request $request)
+  {
+    $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime('-20 days')));
+    $end = $request['end'] ?? new \DateTime('NOW');
+    $userIds = $request['userIds'] ?? [auth()->user()->id];
+    $timers = Timer::byDate($start, $end, $userIds);
+    return $timers;
   }
 }

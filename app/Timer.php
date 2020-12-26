@@ -96,9 +96,31 @@ class Timer extends Model
     )
       ->where('started_at', '>=', $start)
       ->where('stopped_at', '<=', $end)
+      ->whereNotNull('stopped_at')
       ->whereIn('user_id', $userIds)
       ->groupBy(\DB::raw("DATE(started_at)"))
       ->get();
     return $times;
+  }
+
+  public static function byDate($start, $end, array $userIds)
+  {
+    $userIds = $userIds ?? [auth()->user()->id];
+    $timers = Timer::select(
+      [
+        \DB::raw("tasks.name AS task_name"),
+        \DB::raw("timers.name AS timer_name"),
+        "started_at",
+        "stopped_at", 
+        "duration",
+      ]
+    )
+      ->join('tasks', 'tasks.id', '=', 'timers.task_id')
+      ->where('started_at', '>=', $start . " 00:00:00")
+      ->where('stopped_at', '<=', $end . " 23:59:59")
+      ->whereNotNull('stopped_at')
+      ->whereIn('timers.user_id', $userIds)
+      ->get();
+    return $timers;
   }
 }

@@ -13,7 +13,7 @@ export default {
     return {
       start: moment().subtract(50,'d').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
-      userIds: [APP_GLOBALS.AUTH_USER],
+      userIds: [window.APP_GLOBALS.AUTH_USER],
       chartData: []
     }
   },

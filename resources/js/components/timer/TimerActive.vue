@@ -64,7 +64,7 @@
 </template>
 <script>
 
-import TimerMixin from '../../modules/front/tasks/mixins/TimerMixin';
+import TimerMixin from '../../mixins/TimerMixin';
 
 export default {
   components: { },
@@ -84,7 +84,7 @@ export default {
       return this.$store.state.activeTimerCounter.title;
     },
     timerStarted: function() {
-      return this.dateFormat(this.$store.state.activeTimerCounter.timer.started_at, true);
+      return this.timerFormat(this.$store.state.activeTimerCounter.timer.started_at, true);
     },
     showTimer: function() {
       return this.$store.state.activeTimerCounter != null;

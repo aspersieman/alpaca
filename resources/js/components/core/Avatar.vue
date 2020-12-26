@@ -2,6 +2,7 @@
   <div>
     <v-menu
       bottom
+      left
       min-width="200px"
       rounded
       offset-y
@@ -66,19 +67,17 @@ export default {
       name: '',
       email: '',
       color: ''
-    },
+    }
   }),
 
   mounted() {
     var self = this;
     self.clickLogout = methods.clickLogout;
     if (this.$store.getters.isLoggedIn) {
-      this.user.name = window.APP_GLOBALS.AUTH_USER.name;
-      this.user.email = window.APP_GLOBALS.AUTH_USER.email;
-      var initials = this.user.name.match(/\b\w/g) || [];
-      this.user.initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
-      this.user.color = "#"+this.intToRGB(this.hashCode(this.user.name));
-      console.log(this.user.color);
+      self.user.name = window.APP_GLOBALS.AUTH_USER.name;
+      self.user.email = window.APP_GLOBALS.AUTH_USER.email;
+      self.user.initials = self.getInitials(self.user.name);
+      self.user.color = self.getAvatarColour(self.user.name);
     }
   },
 
@@ -90,13 +89,25 @@ export default {
       }
       return hash;
     },
-
     intToRGB(i) {
       var c = (i & 0x00FFFFFF)
         .toString(16)
         .toUpperCase();
       return "00000".substring(0, 6 - c.length) + c;
+    },
+    getInitials(name) {
+      var initials = name.match(/\b\w/g) || [];
+      return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+    },
+    getAvatarColour(name) {
+      return "#"+this.intToRGB(this.hashCode(name));
     }
   }
 }
 </script>
+
+<style scoped lang="scss">
+.avatar-menu {
+  margin-top: 7px;
+}
+</style>

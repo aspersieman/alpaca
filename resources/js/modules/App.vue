@@ -36,9 +36,23 @@ export default {
       return this.$store.getters.showLoader;
     },
   },
+  created() {
+    const self = this;
+    self.$store.commit('setAuthUser', window.APP_GLOBALS.AUTH_USER);
+
+    window.axios.interceptors.response.use(undefined, function (err) {
+      return new Promise(function () {
+        if (err.response.status === 401 
+          && err.response.config 
+          && !err.response.config.__isRetryRequest
+          && self.$route.name != 'index') {
+          self.$router.push('index'); 
+        }
+      });
+    });
+  },
   mounted() {
     const self = this;
-    self.$store.commit('setAuthUser', APP_GLOBALS.AUTH_USER);
     self.$store.dispatch('loadMenu');
   },
   methods: { }

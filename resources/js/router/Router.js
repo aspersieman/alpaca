@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '../common/Store';
+import methods from '../common/Methods';
 
 Vue.use(Router);
 
@@ -28,6 +29,11 @@ const router = new Router({
           path: '/tasks',
           name: 'tasks',
           component: require("../modules/front/tasks/Tasks")
+        },
+        {
+          path: '/reports',
+          name: 'reports',
+          component: require("../modules/front/reports/Reports")
         },
         {
           name: "admin.dashboard",
@@ -110,11 +116,15 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  methods.debug(from);
+  methods.debug(to);
   store.commit("showLoader");
   next();
 });
 
 router.afterEach((to, from) => {
+  methods.debug(from);
+  methods.debug(to);
   setTimeout(()=>{
     store.commit("hideLoader");
   },1000);

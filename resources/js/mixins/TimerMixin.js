@@ -1,4 +1,5 @@
 import moment from 'moment';
+import methods from '../common/Methods';
 
 export default {
   data(){
@@ -153,7 +154,7 @@ export default {
       });
     },
 
-    dateFormat(dateValue, time = false) {
+    timerFormat(dateValue, time = false) {
       let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (time) {
         const date = moment(dateValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
@@ -251,5 +252,41 @@ export default {
       }
     },
   },
+
+  getTimersByDates(fromDate, toDate) {
+    methods.debug(fromDate);
+    methods.debug(toDate);
+
+    const started_at = moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
+    const timer = {
+      name: this.name,
+      started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
+      stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss"),
+      tags: this.tags
+    };
+
+    window.axios.put(`/api/timers/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
+      .then(response => {
+        this.loading = false;
+        this.dialog = false;
+        this.formReset();
+        this.$store.commit('showSnackbar',{
+          message: "Timer updated",
+          color: 'success',
+          duration: 1000
+        });
+        this.$eventBus.$emit('timer-updated');
+        return response;
+      })
+      .catch(error => {
+        console.log(error);
+        this.$store.commit('showSnackbar',{
+          message: error.response.data.message,
+          color: 'error',
+          duration: 3000
+        });
+        this.loading = false;
+      });
+  }
 }
 

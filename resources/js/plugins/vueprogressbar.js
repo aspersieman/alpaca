@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueProgressBar from 'vue-progressbar'
+import VueProgressBar from 'vue-progressbar';
 
 // this is the progress bar settings, you
 // can change colors here to fit on your needs or match

@@ -177,7 +177,7 @@
 <script>
 
 import moment from 'moment';
-import TimerMixin from '../mixins/TimerMixin';
+import TimerMixin from '../../../../mixins/TimerMixin';
 
 export default {
   mixins: [ TimerMixin ],

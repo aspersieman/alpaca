@@ -163,6 +163,7 @@
             <v-menu
               bottom
               left
+              close-on-content-click
             >
               <template #activator="{ on, attrs }">
                 <v-btn
@@ -238,8 +239,8 @@
 <script>
 
 import Timer from './Timer';
-import TaskMixin from '../mixins/TaskMixin';
-import TimerMixin from '../mixins/TimerMixin';
+import TaskMixin from '../../../../mixins/TaskMixin';
+import TimerMixin from '../../../../mixins/TimerMixin';
 
 export default {
   components: {
