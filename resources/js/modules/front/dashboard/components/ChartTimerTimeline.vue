@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="mx-auto timeline-card"
+    class="mx-auto"
   >
     <v-card
       light
@@ -78,7 +78,10 @@
           >
             {{ timer.dateStarted }}
           </strong>
-          <v-row class="pt-1">
+          <v-row
+            v-if="$vuetify.breakpoint.mdAndUp"
+            class="pt-1"
+          >
             <v-col cols="4">
               <span class="caption">
                 {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
@@ -104,6 +107,32 @@
               </div>
             </v-col>
           </v-row>
+          <div
+            v-if="$vuetify.breakpoint.smAndDown"
+          >
+            <div class="caption fullwidth">
+              {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
+              ({{ calculateTimeSpent(timer) }})
+            </div>
+            <div class="fullwidth">
+              <v-icon>
+                access_time
+              </v-icon>
+              <strong
+                class="ellipsis"
+              >
+                {{ timer.timer_name }}
+              </strong>
+            </div>
+            <div class="caption ellipsis fullwidth">
+              <v-icon
+                small
+              >
+                task_alt
+              </v-icon>
+              {{ timer.task_name }}
+            </div>
+          </div>
         </v-timeline-item>
       </v-timeline>
     </v-card-text>
@@ -146,7 +175,8 @@ export default {
       timers: [],
       days: [],
       totalDuration: 0,
-      totalTime: "00:00:00"
+      totalTime: "00:00:00",
+      userIds: [ window.APP_GLOBALS.AUTH_USER ],
     }
   },
   computed: {
@@ -157,18 +187,33 @@ export default {
   created() {
     this.getData();
   },
-  mounted() { },
+  mounted() {
+    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-timer-timeline-parameters-changed' ], (values) => {
+      this.getData(values);
+    });
+  },
   methods: {
-    getData() {
+    getData(parameters) {
       const self = this;
+      let dateStart = self.dates[0];
+      let dateEnd = self.dates[1];
+      if (
+        typeof parameters !== 'undefined'
+        && typeof parameters.dates !== 'undefined'
+      ) {
+        dateStart = parameters.dates[0];
+        dateEnd = parameters.dates[1];
+      }
       self.loading = true;
       const params = {
-        start: self.dates[0],
-        end: self.dates[1],
+        start: dateStart,
+        end: dateEnd,
         userIds: self.userIds
       };
       window.axios.post('/api/chart/bytimer', params).then(response => {
         let timers = response.data;
+        self.timers = [];
+        self.days = [];
         timers.forEach(timer => {
           let dateStarted = this.$appFormatters.dateTimeFormat(timer.started_at, "ddd, D MMM")
           timer.dateStarted = null;
@@ -194,7 +239,7 @@ export default {
 <style scoped lang="scss">
 @import "../../../../../sass/index";
 
-.timeline-card {
-  min-width: 340px;
+.fullwidth {
+  width: 100%;
 }
 </style>

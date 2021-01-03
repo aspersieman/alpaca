@@ -20,26 +20,14 @@
     <v-container fluid>
       <v-row>
         <v-col align="center">
-          <v-spacer />
-        </v-col>
-        <v-col align="center">
-          <v-container fluid>
-            <v-row>
-              <v-col>
-                <date-range-picker />
-              </v-col>
-              <v-col>
-                <base-btn-primary
-                  @click="search()"
-                >
-                  Go
-                </base-btn-primary>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-col>
-        <v-col align="center">
-          <v-spacer />
+          <date-range-picker 
+            v-model="dates"
+          />
+          <base-btn-primary
+            @click="search()"
+          >
+            Go
+          </base-btn-primary>
         </v-col>
       </v-row>
       <v-row>
@@ -80,12 +68,13 @@ export default {
   data() {
     return {
       showDateRange: false,
+      dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
     }
   },
   mounted() { },
   methods: {
     search() {
-      console.log("searching...");
+      this.$eventBus.$emit('chart-parameters-changed', { 'dates': this.dates });
     }
   }
 }

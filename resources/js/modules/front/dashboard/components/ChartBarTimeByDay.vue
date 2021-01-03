@@ -94,7 +94,7 @@ export default {
     return {
       dateRangeMenu: false,
       dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
-      userIds: [window.APP_GLOBALS.AUTH_USER],
+      userIds: [ window.APP_GLOBALS.AUTH_USER ],
       loading: false,
       chartData: [],
       totalDuration: 0,
@@ -110,16 +110,31 @@ export default {
     const self = this;
     self.getData();
   },
+  mounted() {
+    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-bar-time-by-day-parameters-changed' ], (values) => {
+      this.getData(values);
+    });
+  },
   methods: {
-    getData() {
+    getData(parameters) {
       const self = this;
+      let dateStart = self.dates[0];
+      let dateEnd = self.dates[1];
+      if (
+        typeof parameters !== 'undefined'
+        && typeof parameters.dates !== 'undefined'
+      ) {
+        dateStart = parameters.dates[0];
+        dateEnd = parameters.dates[1];
+      }
       self.loading = true;
       const params = {
-        start: self.dates[0],
-        end: self.dates[1],
+        start: dateStart,
+        end: dateEnd,
         userIds: self.userIds
       };
       window.axios.post('/api/chart/byday', params).then(response => {
+        self.chartData = [];
         let days = response.data;
         days.forEach(day => {
           let formattedDay = this.$appFormatters.dateTimeFormat(day[0], "ddd, D MMM")

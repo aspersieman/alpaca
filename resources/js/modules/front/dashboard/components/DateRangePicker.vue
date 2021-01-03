@@ -10,18 +10,20 @@
     >
       <template #activator="{ on, attrs }">
         <v-text-field
-          v-model="dateRange"
+          v-model="selected"
           class="date-range-input"
           label="Date range"
           prepend-icon="mdi-calendar"
           readonly
-          dense
+          value
           v-bind="attrs"
           v-on="on"
+          @input="$emit('input', $event)"
+          @blur="date = (value)"
         />
       </template>
       <v-date-picker
-        v-model="dates"
+        v-model="selected"
         light
         range
       />
@@ -32,6 +34,15 @@
 <script>
 export default {
   components: { },
+  props: {
+    value: {
+      required: false,
+      type: Array,
+      default: function() {
+        return [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ]
+      }
+    }
+  },
   data() {
     return {
       dateRangeMenu: false,
@@ -39,10 +50,24 @@ export default {
     }
   },
   computed: {
+    selected: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit('input', value)
+      }
+    },
     dateRange () {
       return this.dates.join(' ~ ')
     },
   },
+  methods: {
+    parseDate (dates) {
+      if (!dates) { return null }
+      return dates.join(' ~ ')
+    }
+  }
 }
 </script>
 

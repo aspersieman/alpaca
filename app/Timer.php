@@ -96,8 +96,8 @@ class Timer extends Model
         \DB::raw("SUM(duration) AS duration")
       ]
     )
-      ->where('started_at', '>=', $start)
-      ->where('stopped_at', '<=', $end)
+      ->where('started_at', '>=', $start . " 00:00:00")
+      ->where('stopped_at', '<=', $end . " 23:59:59")
       ->whereNotNull('stopped_at')
       ->whereIn('user_id', $userIds)
       ->groupBy(\DB::raw("DATE(started_at)"))
@@ -115,8 +115,8 @@ class Timer extends Model
       ]
     )
       ->join('tagging_tagged', 'tagging_tagged.taggable_id', '=', 'timers.id')
-      ->where('started_at', '>=', $start)
-      ->where('stopped_at', '<=', $end)
+      ->where('started_at', '>=', $start . " 00:00:00")
+      ->where('stopped_at', '<=', $end . " 23:59:59")
       ->whereNotNull('stopped_at')
       ->whereIn('user_id', $userIds)
       ->groupBy("tagging_tagged.tag_name")

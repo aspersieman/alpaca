@@ -14,13 +14,13 @@
           </v-icon>
         </v-avatar>
         <h3 class="title">
-          Time by tag
+          Time by category
         </h3>
       </v-card-title>
       <v-card-subtitle
         class="pa-2 grey lighten-3"
       >
-        Total time logged by tag
+        Total time logged by category
       </v-card-subtitle>
       <v-container
         v-if="showDateRange"
@@ -91,7 +91,7 @@ export default {
     return {
       dateRangeMenu: false,
       dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
-      userIds: [window.APP_GLOBALS.AUTH_USER],
+      userIds: [ window.APP_GLOBALS.AUTH_USER ],
       loading: false,
       chartData: [],
       totalTags: 0,
@@ -106,16 +106,31 @@ export default {
     const self = this;
     self.getData();
   },
+  mounted() {
+    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-pie-time-by-tag-parameters-changed' ], (values) => {
+      this.getData(values);
+    });
+  },
   methods: {
-    getData() {
+    getData(parameters) {
       const self = this;
+      let dateStart = self.dates[0];
+      let dateEnd = self.dates[1];
+      if (
+        typeof parameters !== 'undefined'
+        && typeof parameters.dates !== 'undefined'
+      ) {
+        dateStart = parameters.dates[0];
+        dateEnd = parameters.dates[1];
+      }
       self.loading = true;
       const params = {
-        start: self.dates[0],
-        end: self.dates[1],
+        start: dateStart,
+        end: dateEnd,
         userIds: self.userIds
       };
       window.axios.post('/api/chart/bytag', params).then(response => {
+        self.chartData = [];
         let tags = response.data;
         tags.forEach(tag => {
           self.chartData.push([tag[0], self.$appFormatters.secondsToMinutes(tag[1])]);
