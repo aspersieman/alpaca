@@ -1,7 +1,8 @@
 <template>
   <v-footer
     class="py-4 main-footer"
-    height="auto">
+    height="auto"
+  >
     <v-container class="mx-auto">
       <v-row>
         <v-col cols="9">
@@ -12,7 +13,8 @@
             class="ml-0 mr-3"
             color="primary"
             square
-            target="_blank">
+            target="_blank"
+          >
             <v-icon v-text="item.icon" />
           </base-btn>
         </v-col>
@@ -29,7 +31,7 @@
         </base-btn>
       </v-row>
       <v-row>
-        <span class="font-weight-light caption">&copy; aspersieman {{ year }}</span>
+        <span class="font-weight-light caption">&copy; aspersieman {{ year }} - v{{ version }}</span>
       </v-row>
     </v-container>
   </v-footer>
@@ -46,7 +48,8 @@
           icon: 'mdi-instagram',
         },
       ],
-      year: moment().format('YYYY')
+      year: window.moment().format('YYYY'),
+      version: window.APP_GLOBALS.APP_VERSION
     }),
   }
 </script>

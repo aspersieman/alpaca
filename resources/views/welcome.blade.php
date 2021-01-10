@@ -25,8 +25,9 @@
   <!-- app js values -->
   <script type="application/javascript">
     window.APP_GLOBALS = {};
-    window.APP_GLOBALS.APP_URL = '{{env('APP_URL')}}';
+    window.APP_GLOBALS.APP_URL = '{{ env('APP_URL') }}';
     window.APP_GLOBALS.AUTH_USER = {!! json_encode($auth_user); !!};
+    window.APP_GLOBALS.APP_VERSION = '{{ env('APP_VERSION') }}';
   </script>
 </head>
 <body>
@@ -35,8 +36,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="{{ asset('js/manifest.js') }}"></script>
-  <script src="{{ asset('js/vendor.js') }}"></script>
-  <script src="{{ asset('js/app.js') }}"></script>
+  <script src="{{ asset('js/manifest.js') }}?{{ env('APP_VERSION') }}"></script>
+  <script src="{{ asset('js/vendor.js') }}?{{ env('APP_VERSION') }}"></script>
+  <script src="{{ asset('js/app.js') }}?{{ env('APP_VERSION') }}"></script>
 </body>
 </html>
