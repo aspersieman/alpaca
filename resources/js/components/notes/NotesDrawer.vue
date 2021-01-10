@@ -111,7 +111,6 @@ export default {
         self.notes = this.getNotes();
         self.task = this.$store.state.task;
         let w = this.$refs.drawer.$el.offsetWidth;
-        console.log(w);
         self.$eventBus.$emit('notes-drawer-resize', w);
       } else {
         self.notes = [];
