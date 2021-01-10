@@ -62,6 +62,57 @@ host('lekkerllama.com')
   ->roles('production');
 
 // Tasks
+// Fix for https://github.com/deployphp/deployer/issues/1505 (not released for deployer v6.8)
+desc('Prepare release. Clean up unfinished releases and prepare next release');
+task('deploy:release', function () {
+  cd('{{deploy_path}}');
+
+  // Clean up if there is unfinished release
+  $previousReleaseExist = test('[ -h release ]');
+
+  if ($previousReleaseExist) {
+    run('rm -rf "$(readlink release)"'); // Delete release
+    run('rm release'); // Delete symlink
+  }
+
+  // We need to get releases_list at same point as release_name,
+  // as standard release_name's implementation depends on it and,
+  // if user overrides it, we need to get releases_list manually.
+  $releasesList = get('releases_list');
+  $releaseName = get('release_name');
+
+  // Fix collisions
+  $i = 0;
+  while (test("[ -d {{deploy_path}}/releases/$releaseName ]")) {
+    $releaseName .= '.' . ++$i;
+    set('release_name', $releaseName);
+  }
+
+  $releasePath = parse("{{deploy_path}}/releases/{{release_name}}");
+
+  // Metainfo.
+  $date = run('date +"%Y%m%d%H%M%S"');
+
+  // Save metainfo about release
+  run("echo '$date,{{release_name}}' >> .dep/releases");
+
+  // Make new release
+  run("mkdir -p $releasePath");
+  run("{{bin/symlink}} $releasePath {{deploy_path}}/release");
+
+  // Set release_path to the new release
+  set('release_path', $releasePath);
+
+  // Add to releases list
+  array_unshift($releasesList, $releaseName);
+  set('releases_list', $releasesList);
+
+  // Set previous_release
+  if (isset($releasesList[1])) {
+    set('previous_release', "{{deploy_path}}/releases/{$releasesList[1]}");
+  }
+});
+
 desc("Build resources");
 task('build', function () {
   run('npm install');
@@ -89,6 +140,7 @@ task('artisan:down', function () {
   run('if [ -f {{release_path}}/artisan ]; then /usr/bin/php {{release_path}}/artisan down --message="Down for maintenance. Back shortly"; fi');
 });
 
+desc("Set the VERSION file and populate with tag|branch|revision");
 task('set_version', function () {
   if (input()->hasOption('tag')) {
     $tag = input()->getOption('tag');
@@ -105,6 +157,7 @@ task('set_version', function () {
   if (!empty($revision)) { $version = "r/$revision"; }
   if (empty($version)) { $version = get('branch'); }
   if (empty($version)) { $version = "HEAD"; }
+  $version .= "-".date("YmdHis");
 
   run("cd {{release_path}} && [ -f VERSION ] && rm VERSION; echo '{$version}' > VERSION");
 });
@@ -113,7 +166,7 @@ task('set_version', function () {
 after('deploy:failed', 'deploy:unlock');
 after('deploy:failed', 'artisan:up');
 after('cleanup', 'artisan:up');
-after('artisan:optimize', 'set_version');
+before('artisan:view:cache', 'set_version');
 after('deploy:symlink', 'artisan:migrate');
 after('deploy:update_code', 'build');
 after('build', 'upload');
