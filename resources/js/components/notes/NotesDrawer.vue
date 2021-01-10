@@ -23,7 +23,10 @@
           <v-icon>drag_indicator</v-icon>
         </v-btn>
       </div>
-      <v-list-item fixed>
+      <v-list-item
+        fixed
+        class="drawer-title"
+      >
         <v-list-item-avatar>
           <v-icon>note</v-icon>
         </v-list-item-avatar>
@@ -107,6 +110,9 @@ export default {
       if (value == true) {
         self.notes = this.getNotes();
         self.task = this.$store.state.task;
+        let w = this.$refs.drawer.$el.offsetWidth;
+        console.log(w);
+        self.$eventBus.$emit('notes-drawer-resize', w);
       } else {
         self.notes = [];
         self.task = {
@@ -191,6 +197,7 @@ export default {
     },
 
     setEvents() {
+      const self = this;
       const minSize = this.navigation.borderSize;
       const el = this.$refs.drawer.$el;
       const drawerBorder = el.querySelector(".v-navigation-drawer__border");
@@ -207,6 +214,7 @@ export default {
             ? document.body.scrollWidth - evt.clientX
             : evt.clientX;
         el.style.width = f + "px";
+        self.$eventBus.$emit('notes-drawer-resize', f);
       }
 
       drawerBorder.addEventListener(
@@ -274,6 +282,7 @@ export default {
 
     close () {
       this.$eventBus.$emit('notes-drawer-toggle', false);
+      this.$eventBus.$emit('notes-drawer-resize', 0);
     },
 
     updateNotesDrawerState(state) {
@@ -284,7 +293,8 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
+@import "../../../sass/index";
 .toggle {
   position: absolute;
   left: -10px;
@@ -298,5 +308,20 @@ export default {
 
 .toggle button {
   cursor: ew-resize;
+}
+
+.v-list-item__content {
+  display: block !important;
+}
+
+.drawer-title {
+  height: 64px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: $theme-light-background;
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+  border-left: solid 1px $border-light-grey;
 }
 </style>

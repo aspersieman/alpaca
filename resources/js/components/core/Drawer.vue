@@ -8,16 +8,11 @@
       left
     >
       <template 
-        v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
+        v-if="$store.getters.isLoggedIn && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
         #prepend
       >
         <v-list-item two-line>
-          <v-list-item-avatar
-            :color="user.color"
-          >
-            <span class="white--text headline">{{ user.initials }}</span>
-          </v-list-item-avatar>
-
+          <avatar />
           <v-list-item-content>
             <v-list-item-title>{{ user.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
@@ -36,7 +31,9 @@
             <v-icon>home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
+            <v-list-item-title>
+              Home
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <div
@@ -93,9 +90,17 @@ import {
   mapMutations,
 } from 'vuex';
 import methods from '../../common/Methods';
+import Avatar from './Avatar';
+import AvatarMixin from '../../mixins/AvatarMixin';
 
 export default {
   name: 'CoreDrawer',
+  components: {
+    Avatar
+  },
+  mixins: [ 
+    AvatarMixin,
+  ],
   data: () => ({
     user: {
       initials: '',
@@ -122,6 +127,7 @@ export default {
       this.user.name = window.APP_GLOBALS.AUTH_USER.name;
       this.user.email = window.APP_GLOBALS.AUTH_USER.email;
       this.user.initials = this.getInitials(this.user.name);
+      this.user.color = this.getAvatarColour(this.user.name);
     }
   },
   methods: {

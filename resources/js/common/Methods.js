@@ -10,7 +10,7 @@ export default {
       console.log(err);
     })
   },
-  getCanvasBreakpoint: function(width) {
+  getBreakpoint: function(width) {
     if (width <= 600) {
       return "xs";
     } else if(width >= 600 && width <= 960) {
@@ -21,19 +21,6 @@ export default {
       return "lg";
     } else {
       return "md";
-    }
-  },
-  getCanvasDimensions: function(width) {
-    if (width <= 600) {
-      return { width: 600, height: 400 };
-    } else if(width >= 600 && width <= 960) {
-      return { width: 600, height: 400 };
-    } else if(width >= 960 && width <= 1264) {
-      return { width: 960, height: 680 };
-    } else if(width > 1264) {
-      return { width: 1260, height: 890 };
-    } else {
-      return { width: 600, height: 400 };
     }
   },
   debug: function(message) {

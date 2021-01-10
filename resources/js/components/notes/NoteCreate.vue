@@ -24,6 +24,7 @@
             <v-col>
               <v-textarea
                 v-model="content"
+                class="note-content"
                 label="Content"
                 rows="3"
               />
@@ -101,5 +102,9 @@ export default {
 .drawer-button {
   width: 100px;
   margin: 3px;
+}
+
+.note-content {
+  font-size: .75rem;
 }
 </style>

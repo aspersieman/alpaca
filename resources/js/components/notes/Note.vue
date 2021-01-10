@@ -12,7 +12,9 @@
         {{ note.name }}
       </v-card-title>
       <v-card-text>
-        <div class="text-sm-caption note-content">{{ note.content }}</div>
+        <div class="text-sm-caption note-content">
+          {{ note.content }}
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -57,6 +59,7 @@
             <v-col>
               <v-textarea
                 v-model="noteContent"
+                class="note-content"
                 dense
                 :loading="loading"
                 label="Content"
@@ -209,5 +212,8 @@ export default {
 .note-content {
   white-space: pre-wrap; 
   width: 100%;
+}
+.note-content {
+  font-size: .75rem;
 }
 </style>
