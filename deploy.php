@@ -106,7 +106,7 @@ task('set_version', function () {
   if (empty($version)) { $version = get('branch'); }
   if (empty($version)) { $version = "HEAD"; }
 
-  run("cd {{release_path}} && [ -f VERSION ] && rm VERSION; echo '{{version}}' > VERSION");
+  run("cd {{release_path}} && [ -f VERSION ] && rm VERSION; echo '{$version}' > VERSION");
 });
 
 // [Optional] if deploy fails automatically unlock.
