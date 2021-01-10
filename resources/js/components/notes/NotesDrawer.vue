@@ -108,10 +108,12 @@ export default {
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? 250 : window.innerWidth;
     self.$eventBus.$on('notes-drawer-toggle', (value) => {
       if (value == true) {
-        self.notes = this.getNotes();
-        self.task = this.$store.state.task;
-        let w = this.$refs.drawer.$el.offsetWidth;
-        self.$eventBus.$emit('notes-drawer-resize', w);
+        self.notes = self.getNotes();
+        self.task = self.$store.state.task;
+        if (self.$refs.drawer) {
+          let w = self.$refs.drawer.$el.offsetWidth;
+          self.$eventBus.$emit('notes-drawer-resize', w);
+        }
       } else {
         self.notes = [];
         self.task = {
@@ -122,16 +124,16 @@ export default {
           timers: []
         };
       }
-      this.$store.commit('setNotesDrawer', value);
+      self.$store.commit('setNotesDrawer', value);
     });
     self.$eventBus.$on('note-deleted', (note) => {
-      self.notes = this.getNotes()
+      self.notes = self.getNotes()
         .filter(function(element) {
           return element.id !== note.id;
         });
     });
     self.$eventBus.$on('note-updated', (note) => {
-      self.notes = this.getNotes();
+      self.notes = self.getNotes();
       const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
       self.notes[noteIndex].name = note.name;
       self.notes[noteIndex].content = note.content;
@@ -164,6 +166,7 @@ export default {
           this.dialog = false;
           this.$eventBus.$emit('note-added');
           let notes = this.getNotes();
+          newNote.id = response.data.data.id;
           notes.push(newNote);
           this.$store.commit('setNotes', notes);
           this.$store.commit('showSnackbar',{
