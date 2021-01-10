@@ -1,4 +1,3 @@
-import moment from 'moment';
 import methods from '../common/Methods';
 
 export default {
@@ -43,9 +42,9 @@ export default {
      */
     calculateTimeSpent: function (timer) {
       if (timer.stopped_at != null) {
-        const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const stopped = moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const seconds = parseInt(moment.duration(stopped.diff(started)).asSeconds())
+        const started = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
+        const stopped = window.moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
+        const seconds = parseInt(window.moment.duration(stopped.diff(started)).asSeconds())
         const time = this._readableTimeFromSeconds(seconds);
         return `${time.hours}:${time.minutes}:${time.seconds}`; // for syntax highlighting: `
       }
@@ -74,10 +73,10 @@ export default {
       if (this.$store.state.activeTimerCounter.timer === null || this.$store.state.activeTimerCounter.timer.id != timer.id) {
         // remove 'z' from timezone, moment doesn't like it
         // when doing maths
-        const started = moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-        const now = moment();
+        const started = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        const now = window.moment();
         this.$store.commit('setActiveTimerCounter', {
-          seconds: parseInt(moment.duration(now.diff(started)).asSeconds()), 
+          seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()), 
           timer: timer,
           title: 'Timing...',
           task: timer.task
@@ -107,6 +106,7 @@ export default {
           // Reset the activeTimerCounter and timer string
           this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: null });
           this.$store.state.activeTimerCounter.title = 'Timing...';
+          this.$eventBus.$emit('timer-updated');
         })
     },
 
@@ -157,10 +157,10 @@ export default {
     timerFormat(dateValue, time = false) {
       let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (time) {
-        const date = moment(dateValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
-        return moment.tz(date, tz).format('YYYY-MM-DD @ HH:mm:SS');
+        const date = window.moment(dateValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        return window.moment.tz(date, tz).format('YYYY-MM-DD @ HH:mm:SS');
       } else {
-        return moment.tz(dateValue, tz).format('YYYY-MM-DD');
+        return window.moment.tz(dateValue, tz).format('YYYY-MM-DD');
       }
     },
 
@@ -219,7 +219,7 @@ export default {
       if(this.name.length > 0 && this.startDate.length >= 4) {
         this.loading = true;
         
-        const started_at = moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
+        const started_at = window.moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
         const timer = {
           name: this.name,
           started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
@@ -257,7 +257,7 @@ export default {
     methods.debug(fromDate);
     methods.debug(toDate);
 
-    const started_at = moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
+    const started_at = window.moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
     const timer = {
       name: this.name,
       started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),

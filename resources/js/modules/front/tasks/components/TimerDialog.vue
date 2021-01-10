@@ -176,7 +176,6 @@
 
 <script>
 
-import moment from 'moment';
 import TimerMixin from '../../../../mixins/TimerMixin';
 
 export default {
@@ -203,7 +202,7 @@ export default {
   },
   computed: {
     formattedDate() {
-      return this.startDate ? moment(this.startDate).format('YYYY-MM-DD') : ''
+      return this.startDate ? window.moment(this.startDate).format('YYYY-MM-DD') : ''
     }
   },
   created() {
@@ -215,11 +214,12 @@ export default {
     });
     self.$eventBus.$on('timer-update-dialog', (value) => {
       self.timer = self.$store.state.timer;
+      console.log(self.timer);
       self.name = self.timer.name;
-      self.startDate = self.timer.started_at ? moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
-      self.startTime = self.timer.started_at ? moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      self.endTime = self.timer.stopped_at ? moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      self.duration = moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+      self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+      self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+      self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
       self.dialog = value;
       self.mode = 'UPDATE';
       const tags = self.$store.state.timer.tagged.map(function (item) {

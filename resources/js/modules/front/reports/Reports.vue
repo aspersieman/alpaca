@@ -139,15 +139,6 @@ export default {
   mounted() {
     const self = this;
     self.getDashboardSettings();
-    self.$eventBus.$on(['task-added', 'task-updated', 'timer-added', 'timer-updated', 'timer-deleted'],()=>{
-      self.loadTasks();  
-    });
-    self.$eventBus.$on(['task-deleted'], ()=> {
-      self.tasks = self.tasks
-        .filter(function(element) {
-          return element.id !== self.$store.state.task.id;
-        });
-    });
     self.$eventBus.$on(['task-search-by-status'],()=>{
       self.searchByStatus();  
     });
