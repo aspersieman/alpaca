@@ -5,6 +5,7 @@ namespace App\Providers;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
       Schema::defaultStringLength(191);
+      Blade::directive('version', function () {
+        $versionFile = __DIR__."/../../VERSION";
+        $version = "HEAD";
+        if (is_file($versionFile)) {
+          $version = trim(\file_get_contents($versionFile));
+        }
+        return "<?php echo '$version'; ?>";
+      });
     }
 
     /**

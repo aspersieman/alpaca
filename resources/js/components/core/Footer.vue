@@ -31,7 +31,7 @@
         </base-btn>
       </v-row>
       <v-row>
-        <span class="font-weight-light caption">&copy; aspersieman {{ year }} - v{{ version }}</span>
+        <span class="font-weight-light caption">&copy; aspersieman {{ year }} - {{ version }}</span>
       </v-row>
     </v-container>
   </v-footer>

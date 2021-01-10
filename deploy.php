@@ -89,11 +89,7 @@ task('artisan:down', function () {
   run('if [ -f {{release_path}}/artisan ]; then /usr/bin/php {{release_path}}/artisan down --message="Down for maintenance. Back shortly"; fi');
 });
 
-desc("Setup deployment");
-task('deploy:setup', function () {
-  $tag = null;
-  $revision = null;
-  $branch = null;
+task('set_version', function () {
   if (input()->hasOption('tag')) {
     $tag = input()->getOption('tag');
   }
@@ -103,14 +99,13 @@ task('deploy:setup', function () {
   if (input()->hasOption('branch')) {
     $branch = input()->getOption('branch');
   }
-  $version = "HEAD";
-  if (!empty($branch)) { $version = "$branch"; }
+  $version = "";
+  if (!empty($branch)) { $version = "b/$branch"; }
   if (!empty($tag)) { $version = "$tag"; }
-  if (!empty($revision)) { $version = "$revision"; }
-  set('version', $version);
-});
+  if (!empty($revision)) { $version = "r/$revision"; }
+  if (empty($version)) { $version = get('branch'); }
+  if (empty($version)) { $version = "HEAD"; }
 
-task('set_version', function () {
   run("cd {{release_path}} && [ -f VERSION ] && rm VERSION; echo '{{version}}' > VERSION");
 });
 
@@ -124,5 +119,4 @@ after('deploy:update_code', 'build');
 after('build', 'upload');
 
 // Migrate database before symlink new release.
-before('deploy:prepare', 'deploy:setup');
 before('deploy:prepare', 'artisan:down');

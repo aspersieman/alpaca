@@ -17,17 +17,17 @@
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
 
   <!-- index.css here -->
-  <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/index.css') }}?@version" rel="stylesheet">
 
   <!-- favicon -->
-  <link rel="icon" type="image/png" href="{{ asset('img/logo/llama_emoji.png') }}">
+  <link rel="icon" type="image/png" href="{{ asset('img/logo/llama_emoji.png') }}?@version">
 
   <!-- app js values -->
   <script type="application/javascript">
     window.APP_GLOBALS = {};
     window.APP_GLOBALS.APP_URL = '{{ env('APP_URL') }}';
     window.APP_GLOBALS.AUTH_USER = {!! json_encode($auth_user); !!};
-    window.APP_GLOBALS.APP_VERSION = '{{ env('APP_VERSION') }}';
+    window.APP_GLOBALS.APP_VERSION = '@version()';
   </script>
 </head>
 <body>
@@ -36,8 +36,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="{{ asset('js/manifest.js') }}?{{ env('APP_VERSION') }}"></script>
-  <script src="{{ asset('js/vendor.js') }}?{{ env('APP_VERSION') }}"></script>
-  <script src="{{ asset('js/app.js') }}?{{ env('APP_VERSION') }}"></script>
+  <script src="{{ asset('js/manifest.js') }}?@version()"></script>
+  <script src="{{ asset('js/vendor.js') }}?@version()"></script>
+  <script src="{{ asset('js/app.js') }}?@version()"></script>
 </body>
 </html>
