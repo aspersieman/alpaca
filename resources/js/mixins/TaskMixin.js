@@ -13,7 +13,7 @@ export default {
         self.$eventBus.$emit(EventNames.TASK_UPDATE_DIALOG, true)
       } else {
         self.$store.commit('setSelectedTask', null);
-        self.$eventBus.$emit(EventNames.TASK_ADD_DIALOG)
+        self.$eventBus.$emit(EventNames.TASK_ADD_DIALOG, true)
       }
     },
     loadTasks() {
