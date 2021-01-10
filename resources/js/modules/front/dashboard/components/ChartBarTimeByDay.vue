@@ -78,6 +78,7 @@
   </v-card>
 </template>
 <script>
+import EventNames from '../../../../common/EventNames';
 
 export default {
   name: 'ChartBarWeeklyTime',
@@ -111,7 +112,7 @@ export default {
     self.getData();
   },
   mounted() {
-    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-bar-time-by-day-parameters-changed' ], (values) => {
+    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_BAR_TIME_BY_DAY_PARAMETERS_CHANGED ], (values) => {
       this.getData(values);
     });
   },

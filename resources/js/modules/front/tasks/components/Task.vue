@@ -15,6 +15,7 @@
         row
         wrap
         :class="`pa-2 task ${task.status}`"
+        class="task-details"
       >
         <v-flex
           xs12
@@ -217,6 +218,12 @@
             </v-menu>
           </div>
         </v-flex>
+      </v-layout>
+      <v-layout
+        row
+        wrap
+        :class="`pa-2 task ${task.status}`"
+      >
         <v-flex
           v-if="task.timers.length > 0"
           xs12
@@ -241,6 +248,7 @@
 import Timer from './Timer';
 import TaskMixin from '../../../../mixins/TaskMixin';
 import TimerMixin from '../../../../mixins/TimerMixin';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {
@@ -279,7 +287,7 @@ export default {
       const self = this;
       self.$store.commit('setNotes', self.task.notes);
       self.$store.commit('setSelectedTask', self.task);
-      self.$eventBus.$emit('notes-drawer-toggle', true);
+      self.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, true);
     }
   },
 }
@@ -344,5 +352,12 @@ export default {
 .transparent {
   background-color: transparent;
 }
-</style>
 
+.task-details {
+  position: -webkit-sticky; /* Safari & IE */
+  position: sticky;
+  top: 64px;
+  z-index: 1;
+  background-color: $theme-light-background;
+}
+</style>

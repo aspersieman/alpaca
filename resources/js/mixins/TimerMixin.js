@@ -1,4 +1,5 @@
 import methods from '../common/Methods';
+import EventNames from '../common/EventNames';
 
 export default {
   data(){
@@ -10,13 +11,13 @@ export default {
       const self = this;
       self.$store.commit('setSelectedTask', task);
       self.$store.commit('setSelectedTimer', timer);
-      self.$eventBus.$emit('timer-update-dialog', true)
+      self.$eventBus.$emit(EventNames.TIMER_UPDATE_DIALOG, true)
     },
 
     openTimerAddDialog(task) {
       const self = this;
       self.$store.commit('setSelectedTask', task);
-      self.$eventBus.$emit('timer-add-dialog', true)
+      self.$eventBus.$emit(EventNames.TIMER_ADD_DIALOG, true)
     },
 
     /**
@@ -106,7 +107,7 @@ export default {
           // Reset the activeTimerCounter and timer string
           this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: null });
           this.$store.state.activeTimerCounter.title = 'Timing...';
-          this.$eventBus.$emit('timer-updated');
+          this.$eventBus.$emit(EventNames.TIMER_UPDATED);
         })
     },
 
@@ -131,7 +132,7 @@ export default {
                 color: 'success',
                 duration: 3000
               });
-              self.$eventBus.$emit('timer-deleted');
+              self.$eventBus.$emit(EventNames.TIMER_DELETED);
             })
             .catch(error => {
               self.$store.commit('hideLoader');
@@ -168,12 +169,12 @@ export default {
       const self = this;
       if (timer) {
         self.$store.commit('setActiveTimer', timer);
-        self.$eventBus.$emit('timer-start', timer)
+        self.$eventBus.$emit(EventNames.TIMER_START, timer)
       } else {
         window.axios.get('/api/tasks/timers/active').then(response => {
           if (response.data.data.id !== undefined) {
             self.$store.commit('setActiveTimer', response.data.data);
-            self.$eventBus.$emit('timer-start', response.data.data)
+            self.$eventBus.$emit(EventNames.TIMER_START, response.data.data)
           }
         });
       }
@@ -192,8 +193,8 @@ export default {
         window.axios.post(`/api/tasks/${task.id}/timers`, timer)
           .then(response => {
             self.setActiveTimer(response.data.data);
-            this.$eventBus.$emit('timer-added');
-            this.$eventBus.$emit('timer-start', response.data.data);
+            this.$eventBus.$emit(EventNames.TIMER_ADDED);
+            this.$eventBus.$emit(EventNames.TIMER_START, response.data.data);
             this.loading = false;
             this.dialog = false;
             this.formReset();
@@ -237,7 +238,7 @@ export default {
               color: 'success',
               duration: 1000
             });
-            this.$eventBus.$emit('timer-updated');
+            this.$eventBus.$emit(EventNames.TIMER_UPDATED);
             return response;
         })
           .catch(error => {
@@ -275,7 +276,7 @@ export default {
           color: 'success',
           duration: 1000
         });
-        this.$eventBus.$emit('timer-updated');
+        this.$eventBus.$emit(EventNames.TIMER_UPDATED);
         return response;
       })
       .catch(error => {

@@ -51,6 +51,7 @@
 
 <script>
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   props: {
@@ -99,7 +100,7 @@ export default {
         });
 
         self.isLoading = false;
-        self.$eventBus.$emit('file-group-updated');
+        self.$eventBus.$emit(EventNames.FILE_GROUP_UPDATED);
       }).catch(function (error) {
         self.isLoading = false;
         if (error.response) {

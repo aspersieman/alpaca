@@ -177,6 +177,7 @@
 <script>
 
 import TimerMixin from '../../../../mixins/TimerMixin';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   mixins: [ TimerMixin ],
@@ -207,12 +208,12 @@ export default {
   },
   created() {
     const self = this;
-    this.$eventBus.$on('timer-add-dialog', (value) => {
+    this.$eventBus.$on(EventNames.TIMER_ADD_DIALOG, (value) => {
       self.dialog = value;
       self.mode = 'ADD';
       self.formReset();
     });
-    self.$eventBus.$on('timer-update-dialog', (value) => {
+    self.$eventBus.$on(EventNames.TIMER_UPDATE_DIALOG, (value) => {
       self.timer = self.$store.state.timer;
       console.log(self.timer);
       self.name = self.timer.name;

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   data() {
@@ -65,7 +65,7 @@ export default {
     self.loadFileGroups(()=>{});
     self.initDropzone();
 
-    self.$eventBus.$on(['file-group-added'],()=>{
+    self.$eventBus.$on([EventNames.FILE_GROUP_ADDED],()=>{
         self.loadFileGroups(()=>{});
     });
   },
@@ -116,16 +116,14 @@ export default {
           formData.append('file_group_id',self.uploadTo);
       });
 
-      self.dropzone.on("complete", function(file) {
+      self.dropzone.on("complete", function() {
         self.$store.commit('showSnackbar',{
           message: "File(s) uploaded successfully.",
           color: 'success',
           duration: 3000
         });
 
-        self.$eventBus.$emit('file-uploaded');
-        methods.debug("File uploaded: ");
-        methods.debug(file);
+        self.$eventBus.$emit(EventNames.FILE_UPLOADED);
       });
     },
     loadFileGroups(cb) {

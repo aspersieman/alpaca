@@ -123,6 +123,7 @@
 
 <script>
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   data() {
@@ -171,7 +172,7 @@ export default {
           duration: 3000
         });
         self.$store.commit('hideLoader');
-        self.$eventBus.$emit('group-added');
+        self.$eventBus.$emit(EventNames.GROUP_ADDED);
         self.$refs.groupFormAdd.reset();
         self.permissions = [];
       }).catch(function (error) {

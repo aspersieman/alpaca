@@ -144,6 +144,7 @@
 
 <script>
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {},
@@ -201,7 +202,7 @@ export default {
   },
   mounted() {
     const self = this;
-    self.$eventBus.$on(['file-deleted','file-uploaded'], function () {
+    self.$eventBus.$on([EventNames.FILE_DELETED, EventNames.FILE_UPLOADED], function () {
       self.loadFiles(() => {});
     });
     self.loadFileGroups(() => {});
@@ -241,7 +242,7 @@ export default {
               duration: 3000
             });
 
-            self.$eventBus.$emit('file-deleted');
+            self.$eventBus.$emit(EventNames.FILE_DELETED);
 
             // maybe the action took place from view file
             // lets close it.

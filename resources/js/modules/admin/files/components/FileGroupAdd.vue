@@ -48,6 +48,7 @@
 
 <script>
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   data() {
@@ -84,7 +85,7 @@ export default {
         });
 
         self.isLoading = false;
-        self.$eventBus.$emit('file-group-added');
+        self.$eventBus.$emit(EventNames.FILE_GROUP_ADDED);
 
         self.$refs.fileGroupFormAdd.reset();
       }).catch(function (error) {

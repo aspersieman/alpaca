@@ -65,6 +65,7 @@
 <script>
 
 import TimerMixin from '../../mixins/TimerMixin';
+import EventNames from '../../common/EventNames';
 
 export default {
   components: { },
@@ -94,7 +95,7 @@ export default {
     if (this.$store.getters.isLoggedIn) {
       this.setActiveTimer();
     }
-    this.$eventBus.$on('timer-start', (timer) => {
+    this.$eventBus.$on(EventNames.TIMER_START, (timer) => {
       this.startTimer(timer);
     });
   },

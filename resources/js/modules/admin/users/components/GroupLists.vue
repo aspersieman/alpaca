@@ -130,6 +130,7 @@
 
 <script>
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   data () {
@@ -190,7 +191,7 @@ export default {
               color: 'success',
               duration: 3000
             });
-            self.$eventBus.$emit('group-deleted');
+            self.$eventBus.$emit(EventNames.GROUP_DELETED);
           }).catch(function (error) {
             self.$store.commit('hideLoader');
             if (error.response) {

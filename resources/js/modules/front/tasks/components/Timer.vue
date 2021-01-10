@@ -155,6 +155,7 @@
 <script>
 
 import TimerMixin from '../../../../mixins/TimerMixin';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: { },
@@ -180,7 +181,7 @@ export default {
   },
   mounted() {
     const self = this;
-    this.$eventBus.$on('timer-start', (timer) => {
+    this.$eventBus.$on(EventNames.TIMER_START, (timer) => {
       self.startTimer(timer);
     });
   },

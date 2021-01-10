@@ -134,6 +134,7 @@
 import FileGroupAdd from './FileGroupAdd.vue';
 import FileGroupEdit from './FileGroupEdit.vue';
 import methods from '../../../../common/Methods';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {
@@ -183,7 +184,7 @@ export default {
   },
   mounted() {
     const self = this;
-    self.$eventBus.$on(['file-group-added','file-group-updated','file-group-deleted'],()=>{
+    self.$eventBus.$on([EventNames.FILE_GROUP_ADDED, EventNames.FILE_GROUP_UPDATED, EventNames.FILE_GROUP_DELETED],()=>{
       self.loadFileGroups(()=>{});
     });
   },
@@ -201,7 +202,7 @@ export default {
               color: 'success',
               duration: 3000
             });
-            self.$eventBus.$emit('file-group-deleted');
+            self.$eventBus.$emit(EventNames.FILE_GROUP_DELETED);
           }).catch(function (error) {
             if (error.response) {
               self.$store.commit('showSnackbar',{

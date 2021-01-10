@@ -56,6 +56,7 @@ import ChartBarTimeByDay from './components/ChartBarTimeByDay';
 import ChartPieTimeByTag from './components/ChartPieTimeByTag';
 import ChartTimerTimeline from './components/ChartTimerTimeline';
 import DateRangePicker from './components/DateRangePicker';
+import EventNames from '../../../common/EventNames';
 
 export default {
   name: 'Dashboard',
@@ -74,7 +75,7 @@ export default {
   mounted() { },
   methods: {
     search() {
-      this.$eventBus.$emit('chart-parameters-changed', { 'dates': this.dates });
+      this.$eventBus.$emit(EventNames.CHART_PARAMETERS_CHANGED, { 'dates': this.dates });
     }
   }
 }

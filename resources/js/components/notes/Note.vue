@@ -85,7 +85,12 @@
 </template>
 
 <script type="text/javascript">
+import NotesMixin from '../../mixins/NotesMixin';
+
 export default {
+  mixins: [ 
+    NotesMixin
+  ],
   props: {
     note: {
       required: true,
@@ -109,49 +114,6 @@ export default {
     };
   },
   methods: {
-    deleteNote(note) {
-      const self = this;
-
-      self.$store.commit('showDialog',{
-        type: "confirm",
-        icon: 'warning',
-        title: "Confirm deletion",
-        message: "Are you sure you want to delete this note?",
-        okCb: ()=>{
-          const currentTask = self.task;
-          window.axios.delete('/api/notes/'+parseInt(note.id))
-            .then(function(response) {
-              self.$store.commit('setSelectedTask', currentTask);
-              self.$store.commit('showSnackbar',{
-                message: response.data.message,
-                color: 'success',
-                duration: 3000
-              });
-              self.noteName =  '';
-              self.noteContent = '';
-              self.$eventBus.$emit('note-deleted', note);
-            })
-            .catch(error => {
-              self.$store.commit('hideLoader');
-              if (error.response) {
-                self.$store.commit('showSnackbar',{
-                  message: error.response.data.data.message,
-                  color: 'error',
-                  duration: 10000
-                });
-              } else if (error.request) {
-                console.log(error.request);
-              } else {
-                console.log('Error', error.message);
-              }
-            });
-        },
-        cancelCb: ()=>{
-          console.log("CANCEL");
-        }
-      });
-    },
-
     formShow() {
       this.formReset();
       this.noteName = this.note.name;
@@ -162,41 +124,6 @@ export default {
     formReset() {
       this.noteName = '';
       this.noteContent = '';
-    },
-
-    updateNote() {
-      const note = {
-        id: this.note.id,
-        name: this.noteName,
-        content: this.noteContent
-      };
-      if(note.name.length > 0) {
-        this.loading = true;
-        
-        window.axios.put(`/api/notes/`+ parseInt(note.id), note)
-          .then(response => {
-          this.loading = false;
-          this.formReset();
-          this.$eventBus.$emit('note-updated', note);
-          this.$store.commit('showSnackbar',{
-            message: "Note updated",
-            color: 'success',
-            duration: 1000
-          });
-          this.showEditForm = false;
-          return response;
-        })
-          .catch(error => {
-          console.log(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-        });
-
-      }
     },
   },
 };

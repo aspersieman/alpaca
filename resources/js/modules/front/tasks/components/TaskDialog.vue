@@ -136,6 +136,7 @@
 import Timer from './Timer';
 import moment from 'moment';
 import TaskMixin from '../../../../mixins/TaskMixin';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {
@@ -182,11 +183,11 @@ export default {
   },
   created() {
     const self = this;
-    self.$eventBus.$on('task-add-dialog', (value) => {
+    self.$eventBus.$on(EventNames.TASK_ADD_DIALOG, (value) => {
       self.dialog = value;
       self.mode = 'ADD';
     });
-    self.$eventBus.$on('task-update-dialog', (value) => {
+    self.$eventBus.$on(EventNames.TASK_UPDATE_DIALOG, (value) => {
       self.task = self.$store.state.task;
       self.name = self.$store.state.task.name;
       self.due = self.$store.state.task.due;
@@ -215,7 +216,7 @@ export default {
           self.loading = false;
           self.dialog = false;
           self.formReset();
-          self.$eventBus.$emit('task-added');
+          self.$eventBus.$emit(EventNames.TASK_ADDED);
           self.$store.commit('showSnackbar',{
             message: "Task added",
             color: 'success',
@@ -251,7 +252,7 @@ export default {
           self.loading = false;
           self.dialog = false;
           self.formReset();
-          self.$eventBus.$emit('task-updated');
+          self.$eventBus.$emit(EventNames.TASK_UPDATED);
           self.$store.commit('showSnackbar',{
             message: "Task updated",
             color: 'success',
@@ -277,7 +278,7 @@ export default {
     openTimerDialog() {
       const self = this;
       self.$store.commit('setSelectedTask', this.task);
-      self.$eventBus.$emit('timer-add-dialog', true)
+      self.$eventBus.$emit(EventNames.TIMER_ADD_DIALOG, true)
     },
 
     formReset() {

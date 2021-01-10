@@ -68,12 +68,17 @@
 <script>
 import NotesList from './NotesList';
 import NoteCreate from './NoteCreate';
+import EventNames from '../../common/EventNames';
+import NotesMixin from '../../mixins/NotesMixin';
 
 export default {
   components: {
     NotesList,
     NoteCreate,
   },
+  mixins: [ 
+    NotesMixin
+  ],
   data() {
     return { 
       notes: [],
@@ -106,13 +111,13 @@ export default {
   created() {
     const self = this;
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? 250 : window.innerWidth;
-    self.$eventBus.$on('notes-drawer-toggle', (value) => {
+    self.$eventBus.$on(EventNames.NOTE_DRAWER_TOGGLE, (value) => {
       if (value == true) {
         self.notes = self.getNotes();
         self.task = self.$store.state.task;
         if (self.$refs.drawer) {
           let w = self.$refs.drawer.$el.offsetWidth;
-          self.$eventBus.$emit('notes-drawer-resize', w);
+          self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, w);
         }
       } else {
         self.notes = [];
@@ -126,13 +131,13 @@ export default {
       }
       self.$store.commit('setNotesDrawer', value);
     });
-    self.$eventBus.$on('note-deleted', (note) => {
+    self.$eventBus.$on(EventNames.NOTE_DELETED, (note) => {
       self.notes = self.getNotes()
         .filter(function(element) {
           return element.id !== note.id;
         });
     });
-    self.$eventBus.$on('note-updated', (note) => {
+    self.$eventBus.$on(EventNames.NOTE_UPDATED, (note) => {
       self.notes = self.getNotes();
       const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
       self.notes[noteIndex].name = note.name;
@@ -149,46 +154,9 @@ export default {
     getNotes() {
       return this.$store.state.notes;
     },
-
-    addNote(note) {
-      if(note.name != '') {
-        this.loading = true;
-        
-        const newNote = {
-          name: note.name,
-          content: note.content,
-          task_id: note.task_id
-        };
-
-        window.axios.post('/api/notes', newNote)
-          .then(response => {
-          this.loading = false;
-          this.dialog = false;
-          this.$eventBus.$emit('note-added');
-          let notes = this.getNotes();
-          newNote.id = response.data.data.id;
-          notes.push(newNote);
-          this.$store.commit('setNotes', notes);
-          this.$store.commit('showSnackbar',{
-            message: "Note added",
-            color: 'success',
-            duration: 1000
-          });
-          return response;
-        })
-          .catch(error => {
-          console.error(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-        });
-
-      }
+    getTasks() {
+      return this.$store.state.tasks;
     },
-
     setBorderWidth() {
       let i = this.$refs.drawer.$el.querySelector(
         ".v-navigation-drawer__border"
@@ -216,7 +184,7 @@ export default {
             ? document.body.scrollWidth - evt.clientX
             : evt.clientX;
         el.style.width = f + "px";
-        self.$eventBus.$emit('notes-drawer-resize', f);
+        self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, f);
       }
 
       drawerBorder.addEventListener(
@@ -283,8 +251,8 @@ export default {
     },
 
     close () {
-      this.$eventBus.$emit('notes-drawer-toggle', false);
-      this.$eventBus.$emit('notes-drawer-resize', 0);
+      this.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, false);
+      this.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, 0);
     },
 
     updateNotesDrawerState(state) {

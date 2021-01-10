@@ -103,6 +103,7 @@ import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
 import Avatar from './Avatar';
 import methods from '../../common/Methods';
 import TaskMixin from '../../mixins/TaskMixin';
+import EventNames from '../../common/EventNames';
 
 export default {
   name: 'CoreAppBar',
@@ -128,7 +129,7 @@ export default {
   mounted() {
     var self = this;
     self.clickLogin = methods.clickLogin;
-    self.$eventBus.$on('notes-drawer-resize', (drawerWidth) => {
+    self.$eventBus.$on(EventNames.NOTE_DRAWER_RESIZE, (drawerWidth) => {
       this.relativeBreakpoint(drawerWidth);
     });
   },

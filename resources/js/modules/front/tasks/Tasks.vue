@@ -140,6 +140,7 @@ import draggable from 'vuedraggable';
 import TaskMixin from '../../../mixins/TaskMixin';
 import TimerMixin from '../../../mixins/TimerMixin';
 import NotesDrawer from '../../../components/notes/NotesDrawer';
+import EventNames from '../../../common/EventNames';
 
 export default {
   components: {
@@ -190,16 +191,16 @@ export default {
         to: { name:'tasks' }
       },
     ]);
-    self.$eventBus.$on(['task-added', 'task-updated', 'timer-added', 'timer-updated'],()=>{
+    self.$eventBus.$on([EventNames.TASK_ADDED, EventNames.TASK_UPDATED, EventNames.TIMER_ADDED, EventNames.TIMER_UPDATED, EventNames.TIMER_DELETED, EventNames.NOTE_DELETED],()=>{
       self.loadTasks();  
     });
-    self.$eventBus.$on(['task-deleted'], ()=> {
+    self.$eventBus.$on([EventNames.TASK_DELETED], ()=> {
       self.tasks = self.tasks
         .filter(function(element) {
           return element.id !== self.$store.state.task.id;
         });
     });
-    self.$eventBus.$on(['task-search-by-status'],()=>{
+    self.$eventBus.$on([EventNames.TASK_SEARCH_BY_STATUS],()=>{
       self.searchByStatus();  
     });
   },

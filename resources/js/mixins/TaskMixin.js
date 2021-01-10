@@ -1,3 +1,5 @@
+import EventNames from '../common/EventNames';
+
 export default {
   data(){
     return {
@@ -8,10 +10,10 @@ export default {
       const self = this;
       if (task) {
         self.$store.commit('setSelectedTask', task);
-        self.$eventBus.$emit('task-update-dialog', true)
+        self.$eventBus.$emit(EventNames.TASK_UPDATE_DIALOG, true)
       } else {
         self.$store.commit('setSelectedTask', null);
-        self.$eventBus.$emit('task-add-dialog', true)
+        self.$eventBus.$emit(EventNames.TASK_ADD_DIALOG)
       }
     },
     loadTasks() {
@@ -61,7 +63,7 @@ export default {
                 color: 'success',
                 duration: 3000
               });
-              self.$eventBus.$emit('task-deleted');
+              self.$eventBus.$emit(EventNames.TASK_DELETED);
             })
             .catch(error => {
               self.$store.commit('hideLoader');
@@ -120,7 +122,7 @@ export default {
         currentTask.status = newStatus
         self.btnColor = btnColor
 
-        self.$eventBus.$emit('task-search-by-status');
+        self.$eventBus.$emit(EventNames.TASK_SEARCH_BY_STATUS);
       }
     },
     updateName() {

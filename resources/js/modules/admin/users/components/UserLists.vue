@@ -273,6 +273,8 @@
 </template>
 
 <script>
+import EventNames from '../../../../common/EventNames';
+
 export default {
   data () {
     return {
@@ -330,7 +332,7 @@ export default {
 
     self.loadGroups(()=>{});
 
-    self.$eventBus.$on(['user-added','user-updated','user-deleted','group-added'],()=>{
+    self.$eventBus.$on([EventNames.USER_ADDED, EventNames.USER_UPDATED, EventNames.USER_DELETED, EventNames.GROUP_ADDED],()=>{
       self.loadUsers(()=>{});
     });
 
@@ -354,7 +356,7 @@ export default {
               color: 'success',
               duration: 3000
             });
-            self.$eventBus.$emit('user-deleted');
+            self.$eventBus.$emit(EventNames.USER_DELETED);
           }).catch(function (error) {
             self.$store.commit('hideLoader');
             if (error.response) {

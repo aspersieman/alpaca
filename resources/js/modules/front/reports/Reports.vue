@@ -139,33 +139,9 @@ export default {
   mounted() {
     const self = this;
     self.getDashboardSettings();
-    self.$eventBus.$on(['task-search-by-status'],()=>{
-      self.searchByStatus();  
-    });
   },
   created() { },
   methods: {
-    searchByStatus(status) {
-      const self = this;
-      self.tasks = self.$store.state.tasks;
-      self.setDashboardSettings();
-      if (status) {
-        self.tasks = self.tasks.filter(function(item) {
-          return item.status === status;
-        });
-      } else {
-        if (self.status.length > 0) {
-          self.tasks = self.tasks.filter(function(item) {
-            return self.status.includes(item.status);
-          });
-        }
-      }
-    },
-
-    searchFocus() {
-      this.$refs.searchInput.focus();
-    },
-
     setDashboardSettings() {
       const parsed = JSON.stringify(this.status);
       localStorage.setItem('status', parsed);

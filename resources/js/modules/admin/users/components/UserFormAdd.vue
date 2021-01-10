@@ -201,6 +201,8 @@
 </template>
 
 <script>
+import EventNames from '../../../../common/EventNames';
+
 export default {
   data() {
     const self = this;
@@ -279,7 +281,7 @@ export default {
           color: 'success',
           duration: 3000
         });
-        self.$eventBus.$emit('user-added');
+        self.$eventBus.$emit(EventNames.USER_ADDED);
         self.$store.commit('hideLoader');
         // reset
         self.$refs.userFormAdd.reset();

@@ -76,6 +76,8 @@
   </v-card>
 </template>
 <script>
+import EventNames from '../../../../common/EventNames';
+
 export default {
   name: 'ChartBarWeeklyTime',
   props: {
@@ -107,7 +109,7 @@ export default {
     self.getData();
   },
   mounted() {
-    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-pie-time-by-tag-parameters-changed' ], (values) => {
+    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_PIE_TIME_BY_TAG_PARAMETERS_CHANGED ], (values) => {
       this.getData(values);
     });
   },

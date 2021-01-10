@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import EventNames from '../../common/EventNames';
+
 export default {
   data() {
     return {
@@ -77,7 +79,7 @@ export default {
         const name = this.name;
         const content = this.content;
         const task_id = this.$store.state.task.id == 0 || typeof this.$store.state.task.id == 'undefined' ? null : this.$store.state.task.id;
-        this.$emit('create-note', {
+        this.$emit(EventNames.NOTE_ADDED, {
           task_id,
           name,
           content,

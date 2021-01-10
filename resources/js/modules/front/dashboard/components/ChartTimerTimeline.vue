@@ -146,6 +146,7 @@
 <script>
 
 import TimerMixin from '../../../../mixins/TimerMixin';
+import EventNames from '../../../../common/EventNames';
 
 export default {
   components: { },
@@ -188,7 +189,7 @@ export default {
     this.getData();
   },
   mounted() {
-    this.$eventBus.$on([ 'chart-parameters-changed', 'chart-timer-timeline-parameters-changed' ], (values) => {
+    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_TIMER_TIMELINE_PARAMETERS_CHANGED ], (values) => {
       this.getData(values);
     });
   },
