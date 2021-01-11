@@ -6,6 +6,9 @@ export default {
     }
   },
   methods: {
+    getNotes() {
+      return this.$store.state.notes;
+    },
     addNote(note) {
       if(note.name != '') {
         this.loading = true;

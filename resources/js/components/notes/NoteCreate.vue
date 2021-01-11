@@ -56,8 +56,12 @@
 
 <script>
 import EventNames from '../../common/EventNames';
+import NotesMixin from '../../mixins/NotesMixin';
 
 export default {
+  mixins: [ 
+    NotesMixin
+  ],
   data() {
     return {
       name: '',
@@ -79,11 +83,13 @@ export default {
         const name = this.name;
         const content = this.content;
         const task_id = this.$store.state.task.id == 0 || typeof this.$store.state.task.id == 'undefined' ? null : this.$store.state.task.id;
-        this.$emit(EventNames.NOTE_ADDED, {
+        const note = {
           task_id,
           name,
           content,
-        });
+        };
+        this.$emit(EventNames.NOTE_ADDED, note);
+        this.addNote(note);
         // Clean fields after submit
         this.name = '';
         this.content = '';
