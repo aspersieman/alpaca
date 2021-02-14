@@ -1,102 +1,23 @@
 <template>
   <div class="drawer-buttons">
     <v-btn
-      v-show="!isCreating"
       class="drawer-button"
-      @click="open"
+      @click="openNoteDialog()"
     >
       New Note
     </v-btn>
-    <v-card
-      v-show="isCreating"
-    >
-      <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="name"
-                label="Title"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-textarea
-                v-model="content"
-                class="note-content"
-                label="Content"
-                rows="3"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-btn
-                class="success mx-0 mt-3"
-                @click="createNote()"
-              >
-                Add
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                class="error mx-0 mt-3"
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
-    </v-card>
   </div>
 </template>
 
 <script>
-import EventNames from '../../common/EventNames';
 import NotesMixin from '../../mixins/NotesMixin';
 
 export default {
-  mixins: [ 
-    NotesMixin
-  ],
+  mixins: [ NotesMixin ],
   data() {
-    return {
-      name: '',
-      content: '',
-      isCreating: false,
-    };
+    return { };
   },
-  methods: {
-    open() {
-      this.isCreating = true;
-    },
-
-    close() {
-      this.isCreating = false;
-    },
-
-    createNote() {
-      if (this.name != '' && this.content != '') {
-        const name = this.name;
-        const content = this.content;
-        const task_id = this.$store.state.task.id == 0 || typeof this.$store.state.task.id == 'undefined' ? null : this.$store.state.task.id;
-        const note = {
-          task_id,
-          name,
-          content,
-        };
-        this.$emit(EventNames.NOTE_ADDED, note);
-        this.addNote(note);
-        // Clean fields after submit
-        this.name = '';
-        this.content = '';
-        this.isCreating = false;
-      }
-    },
-  },
+  methods: { },
 };
 </script>
 <style scoped lang="scss">

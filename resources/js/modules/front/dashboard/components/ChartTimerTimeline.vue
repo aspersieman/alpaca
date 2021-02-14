@@ -92,9 +92,7 @@
               <v-icon>
                 access_time
               </v-icon>
-              <strong
-                class="ellipsis"
-              >
+              <strong>
                 {{ timer.timer_name }}
               </strong>
               <div class="caption ellipsis">
@@ -114,7 +112,7 @@
               {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
               ({{ calculateTimeSpent(timer) }})
             </div>
-            <div class="fullwidth">
+            <div class="fullwidth ellipsis">
               <v-icon>
                 access_time
               </v-icon>
@@ -212,6 +210,8 @@ export default {
         userIds: self.userIds
       };
       window.axios.post('/api/chart/bytimer', params).then(response => {
+        self.totalDuration = 0;
+        self.totalTime = "00:00:00";
         let timers = response.data;
         self.timers = [];
         self.days = [];
@@ -222,7 +222,7 @@ export default {
             self.days.push(dateStarted);
             timer.dateStarted = dateStarted;
           }
-          self.totalDuration += timer.duration;
+          self.totalDuration += timer.duration || 0;
           self.timers.push(timer);
         });
         self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds');

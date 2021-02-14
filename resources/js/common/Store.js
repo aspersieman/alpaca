@@ -37,6 +37,7 @@ export default new Vuex.Store({
     tasks: [],
     timer: null,
     notes: [],
+    note: null,
     notesDrawer: false,
     activeTimer: null,
     activeTimerCounter: {
@@ -144,6 +145,9 @@ export default new Vuex.Store({
     },
     setNotes(state, notes) {
       state.notes = notes;
+    },
+    setSelectedNote(state, note) {
+      state.note = note;
     },
     setNotesDrawer(state, value) {
       state.notesDrawer = value;

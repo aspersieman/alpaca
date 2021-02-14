@@ -23,7 +23,6 @@
         />
       </router-link>
       <v-toolbar-title
-        v-if="$vuetify.breakpoint.mdAndUp && !isSmall"
         class="toolbar-title"
       >
         <router-link to="/">
@@ -33,7 +32,7 @@
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
-            v-if="$store.getters.isLoggedIn && !isSmall"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard"
@@ -41,7 +40,7 @@
             Dashboard
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && !isSmall"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
             class="d-none d-sm-flex appbar-button"
             text
             to="/tasks"
@@ -49,7 +48,7 @@
             Tasks
           </v-btn>
           <v-btn
-            v-if="this.$store.getters.isLoggedIn && !isSmall"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
             class="d-none d-sm-flex appbar-button"
             text
             to="/reports"
@@ -58,7 +57,7 @@
           </v-btn>
           <v-spacer />
           <base-btn-primary
-            v-if="this.$store.getters.isLoggedIn && !isSmall"
+            v-if="$store.getters.isLoggedIn && breakpoint != 'sm' && breakpoint != 'xs'"
             v-shortkey.once="['ctrl', 'alt', 't']"
             class="hidden-sm-and-down"
             dark
@@ -71,7 +70,7 @@
           </base-btn-primary>
           <timer-active />
           <v-btn
-            v-if="!this.$store.getters.isLoggedIn && !isSmall"
+            v-if="!$store.getters.isLoggedIn && !isSmall"
             class="d-none d-sm-flex"
             text
             link
@@ -79,15 +78,14 @@
           >
             Login
           </v-btn>
-          <v-spacer />
-          <avatar 
-            v-if="this.$store.getters.isLoggedIn && !isSmall"
-            class="d-none d-sm-flex"
-          />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
         <timer-dialog @timerAdded="snackbar=true" />
       </v-container>
+      <avatar 
+        v-if="$store.getters.isLoggedIn && !isSmall"
+        class="d-none d-sm-flex"
+      />
     </v-app-bar>
   </div>
 </template>

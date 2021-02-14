@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '../common/Store';
-import methods from '../common/Methods';
 
 Vue.use(Router);
 

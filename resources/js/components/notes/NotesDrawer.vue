@@ -90,9 +90,11 @@ export default {
         order: null,
         timers: []
       },
+      defaultWidth: 450,
       navigation: {
-        width: 250,
-        borderSize: 3
+        width: 450,
+        borderSize: 3,
+        maxWidth: 700
       }
     };
   },
@@ -110,7 +112,7 @@ export default {
   },
   created() {
     const self = this;
-    self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? 250 : window.innerWidth;
+    self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
     self.$eventBus.$on(EventNames.NOTE_DRAWER_TOGGLE, (value) => {
       if (value == true) {
         self.notes = self.getNotes();
@@ -183,8 +185,10 @@ export default {
           direction === "right"
             ? document.body.scrollWidth - evt.clientX
             : evt.clientX;
-        el.style.width = f + "px";
-        self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, f);
+        if (f <= self.navigation.maxWidth) {
+          el.style.width = f + "px";
+          self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, f);
+        }
       }
 
       drawerBorder.addEventListener(

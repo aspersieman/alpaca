@@ -16,6 +16,8 @@ export default {
   NOTE_DRAWER_RESIZE: "note-drawer-resize",
   NOTE_DRAWER_TOGGLE: "note-drawer-toggle",
   NOTE_UPDATED: "note-updated",
+  NOTE_UPDATE_DIALOG: "note-update-dialog",
+  NOTE_ADD_DIALOG: "note-add-dialog",
   PERMISSION_ADDED: "permission-added",
   TASK_ADDED: "task-added",
   TASK_ADD_DIALOG: "task-add-dialog",

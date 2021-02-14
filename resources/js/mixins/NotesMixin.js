@@ -14,8 +14,8 @@ export default {
         this.loading = true;
         
         const newNote = {
-          name: note.name,
-          content: note.content,
+          name: note.name.trim(),
+          content: note.content.trim(),
           task_id: note.task_id
         };
 
@@ -33,6 +33,7 @@ export default {
             color: 'success',
             duration: 1000
           });
+          this.$emit(EventNames.NOTE_ADDED, false);
           return response;
         })
           .catch(error => {
@@ -46,16 +47,16 @@ export default {
         });
       }
     },
-    updateNote() {
-      const note = {
-        id: this.note.id,
-        name: this.noteName,
-        content: this.noteContent
-      };
-      if(note.name.length > 0) {
+    updateNote(note) {
+      if(note && note.name.length > 0) {
         this.loading = true;
+        const updateNote = {
+          id: note.id,
+          name: note.name.trim(),
+          content: note.content.trim()
+        };
         
-        window.axios.put(`/api/notes/`+ parseInt(note.id), note)
+        window.axios.put(`/api/notes/`+ parseInt(note.id), updateNote)
           .then(response => {
           this.loading = false;
           this.formReset();
@@ -66,6 +67,7 @@ export default {
             duration: 1000
           });
           this.showEditForm = false;
+          this.$emit(EventNames.NOTE_UPDATED, false);
           return response;
         })
           .catch(error => {
@@ -122,5 +124,15 @@ export default {
         }
       });
     },
-  }
+    openNoteDialog(note) {
+      const self = this;
+      if (note) {
+        self.$store.commit('setSelectedNote', note);
+        self.$eventBus.$emit(EventNames.NOTE_UPDATE_DIALOG, true)
+      } else {
+        self.$store.commit('setSelectedNote', null);
+        self.$eventBus.$emit(EventNames.NOTE_ADD_DIALOG, true)
+      }
+    },
+  },
 }

@@ -2,132 +2,123 @@
   <v-dialog
     v-model="dialog"
     max-width="600px"
+    scrollable
     :fullscreen="$vuetify.breakpoint.xs"
     :retain-focus="false"
   >
     <v-card>
       <v-card-title class="grey--text">
-        <h2 v-if="mode == 'ADD'">
+        <span v-if="mode == 'ADD'">
           Add a New Task
-        </h2>
-        <h2 v-if="mode == 'UPDATE'">
+        </span>
+        <span v-if="mode == 'UPDATE'">
           Update Task
-        </h2>
+        </span>
       </v-card-title>
+      <v-divider />
       <v-card-text>
-        <v-form
-          ref="form"
-          class="px-3"
+        <v-text-field
+          v-model="name"
+          label="Title"
+          prepend-icon="edit"
+          autofocus
+        />
+        <v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          :nudge-right="40"
+          transition="scale-transition"
+          offset-y
+          min-width="290px"
         >
-          <v-text-field
-            v-model="name"
-            label="Title"
-            prepend-icon="edit"
-            autofocus
-          />
-          <v-menu
-            v-model="menu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template #activator="{ on, attrs }">
-              <v-text-field
-                v-model="due"
-                :rules="dateRules"
-                :value="formattedDate"
-                label="Due date"
-                prepend-icon="event"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              />
-            </template>
-            <v-date-picker
+          <template #activator="{ on, attrs }">
+            <v-text-field
               v-model="due"
-              @input="menu2 = false"
+              :rules="dateRules"
+              :value="formattedDate"
+              label="Due date"
+              prepend-icon="event"
+              readonly
+              v-bind="attrs"
+              v-on="on"
             />
-          </v-menu>
-          <div v-if="mode == 'UPDATE'">
-            <v-combobox
-              v-model="status"
-              class="cmb-statuses"
-              :items="statuses"
-              label="Status"
-              chips
-            >
-              <template
-                #selection="data"
-                class="cmb-statuses"
-              >
-                <v-chip
-                  :key="JSON.stringify(data.item)"
-                  v-bind="data.attrs"
-                  :input-value="data.selected"
-                  :disabled="data.disabled"
-                  :class="`status ${data.item}`"
-                  @click:close="data.parent.selectItem(data.item)"
-                >
-                  {{ data.item }}
-                </v-chip>
-              </template>
-            </v-combobox>
-            <timer 
-              v-if="task"
-              :dense="true"
-              :two-line="true"
-              :task="task"
-            />
-          </div>
-
-          <v-spacer />
-
-          <v-layout
-            row 
-            wrap
-            width="100%"
+          </template>
+          <v-date-picker
+            v-model="due"
+            @input="menu2 = false"
+          />
+        </v-menu>
+        <div v-if="mode == 'UPDATE'">
+          <v-combobox
+            v-model="status"
+            class="cmb-statuses"
+            :items="statuses"
+            label="Status"
+            chips
           >
-            <v-btn
-              v-if="mode == 'ADD'"
-              text
-              class="success mx-0 mt-3"
-              :loading="loading"
-              @click="addTask"
+            <template
+              #selection="data"
+              class="cmb-statuses"
             >
-              Add
-            </v-btn>
-            <v-btn
-              v-if="mode == 'UPDATE'"
-              text
-              class="success ml-1 mx-0 mt-3"
-              :loading="loading"
-              @click="updateTask"
-            >
-              Update
-            </v-btn>
-            <v-btn
-              v-if="mode == 'UPDATE'"
-              text
-              class="success ml-1 mx-0 mt-3"
-              :loading="loading"
-              @click="openTimerDialog();"
-            >
-              Add timer
-            </v-btn>
-            <v-spacer />
-            <v-btn
-              text
-              class="error mx-0 mt-3"
-              :loading="loading"
-              @click="close();"
-            >
-              Cancel
-            </v-btn>
-          </v-layout>
-        </v-form>
+              <v-chip
+                :key="JSON.stringify(data.item)"
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                :disabled="data.disabled"
+                :class="`status ${data.item}`"
+                @click:close="data.parent.selectItem(data.item)"
+              >
+                {{ data.item }}
+              </v-chip>
+            </template>
+          </v-combobox>
+          <timer 
+            v-if="task"
+            :dense="true"
+            :two-line="true"
+            :task="task"
+          />
+        </div>
       </v-card-text>
+      <v-divider />
+      <v-card-actions>
+        <v-btn
+          v-if="mode == 'ADD'"
+          text
+          class="success mx-0 mt-3"
+          :loading="loading"
+          @click="addTask"
+        >
+          Add
+        </v-btn>
+        <v-btn
+          v-if="mode == 'UPDATE'"
+          text
+          class="success ml-1 mx-0 mt-3"
+          :loading="loading"
+          @click="updateTask"
+        >
+          Update
+        </v-btn>
+        <v-btn
+          v-if="mode == 'UPDATE'"
+          text
+          class="success ml-1 mx-0 mt-3"
+          :loading="loading"
+          @click="openTimerDialog();"
+        >
+          Add timer
+        </v-btn>
+        <v-spacer />
+        <v-btn
+          text
+          class="error mx-0 mt-3"
+          :loading="loading"
+          @click="close();"
+        >
+          Cancel
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

@@ -13,6 +13,7 @@
     <vue-progress-bar />
     <home-snack-bar />
     <confirm-dialog />
+    <note-dialog />
   </v-app>
 </template>
 <script>
@@ -21,6 +22,7 @@ import CoreAppBar from '../components/core/AppBar.vue';
 import CoreContent from '../components/core/Content.vue';
 import CoreFooter from '../components/core/Footer.vue';
 import ConfirmDialog from '../components/core/ConfirmDialog.vue';
+import NoteDialog from '../components/notes/NoteDialog.vue';
 import SnackBar from './front/home/SnackBar.vue';
 export default {
   components: {
@@ -29,7 +31,8 @@ export default {
     'core-content': CoreContent,
     'core-footer': CoreFooter,
     'home-snack-bar': SnackBar,
-    'confirm-dialog': ConfirmDialog
+    'confirm-dialog': ConfirmDialog,
+    'note-dialog': NoteDialog
   },
   computed: {
     showLoader() {

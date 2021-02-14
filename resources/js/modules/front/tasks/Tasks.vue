@@ -122,6 +122,7 @@
         />
       </draggable>
       <v-btn
+        v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
         fab
         dark
         small
@@ -282,10 +283,11 @@ export default {
 }
 
 .task-add-button-mobile {
-  bottom: 5px;
+  bottom: 10px;
   right: 0;
   position: sticky;
   margin-left: 10px;
   float: right;
+  z-index: 10;
 }
 </style>
