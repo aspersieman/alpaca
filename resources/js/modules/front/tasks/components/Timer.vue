@@ -1,19 +1,15 @@
 <template>
-  <div 
-    v-if="task.timers.length > 0"
-    class="timers"
-  >
+  <div>
     <v-card 
-      v-for="timer in task.timers" 
-      :key="timer.id"
       text 
       flat 
     >
-      <div :class="showTimerForTask(task, timer) ? 'active-timer' : ''">
+      <div
+        :class="showTimerForTask(task, timer) ? 'active-timer' : ''"
+      >
         <v-layout
           row
           wrap
-          class="timer"
         >
           <v-flex 
             xs1
@@ -174,10 +170,23 @@ export default {
         }
       }
     },
-  },
-  data() {
-    return {
-    }
+    timer: {
+      required: true,
+      type: Object,
+      default: function() {
+        return {
+          id: null,
+          name: null,
+          task_id: null, 
+          user_id: null,
+          started_at: null,
+          stopped_at: null, 
+          duration: 0,
+          created_at: null,
+          updated_at: null
+        }
+      }
+    },
   },
   mounted() {
     const self = this;
@@ -185,7 +194,6 @@ export default {
       self.startTimer(timer);
     });
   },
-  methods: { },
 }
 </script>
 
@@ -193,14 +201,10 @@ export default {
 @import "../../../../../sass/index";
 
 .active-timer {
-  background-color: $active-green;
   padding-right: 6px;
   margin-right: -3px;
   padding-left: 2px;
   margin-left: -3px;
-}
-.timers {
-  max-width: 500px;
 }
 .v-list-item {
   height: 20px;
@@ -208,15 +212,12 @@ export default {
 .horizontal-center {
   margin: auto;
 }
-
 .fs-90 {
  font-size: 0.90rem;
 }
-
 .caption {
   white-space: nowrap;
 }
-
 .timer-stop {
   font-size: 32px !important;
 }

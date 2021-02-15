@@ -105,7 +105,18 @@ export default {
           this.$store.commit('setStoppedTimer', response.data.data);
           this.$store.commit('setStoppedTimerValue', this.calculateTimeSpent(response.data.data));
           // Reset the activeTimerCounter and timer string
-          this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: null });
+          const timer = {
+            id: null,
+            name: null,
+            task_id: null, 
+            user_id: null,
+            started_at: null,
+            stopped_at: null, 
+            duration: 0,
+            created_at: null,
+            updated_at: null,
+          };
+          this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: timer });
           this.$store.state.activeTimerCounter.title = 'Timing...';
           this.$eventBus.$emit(EventNames.TIMER_UPDATED);
         })

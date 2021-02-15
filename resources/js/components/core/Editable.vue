@@ -111,7 +111,7 @@ export default {
   margin-left: -15px;
 }
 .editable {
-  outline: 1px solid #ddd;
+  outline: 1px solid $border-dark-grey;
   padding: 4px;
   white-space: pre-wrap; 
   width: 100%;

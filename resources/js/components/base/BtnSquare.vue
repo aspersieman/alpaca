@@ -13,7 +13,7 @@
 
 <script>
   export default {
-    name: 'BaseBtn',
+    name: 'BaseBtnSquare',
 
     props: {
       square: Boolean,

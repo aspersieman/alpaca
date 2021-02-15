@@ -40,6 +40,14 @@
           Update Note
         </span>
       </v-card-title>
+      <v-card-subtitle
+        v-if="subtitle != '' && subtitle != null"
+      >
+        <v-icon small>
+          task_alt
+        </v-icon>
+        {{ subtitle }}
+      </v-card-subtitle>
       <v-divider />
       <v-card-text>
         <v-text-field
@@ -92,18 +100,22 @@
 
 import EventNames from '../../common/EventNames';
 import NotesMixin from '../../mixins/NotesMixin';
+import TaskMixin from '../../mixins/TaskMixin';
 import Editable from '../../components/core/Editable';
 
 export default {
   components: { Editable },
-  mixins: [ NotesMixin ],
+  mixins: [ 
+    NotesMixin, 
+    TaskMixin
+  ],
   data() {
     return {
       mode: 'ADD',
       dialog: false,
       name: '',
       content: '',
-      userId: '',
+      subtitle: '',
       loading: false,
       fullscreen: false,
       onlyEdit: true,
@@ -114,26 +126,28 @@ export default {
       }
     }
   },
-  computed: { },
   created() {
     const self = this;
     this.$eventBus.$on(EventNames.NOTE_ADD_DIALOG, (value) => {
+      self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
-      self.formReset();
+      self.subtitle = self.getActiveTask().name || '';
     });
     self.$eventBus.$on(EventNames.NOTE_UPDATE_DIALOG, (value) => {
+      self.formReset();
       self.dialog = value;
       self.note = self.$store.state.note;
       self.name = self.note.name;
       self.content = self.note.content;
+      self.subtitle = self.getActiveTask().name || '';
       self.mode = 'UPDATE';
     });
     self.$eventBus.$on([ EventNames.NOTE_ADDED, EventNames.NOTE_UPDATED ], (value) => {
+      self.formReset();
       self.dialog = value || false;
       this.loading = false;
       this.close();
-      this.formReset();
     });
   },
   methods: {
@@ -144,7 +158,16 @@ export default {
     formReset() {
       this.name = '';
       this.content = null;
+      this.subtitle = '';
       this.isCreating = false;
+      this.loading = false;
+      this.fullscreen = false;
+      this.onlyEdit = true;
+      this.note = {
+        id: '',
+        name: '',
+        content: ''
+      };
     },
     createNote() {
       if (this.name != '' && this.content != '') {
@@ -173,7 +196,7 @@ export default {
     },
     maximise() {
       this.fullscreen = !this.fullscreen;
-    }
+    },
   }
 }
 </script>

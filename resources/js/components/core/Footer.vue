@@ -6,7 +6,7 @@
     <v-container class="mx-auto">
       <v-row>
         <v-col cols="9">
-          <base-btn
+          <base-btn-square
             v-for="(item, i) in items"
             :key="i"
             :href="item.href"
@@ -16,19 +16,19 @@
             target="_blank"
           >
             <v-icon v-text="item.icon" />
-          </base-btn>
+          </base-btn-square>
         </v-col>
 
         <v-spacer />
 
-        <base-btn
+        <base-btn-square
           class="mr-0"
           square
           title="Go to top"
           @click="$vuetify.goTo(0)"
         >
           <v-icon>mdi-chevron-up</v-icon>
-        </base-btn>
+        </base-btn-square>
       </v-row>
       <v-row>
         <span class="font-weight-light caption">&copy; aspersieman {{ year }} - {{ version }}</span>

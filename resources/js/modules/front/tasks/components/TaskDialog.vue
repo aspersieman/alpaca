@@ -72,12 +72,63 @@
               </v-chip>
             </template>
           </v-combobox>
-          <timer 
-            v-if="task"
-            :dense="true"
-            :two-line="true"
+          <timer-list
+            :only-active="onlyActive"
             :task="task"
           />
+          <v-card 
+            text 
+            flat 
+          >
+            <div>
+              <v-layout
+                row
+                wrap
+                class="border-top"
+              >
+                <v-flex 
+                  xs1
+                  sm1
+                  md1
+                  lg1
+                  class="strong"
+                />
+                <v-flex
+                  xs6
+                  sm3
+                  md3
+                  lg3
+                  class="ml-2 strong"
+                >
+                  Total:
+                </v-flex>
+                <v-flex
+                  v-if="$vuetify.breakpoint.smAndUp"
+                  sm4
+                  md4
+                  lg4
+                />
+                <v-spacer />
+                <v-flex
+                  xs4
+                  sm3
+                  md3
+                  lg3 
+                  class="fs-90"
+                >
+                  <v-layout 
+                    row
+                  >
+                    <v-flex
+                      class="horizontal-center fs-90 strong"
+                    >
+                      {{ getTotalTime(task) }}
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+              </v-layout>
+            </div>
+          </v-card>
         </div>
       </v-card-text>
       <v-divider />
@@ -124,14 +175,14 @@
 </template>
 
 <script>
-import Timer from './Timer';
+import TimerList from './TimerList';
 import moment from 'moment';
 import TaskMixin from '../../../../mixins/TaskMixin';
 import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {
-    Timer
+    TimerList
   },
   mixins: [ 
     TaskMixin
@@ -164,7 +215,8 @@ export default {
         'complete',
         'ongoing',
         'overdue'
-      ]
+      ],
+      onlyActive: false
     }
   },
   computed: {
@@ -175,10 +227,12 @@ export default {
   created() {
     const self = this;
     self.$eventBus.$on(EventNames.TASK_ADD_DIALOG, (value) => {
+      self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
     });
     self.$eventBus.$on(EventNames.TASK_UPDATE_DIALOG, (value) => {
+      self.formReset();
       self.task = self.$store.state.task;
       self.name = self.$store.state.task.name;
       self.due = self.$store.state.task.due;
@@ -301,5 +355,11 @@ export default {
 .theme--light.v-chip.status.overdue {
   color: white;
   background-color: $task-status-overdue;
+}
+.strong {
+  font-weight: bold;
+}
+.border-top {
+  border-top: 1px solid $border-dark-grey;
 }
 </style>

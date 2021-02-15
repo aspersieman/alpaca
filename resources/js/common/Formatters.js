@@ -29,6 +29,14 @@ export default {
       secondsToMinutes(seconds) {
         const minutes = (parseInt(seconds) / 60) || 0;
         return minutes;
+      },
+      dateOnly(dateString) {
+        let date = new Date(dateString);
+        date.setHours(0); 
+        date.setMinutes(0); 
+        date.setSeconds(0)
+        date.setMilliseconds(0);
+        return date;
       }
     }
   }

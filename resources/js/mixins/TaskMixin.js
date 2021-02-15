@@ -22,7 +22,6 @@ export default {
         self.tasks = response.data.data;
         self.$store.commit('setTasks', response.data.data);
         self.tasksCopy = response.data.data;
-        self.searchByStatus();
       });
     },
     saveOrder() {
@@ -121,8 +120,6 @@ export default {
         });
         currentTask.status = newStatus
         self.btnColor = btnColor
-
-        self.$eventBus.$emit(EventNames.TASK_SEARCH_BY_STATUS);
       }
     },
     updateName() {
@@ -146,5 +143,34 @@ export default {
 
       this.editMode = false;
     },
+    getActiveTask() {
+      const task_id = this.$store.state.task.id == 0 || typeof this.$store.state.task.id == 'undefined' ? null : this.$store.state.task.id;
+      let task = this.$store.state.tasks
+        .filter(function(element) {
+          return element.id === task_id;
+        });
+      task = task.length > 0 ? task[0] : null;
+      return task;
+    },
+    getTimers(task, onlyActive) {
+      const self = this;
+      if (onlyActive) {
+        let timer = task.timers
+          .filter(function(element) {
+            if (self.$store.state.activeTimerCounter.timer) {
+              return element.id === self.$store.state.activeTimerCounter.timer.id;
+            }
+          });
+        return timer.length > 0 ? [timer[0]] : [];
+      }
+      return task.timers;
+    },
+    getTotalTime(task) {
+      let totalDuration = 0;
+      task.timers.forEach(timer => {
+        totalDuration += timer.duration || 0;
+      });
+      return this.$appFormatters.duration(totalDuration, 'seconds');
+    }
   }
 }

@@ -8,7 +8,7 @@
       :value="drawerState"
       :width="navigation.width"
       :touchless="true"
-      @input="updateNotesDrawerState"
+      @input="updateNoteDrawerState"
     >
       <div
         v-if="$vuetify.breakpoint.mdAndUp"
@@ -33,7 +33,12 @@
 
         <v-list-item-content>
           <v-list-item-title>Notes</v-list-item-title>
-          <v-list-item-subtitle>{{ task.name }}</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            <v-icon small>
+              task_alt
+            </v-icon>
+            {{ task.name }}
+          </v-list-item-subtitle>
         </v-list-item-content>
         <v-btn
           icon
@@ -50,7 +55,7 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <notes-list 
+            <note-list 
               :notes="notes" 
             />
           </v-list-item-content>
@@ -66,14 +71,14 @@
 </template>
 
 <script>
-import NotesList from './NotesList';
+import NoteList from './NoteList';
 import NoteCreate from './NoteCreate';
 import EventNames from '../../common/EventNames';
 import NotesMixin from '../../mixins/NotesMixin';
 
 export default {
   components: {
-    NotesList,
+    NoteList,
     NoteCreate,
   },
   mixins: [ 
@@ -101,7 +106,7 @@ export default {
   computed: {
     drawerState: {
       get() {
-        return this.$store.getters.getNotesDrawer; 
+        return this.$store.getters.getNoteDrawer; 
       },
       set(state) {
         if (state) {
@@ -131,7 +136,7 @@ export default {
           timers: []
         };
       }
-      self.$store.commit('setNotesDrawer', value);
+      self.$store.commit('setNoteDrawer', value);
     });
     self.$eventBus.$on(EventNames.NOTE_DELETED, (note) => {
       self.notes = self.getNotes()
@@ -259,7 +264,7 @@ export default {
       this.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, 0);
     },
 
-    updateNotesDrawerState(state) {
+    updateNoteDrawerState(state) {
       if (state) {
         //this.close();
       }

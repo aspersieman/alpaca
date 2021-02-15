@@ -22,7 +22,6 @@ export default {
   TASK_ADDED: "task-added",
   TASK_ADD_DIALOG: "task-add-dialog",
   TASK_DELETED: "task-deleted",
-  TASK_SEARCH_BY_STATUS: "task-search-by-status",
   TASK_UPDATED: "task-updated",
   TASK_UPDATE_DIALOG: "task-update-dialog",
   TIMER_ADDED: "timer-added",

@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div
+    style="width: 100%"
+  >
     <v-menu
       v-model="dateRangeMenu"
       :close-on-content-click="false"
@@ -13,9 +15,12 @@
           v-model="selected"
           class="date-range-input"
           label="Date range"
-          prepend-icon="mdi-calendar"
+          :prepend-icon="getIcon()"
+          :clearable="clearable"
           readonly
           value
+          outlined
+          dense
           v-bind="attrs"
           v-on="on"
           @input="$emit('input', $event)"
@@ -41,6 +46,16 @@ export default {
       default: function() {
         return [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ]
       }
+    },
+    showIcon: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    clearable: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -66,11 +81,18 @@ export default {
     parseDate (dates) {
       if (!dates) { return null }
       return dates.join(' ~ ')
+    },
+    getIcon() {
+      if (this.showIcon) {
+        return 'mdi-calendar';
+      } else {
+        return '';
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import "../../../../../sass/index";
+@import "../../../sass/index";
 </style>

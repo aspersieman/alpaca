@@ -23,6 +23,7 @@
         />
       </router-link>
       <v-toolbar-title
+        v-if="!($store.state.activeTimerCounter.timer.id != null && $vuetify.breakpoint.smAndDown)"
         class="toolbar-title"
       >
         <router-link to="/">

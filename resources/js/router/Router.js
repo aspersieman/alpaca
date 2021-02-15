@@ -17,22 +17,22 @@ const router = new Router({
         {
           name: "index.home",
           path: "",
-          component: require("../modules/front/home/Home")
+          component: require("../modules/front/home/Index")
         },
         {
           path: '/dashboard',
           name: 'dashboard',
-          component: require("../modules/front/dashboard/Dashboard")
+          component: require("../modules/front/dashboard/Index")
         },
         {
           path: '/tasks',
           name: 'tasks',
-          component: require("../modules/front/tasks/Tasks")
+          component: require("../modules/front/tasks/Index")
         },
         {
           path: '/reports',
           name: 'reports',
-          component: require("../modules/front/reports/Reports")
+          component: require("../modules/front/reports/Index")
         },
         {
           name: "admin.dashboard",

@@ -20,14 +20,18 @@
     <v-container fluid>
       <v-row>
         <v-col align="center">
-          <date-range-picker 
-            v-model="dates"
-          />
-          <base-btn-primary
-            @click="search()"
+          <div
+            class="date-picker-container"
           >
-            Go
-          </base-btn-primary>
+            <date-range-picker 
+              v-model="dates"
+            />
+            <base-btn-primary
+              @click="search()"
+            >
+              Go
+            </base-btn-primary>
+          </div>
         </v-col>
       </v-row>
       <v-row>
@@ -55,7 +59,7 @@
 import ChartBarTimeByDay from './components/ChartBarTimeByDay';
 import ChartPieTimeByTag from './components/ChartPieTimeByTag';
 import ChartTimerTimeline from './components/ChartTimerTimeline';
-import DateRangePicker from './components/DateRangePicker';
+import DateRangePicker from '../../../components/core/DateRangePicker';
 import EventNames from '../../../common/EventNames';
 
 export default {
@@ -80,3 +84,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.date-picker-container {
+  max-width: 215px;
+}
+</style>

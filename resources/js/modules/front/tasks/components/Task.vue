@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div 
+    class="task-container"
+  >
     <v-card
       text
       flat
@@ -15,13 +17,12 @@
         row
         wrap
         :class="`pa-2 task ${task.status}`"
-        class="task-details"
       >
         <v-flex
           xs12
           sm12
-          md4
-          lg4
+          md3
+          lg3
         >
           <div
             class="caption grey--text ml-2"
@@ -47,8 +48,8 @@
           </v-form>
         </v-flex>
         <v-flex
-          xs5
-          sm5
+          xs7
+          sm7
           md2
           lg2
         >
@@ -63,10 +64,26 @@
           </div>
         </v-flex>
         <v-flex
-          xs5
-          sm5
-          md3
-          lg3 
+          v-if="$vuetify.breakpoint.mdAndUp"
+          md2
+          lg2 
+          class="pt-0"
+        >
+          <div
+            class="caption grey--text"
+            :class="{'ml-3': $vuetify.breakpoint.smAndDown}"
+          >
+            Time
+          </div>
+          <div class="mt-0 pt-0">
+            {{ getTotalTime(task) }}
+          </div>
+        </v-flex>
+        <v-flex
+          xs3
+          sm3
+          md2
+          lg2 
           class="pt-0"
         >
           <div class="mt-0 pt-0">
@@ -86,6 +103,7 @@
           v-if="$vuetify.breakpoint.mdAndUp"
           md3
           lg3
+          class="align-right"
         >
           <div class="mt-0 pt-0">
             <v-btn
@@ -142,13 +160,21 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="openNotesDrawer()"
+              @click="openNoteDrawer()"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
-                  <v-icon v-on="on">
-                    note
-                  </v-icon>
+                  <v-badge
+                    :content="countNotes(task)"
+                    :value="countNotes(task)"
+                    bordered
+                    overlap
+                    color="grey lighten-1"
+                  >
+                    <v-icon v-on="on">
+                      note
+                    </v-icon>
+                  </v-badge>
                 </template>
                 Notes
               </v-tooltip>
@@ -207,10 +233,18 @@
                 </v-list-item>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click.stop="openNotesDrawer()"
+                  @click.stop="openNoteDrawer()"
                 >
                   <v-list-item-icon class="horizontal-center">
-                    <v-icon>note_add</v-icon>
+                    <v-badge
+                      :content="countNotes(task)"
+                      :value="countNotes(task)"
+                      bordered
+                      overlap
+                      color="grey lighten-1"
+                    >
+                      <v-icon>note</v-icon>
+                    </v-badge>
                   </v-list-item-icon>
                   <v-list-item-title>Notes</v-list-item-title>
                 </v-list-item>
@@ -220,12 +254,12 @@
         </v-flex>
       </v-layout>
       <v-layout
+        v-if="getTimers(task, onlyActive).length > 0"
         row
         wrap
         :class="`pa-2 task ${task.status}`"
       >
         <v-flex
-          v-if="task.timers.length > 0"
           xs12
           sm12
           md12
@@ -236,7 +270,10 @@
             Timers
           </div>
           <div>
-            <timer :task="task" />
+            <timer-list
+              :only-active="onlyActive"
+              :task="task"
+            />
           </div>
         </v-flex>
       </v-layout>
@@ -245,14 +282,14 @@
 </template>
 <script>
 
-import Timer from './Timer';
+import TimerList from './TimerList';
 import TaskMixin from '../../../../mixins/TaskMixin';
 import TimerMixin from '../../../../mixins/TimerMixin';
 import EventNames from '../../../../common/EventNames';
 
 export default {
   components: {
-    Timer
+    TimerList
   },
   mixins: [ 
     TaskMixin,
@@ -279,16 +316,23 @@ export default {
       newValues: [],
       timers: [],
       editMode: false,
+      onlyActive: true
     }
   },
   mounted() { },
   methods: {
-    openNotesDrawer() {
+    openNoteDrawer() {
       const self = this;
       self.$store.commit('setNotes', self.task.notes);
       self.$store.commit('setSelectedTask', self.task);
       self.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, true);
-    }
+    },
+    countNotes(task) {
+      return task.notes.length > 0 ? task.notes.length : '';
+    },
+    countTimers(task) {
+      return task.timers.length > 0 ? task.timers.length : '';
+    },
   },
 }
 </script>
@@ -296,8 +340,9 @@ export default {
 <style scoped lang="scss">
 @import "../../../../../sass/index";
 
-.task {
+.task-container {
   border-bottom: 1px solid $border-light-grey;
+  background-color: $theme-light-background;
 }
 .task.complete {
   border-left: 4px solid $task-status-complete;
@@ -353,11 +398,7 @@ export default {
   background-color: transparent;
 }
 
-.task-details {
-  position: -webkit-sticky; /* Safari & IE */
-  position: sticky;
-  top: 64px;
-  z-index: 1;
-  background-color: $theme-light-background;
+.align-right {
+  text-align: right;
 }
 </style>

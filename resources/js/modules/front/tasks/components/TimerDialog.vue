@@ -15,6 +15,14 @@
           Update Timer
         </span>
       </v-card-title>
+      <v-card-subtitle
+        v-if="subtitle != '' && subtitle != null"
+      >
+        <v-icon small>
+          task_alt
+        </v-icon>
+        {{ subtitle }}
+      </v-card-subtitle>
       <v-divider />
       <v-card-text>
         <v-menu
@@ -161,10 +169,14 @@
 <script>
 
 import TimerMixin from '../../../../mixins/TimerMixin';
+import TaskMixin from '../../../../mixins/TaskMixin';
 import EventNames from '../../../../common/EventNames';
 
 export default {
-  mixins: [ TimerMixin ],
+  mixins: [
+    TimerMixin,
+    TaskMixin
+  ],
   data() {
     return {
       mode: 'ADD',
@@ -174,7 +186,7 @@ export default {
       startTime: '',
       endTime: '',
       duration: '',
-      userId: '',
+      subtitle: '',
       loading: false,
       dateMenu: false,
       startTimeMenu: false,
@@ -193,17 +205,20 @@ export default {
   created() {
     const self = this;
     this.$eventBus.$on(EventNames.TIMER_ADD_DIALOG, (value) => {
+      self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
-      self.formReset();
+      self.subtitle = self.getActiveTask().name || '';
     });
     self.$eventBus.$on(EventNames.TIMER_UPDATE_DIALOG, (value) => {
+      self.formReset();
       self.timer = self.$store.state.timer;
       self.name = self.timer.name;
       self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
       self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+      self.subtitle = self.getActiveTask().name || '';
       self.dialog = value;
       self.mode = 'UPDATE';
       const tags = self.$store.state.timer.tagged.map(function (item) {
@@ -224,6 +239,7 @@ export default {
       this.duration = '';
       this.timer = null;
       this.tags = [];
+      this.subtitle = '';
     },
     removeCategory(item) {
       this.tags.splice(this.tags.indexOf(item), 1)

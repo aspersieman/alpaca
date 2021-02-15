@@ -38,7 +38,7 @@ export default new Vuex.Store({
     timer: null,
     notes: [],
     note: null,
-    notesDrawer: false,
+    noteDrawer: false,
     activeTimer: null,
     activeTimerCounter: {
       seconds: 0,
@@ -149,8 +149,8 @@ export default new Vuex.Store({
     setSelectedNote(state, note) {
       state.note = note;
     },
-    setNotesDrawer(state, value) {
-      state.notesDrawer = value;
+    setNoteDrawer(state, value) {
+      state.noteDrawer = value;
     },
     setAppBarBreakpoint(state, value) {
       state.appBarBreakpoint = value;
@@ -227,8 +227,8 @@ export default new Vuex.Store({
     getNotes: state => {
       return state.notes
     },
-    getNotesDrawer: state => {
-      return state.notesDrawer
+    getNoteDrawer: state => {
+      return state.noteDrawer
     },
     getAppBarBreakpoint: state => {
       return state.appBarBreakpoint
