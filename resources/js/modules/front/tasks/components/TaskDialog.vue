@@ -73,6 +73,7 @@
             </template>
           </v-combobox>
           <div
+            v-if="task.timers.length > 0"
             class="timers"
           >
             <div class="caption grey--text">

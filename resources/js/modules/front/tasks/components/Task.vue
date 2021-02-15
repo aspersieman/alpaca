@@ -70,12 +70,16 @@
           class="pt-0"
         >
           <div
+            v-if="task.timers.length > 0"
             class="caption grey--text"
             :class="{'ml-3': $vuetify.breakpoint.smAndDown}"
           >
             Time
           </div>
-          <div class="mt-0 pt-0">
+          <div
+            v-if="task.timers.length > 0"
+            class="mt-0 pt-0"
+          >
             {{ getTotalTime(task) }}
           </div>
         </v-flex>

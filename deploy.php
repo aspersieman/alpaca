@@ -49,7 +49,7 @@ set('git_tty', true);
 
 // Shared files/dirs between deploys 
 add('shared_files', [ '.env' ]);
-add('shared_dirs', [ 'vendor' ]);
+add('shared_dirs', [ ]);
 
 // Writable dirs by web server 
 add('writable_dirs', []);
@@ -132,6 +132,7 @@ task('deploy:vendors', function() {
 desc("Upload resources");
 task('upload', function () {
   upload(__DIR__ . "/public", '{{release_path}}');
+  upload(__DIR__ . "/vendor", '{{release_path}}');
 });
 
 desc("Maintenance mode with message");
