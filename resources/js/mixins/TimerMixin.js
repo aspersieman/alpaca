@@ -28,8 +28,8 @@ export default {
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds: function(seconds) {
-      seconds = parseInt(seconds);
+    _readableTimeFromSeconds: function(from, to) {
+      const seconds = parseInt(window.moment.duration(to.diff(from)).asSeconds())
       const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
         hours: this._padNumber(hours),
@@ -43,10 +43,9 @@ export default {
      */
     calculateTimeSpent: function (timer) {
       if (timer.stopped_at != null) {
-        const started = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const stopped = window.moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS')
-        const seconds = parseInt(window.moment.duration(stopped.diff(started)).asSeconds())
-        const time = this._readableTimeFromSeconds(seconds);
+        const from = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        const to = window.moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+        const time = this._readableTimeFromSeconds(from, to);
         return `${time.hours}:${time.minutes}:${time.seconds}`; // for syntax highlighting: `
       }
       return '';
@@ -84,7 +83,9 @@ export default {
         });
 
         this.$store.state.activeTimerCounter.ticker = setInterval(() => {
-          const time = this._readableTimeFromSeconds(++this.$store.state.activeTimerCounter.seconds)
+          const from = window.moment(this.$store.state.activeTimerCounter.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+          const to = window.moment();
+          const time = this._readableTimeFromSeconds(from, to);
           this.$store.state.activeTimerCounter.title = `${time.hours}:${time.minutes}:${time.seconds}`
         }, 1000);
       }

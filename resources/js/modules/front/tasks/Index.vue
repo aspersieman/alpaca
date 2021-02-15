@@ -3,10 +3,11 @@
     <note-drawer />
     <v-container class="my-2">
       <v-row>
-        <v-col>
+        <v-col
+          class="mb-3" 
+        >
           <v-layout 
             row 
-            class="mb-3" 
             wrap
           >
             <v-avatar>
@@ -17,6 +18,15 @@
             <h1 class="subheading grey--text ml-4">
               Tasks
             </h1>
+          </v-layout>
+          <v-layout 
+            v-if="$vuetify.breakpoint.mdAndUp"
+            row 
+            wrap
+          >
+            <h4 class="subheading grey--text ml-4">
+              Active tasks and tasks completed today
+            </h4>
           </v-layout>
         </v-col>
         <v-col
@@ -118,7 +128,9 @@
         </v-layout>
       </v-fade-transition>
     </v-container>
-    <v-container>
+    <v-container
+      class="tasks-container"
+    >
       <v-row>
         <v-col
           class="col-12"
@@ -387,10 +399,14 @@ export default {
 
 .filter-toggle-container {
   text-align: right;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 .search-input-max-width {
   max-width: 300px;
+}
+
+.tasks-container {
+  margin-top: -50px;
 }
 </style>

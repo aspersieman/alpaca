@@ -72,63 +72,73 @@
               </v-chip>
             </template>
           </v-combobox>
-          <timer-list
-            :only-active="onlyActive"
-            :task="task"
-          />
-          <v-card 
-            text 
-            flat 
+          <div
+            class="timers"
           >
-            <div>
-              <v-layout
-                row
-                wrap
-                class="border-top"
-              >
-                <v-flex 
-                  xs1
-                  sm1
-                  md1
-                  lg1
-                  class="strong"
-                />
-                <v-flex
-                  xs6
-                  sm3
-                  md3
-                  lg3
-                  class="ml-2 strong"
-                >
-                  Total:
-                </v-flex>
-                <v-flex
-                  v-if="$vuetify.breakpoint.smAndUp"
-                  sm4
-                  md4
-                  lg4
-                />
-                <v-spacer />
-                <v-flex
-                  xs4
-                  sm3
-                  md3
-                  lg3 
-                  class="fs-90"
-                >
-                  <v-layout 
-                    row
-                  >
-                    <v-flex
-                      class="horizontal-center fs-90 strong"
-                    >
-                      {{ getTotalTime(task) }}
-                    </v-flex>
-                  </v-layout>
-                </v-flex>
-              </v-layout>
+            <div class="caption grey--text">
+              Timers
             </div>
-          </v-card>
+            <timer-list
+              :only-active="onlyActive"
+              :task="task"
+            />
+            <v-card 
+              text 
+              flat 
+            >
+              <div>
+                <v-layout
+                  row
+                  wrap
+                  class="border-top"
+                >
+                  <v-flex 
+                    xs1
+                    sm1
+                    md1
+                    lg1
+                  >
+                    &nbsp;
+                  </v-flex>
+                  <v-flex
+                    xs6
+                    sm3
+                    md3
+                    lg3
+                    class="ml-2 strong"
+                  >
+                    Total:
+                  </v-flex>
+                  <v-flex
+                    v-if="$vuetify.breakpoint.smAndUp"
+                    sm4
+                    md4
+                    lg4
+                  >
+                    &nbsp;
+                  </v-flex>
+                  <v-spacer />
+                  <v-flex
+                    xs4
+                    sm3
+                    md3
+                    lg3 
+                    class="fs-90"
+                  >
+                    <v-layout 
+                      row
+                    >
+                      <v-flex
+                        class="horizontal-center fs-90 strong"
+                      >
+                        {{ getTotalTime(task) }}
+                      </v-flex>
+                    </v-layout>
+                  </v-flex>
+                </v-layout>
+              </div>
+            </v-card>
+          </div>
         </div>
       </v-card-text>
       <v-divider />
@@ -361,5 +371,8 @@ export default {
 }
 .border-top {
   border-top: 1px solid $border-dark-grey;
+}
+.timers {
+  max-width: 500px;
 }
 </style>
