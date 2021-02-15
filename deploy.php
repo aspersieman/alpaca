@@ -57,7 +57,7 @@ set('allow_anonymous_stats', false);
 
 // Hosts
 host('lekkerllama.com')
-  ->set('deploy_path', '/var/www/html/alpaca')
+  ->set('deploy_path', '/var/www/html/deployer/alpaca')
   ->user($user)
   ->roles('production');
 
