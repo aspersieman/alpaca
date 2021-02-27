@@ -151,7 +151,7 @@
               </v-tooltip>
             </v-btn>
             <v-btn
-              v-if="$store.state.activeTimerCounter.seconds == 0"
+              v-if="!isActiveTimer()"
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
@@ -329,7 +329,10 @@ export default {
       onlyActive: true
     }
   },
-  mounted() { },
+  mounted() { 
+    console.log(this.$store.state.activeTimer);
+    console.log(this.$store.state.activeTimerCounter);
+  },
   methods: {
     openNoteDrawer() {
       const self = this;
