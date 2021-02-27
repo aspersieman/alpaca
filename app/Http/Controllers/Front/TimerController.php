@@ -45,14 +45,16 @@ class TimerController extends FrontController
   public function stopRunning(Request $request)
   {
     if ($timer = Timer::mine()->running()->first()) {
-      $start = Carbon::createFromFormat('Y-m-d H:s:i', $timer->started_at);
       $tz = $request->tz ?? config('app.timezone');
+      $start = Carbon::createFromFormat('Y-m-d H:i:s', $timer->started_at, $tz);
       $now = Carbon::now(new \DateTimeZone($tz));
-      $timer->duration = $now->diffInSeconds($start);
-      $timer->update(['stopped_at' => $now]);
+      $duration = $now->diffInSeconds($start);
+      $timer->stopped_at = $now;
+      $timer->duration = $duration;
+      $timer->save();
     }
 
-    return $this->sendResponseOk($timer, "Timer stopped ok");
+    return $this->sendResponseOk($timer, "Timer stopped ok ({$start} {$now} {$duration})");
   }
 
   public function delete(Request $request, int $id, int $timer_id)
