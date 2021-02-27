@@ -125,6 +125,19 @@
             :clearable="clearable"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
           />
+          <v-spacer />
+          <v-combobox
+            v-model="sort"
+            outlined
+            :clearable="clearable"
+            dense
+            :items="sortList"
+            label="Sort"
+            class="search-input"
+            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
+            prepend-icon="filter_list"
+            @change="sortTasks()"
+          />
         </v-layout>
       </v-fade-transition>
     </v-container>
@@ -159,18 +172,11 @@
               </v-btn>
             </v-layout>
           </v-layout>
-          <draggable
-            v-if="tasks.length > 0"
-            v-model="tasks"
-            handle=".handle"
-            @change="saveOrder"
-          >
-            <task
-              v-for="(task, index) in searchTasks"
-              :key="index"
-              :task="task" 
-            />
-          </draggable>
+          <task
+            v-for="(task, index) in searchTasks"
+            :key="index"
+            :task="task" 
+          />
           <v-btn
             v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
             fab
@@ -191,14 +197,12 @@
 import Task from './components/Task';
 import NoteDrawer from '../../../components/notes/NoteDrawer';
 import DateRangePicker from '../../../components/core/DateRangePicker';
-import draggable from 'vuedraggable';
 import TaskMixin from '../../../mixins/TaskMixin';
 import TimerMixin from '../../../mixins/TimerMixin';
 import EventNames from '../../../common/EventNames';
 
 export default {
   components: {
-    draggable,
     Task,
     NoteDrawer,
     DateRangePicker
@@ -213,11 +217,11 @@ export default {
       tasksCopy: [],
       userId: '',
       btnColor: '',
-      newName: "",
+      newName: '',
       indexToEdit: 0,
       drag: true,
       snackbar: false,
-      search: "",
+      search: '',
       searching: false,
       activeTimerString: 'Timing...',
       counter: { seconds: 0, timer: null },
@@ -230,6 +234,12 @@ export default {
       ],
       dates: [],
       showFilters: false,
+      sort: '',
+      sortList: [
+        'Due date',
+        'Priority',
+        'Status'
+      ],
       filtersCount: 0,
       clearable: true
     }
@@ -290,6 +300,9 @@ export default {
     self.$eventBus.$on([EventNames.TASK_ADDED, EventNames.TASK_UPDATED, EventNames.TIMER_ADDED, EventNames.TIMER_UPDATED, EventNames.TIMER_DELETED, EventNames.NOTE_DELETED],()=>{
       self.loadTasks();  
     });
+    self.$eventBus.$on([EventNames.TASKS_LOADED],()=>{
+      self.sortTasks();  
+    });
     self.$eventBus.$on([EventNames.TASK_DELETED], ()=> {
       self.tasks = self.tasks
         .filter(function(element) {
@@ -298,6 +311,7 @@ export default {
     });
   },
   created() {
+    this.getTasksSettings();
     this.loadTasks();
     this.setActiveTimer();
   },
@@ -313,6 +327,8 @@ export default {
       localStorage.setItem('tasks-status', parsedStatus);
       const parsedDateRange = JSON.stringify(this.dates);
       localStorage.setItem('tasks-date-range', parsedDateRange);
+      const parsedSort = JSON.stringify(this.sort);
+      localStorage.setItem('tasks-sort', parsedSort);
     },
 
     getTasksSettings() {
@@ -337,6 +353,13 @@ export default {
           localStorage.removeItem('tasks-date-range');
         }
       }
+      if (localStorage.getItem('tasks-sort')) {
+        try {
+          this.sort = JSON.parse(localStorage.getItem('tasks-sort'));
+        } catch(e) {
+          localStorage.removeItem('tasks-sort');
+        }
+      }
     },
     toggleFilters() {
       this.showFilters = !this.showFilters;
@@ -353,6 +376,34 @@ export default {
         activeFilters += 1;
       }
       this.filtersCount = activeFilters;
+    },
+
+    sortTasks() {
+      switch (this.sort) {
+        case 'Due date':
+          this.tasks.sort((a, b) => {
+            let dateA = new Date(a.due);
+            let dateB = new Date(b.due);
+            return dateA - dateB;
+          });
+          break;
+        case 'Priority':
+          this.tasks.sort((a, b) => {
+            let priorityA = a.priority == 0 ? 4 : a.priority;
+            let priorityB = b.priority == 0 ? 4 : b.priority;
+            if (priorityA > priorityB) return 1;
+            if (priorityB > priorityA) return -1;
+            return 0;
+          });
+          break;
+        case 'Status':
+          this.tasks.sort((a, b) => a.status.localeCompare(b.status));
+          break;
+        case 'id':
+          this.tasks.sort((a, b) => a.status.localeCompare(b.status));
+          break;
+      }
+      this.setTasksSettings();
     }
   }
 }

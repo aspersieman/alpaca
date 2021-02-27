@@ -12,7 +12,7 @@ class Task extends Model
   /**
    * {@inheritDoc}
    */
-  protected $fillable = ['name', 'status', 'due', 'user_id', 'project_id'];
+  protected $fillable = ['name', 'status', 'due', 'user_id', 'project_id', 'priority'];
 
   /**
    * {@inheritDoc}
@@ -23,6 +23,12 @@ class Task extends Model
     'complete',
     'ongoing',
     'overdue'
+  ];
+
+  const PRIORITIES = [
+    1, // high
+    2, // medium
+    3 // low
   ];
 
   /**
@@ -101,19 +107,15 @@ class Task extends Model
   }
 
   /**
-   * Update order
+   * Update priority
    *
    * @return \Illuminate\Database\Eloquent\Relations\HasMany
    */
-  public static function order($tasks)
+  public static function priority($id, $priority)
   {
-    $updated = [];
-    foreach($tasks as $task) {
-      $count = Task::where('id', $task['id'])
-        ->update(['order' => $task['order']]);
-      if ($count > 0) $updated[$task['id']] = $task['order'];
-    }
-    return $updated;
+    return Task::withTrashed()
+      ->where('id', $id)
+      ->update(['priority' => $priority]);
   }
 
   public static function put($id, $data)
@@ -123,6 +125,7 @@ class Task extends Model
     $task->name = $data['name'];
     $task->due = $data['due'];
     $task->status = $data['status'];
+    $task->priority = $data['priority'];
     $task->save();
     return $task;
   }

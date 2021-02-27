@@ -48,6 +48,24 @@
             @input="menu2 = false"
           />
         </v-menu>
+        <v-combobox
+          v-model="priority"
+          class="cmb-priority"
+          :items="priorities"
+          item-text="name"
+          item-value="id"
+          label="Priority"
+        >
+          <template
+            #prepend
+          >
+            <v-icon
+              :class="`priority-${priority.id}`"
+            >
+              priority_high
+            </v-icon>
+          </template>
+        </v-combobox>
         <div v-if="mode == 'UPDATE'">
           <v-combobox
             v-model="status"
@@ -207,6 +225,7 @@ export default {
         due: null,
         status: null,
         order: null,
+        timers: []
       },
       mode: '',
       name: '',
@@ -226,6 +245,12 @@ export default {
         'complete',
         'ongoing',
         'overdue'
+      ],
+      priority: { id: 0, name: '' },
+      priorities: [
+        { id: 1, name: 'High' },
+        { id: 2, name: 'Medium' },
+        { id: 3, name: 'Low' },
       ],
       onlyActive: false
     }
@@ -249,6 +274,7 @@ export default {
       self.due = self.$store.state.task.due;
       self.timers = self.$store.state.task.timers || [];
       self.status = self.$store.state.task.status;
+      self.priority = self.getPriorityById(self.$store.state.task.priority);
 
       self.dialog = value;
       self.mode = 'UPDATE';
@@ -257,7 +283,7 @@ export default {
   methods: {
     addTask() {
       const self = this;
-      if(self.name.length > 0 && self.due.length >= 4) {
+      if(self.name && self.due && self.name.length > 0 && self.due.length >= 4) {
         self.loading = true;
         
         const task = {
@@ -301,6 +327,7 @@ export default {
           name: self.name,
           due: self.due,
           status: self.status,
+          priority: self.priority.id || 0
         };
 
         window.axios.put(`/api/tasks/${self.task.id}`, task)
@@ -339,15 +366,33 @@ export default {
 
     formReset() {
       this.due = moment().format('YYYY-MM-DD');
-      this.task = null;
+      this.task = {
+        id: null,
+        name: null,
+        due: null,
+        status: null,
+        order: null,
+        timers: []
+      };
       this.name = null;
       this.timers = [];
       this.status = 'ongoing';
+      this.priority = null;
     },
+
+    getPriorityById(priorityId) {
+      let priority = this.priorities
+        .filter(function(element) {
+          return element.id == priorityId;
+        })[0];
+      priority = priority || { id: 0, name: '' };
+      return priority;
+    }
   },
 }
 </script>
 <style scoped lang="scss">
+@import "../../../../../sass/index";
 @import "../../../../../sass/_variables";
 .v-list {
   text-transform: uppercase;

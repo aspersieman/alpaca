@@ -143,7 +143,7 @@
           :loading="loading"
           @click="addTimer"
         >
-          Add timer
+          Start
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE'"
@@ -209,6 +209,7 @@ export default {
       self.dialog = value;
       self.mode = 'ADD';
       self.subtitle = self.getActiveTask().name || '';
+      self.name = self.getActiveTask().name || '';
     });
     self.$eventBus.$on(EventNames.TIMER_UPDATE_DIALOG, (value) => {
       self.formReset();

@@ -22,7 +22,7 @@ class TaskController extends Controller
   {
     $tasks = Task::mine()
       ->with(['timers.tagged', 'project'])
-      ->orderBy('order', 'asc')
+      ->orderBy('created_at', 'asc')
       ->get()
       ->toArray();
     return $this->sendResponseOk(
@@ -46,7 +46,7 @@ class TaskController extends Controller
         AND tasks.deleted_at IS NULL
         '
       )
-      ->orderBy('order', 'asc')
+      ->orderBy('created_at', 'asc')
       ->get()
       ->toArray();
     return $this->sendResponseOk(
@@ -101,10 +101,10 @@ class TaskController extends Controller
     return $this->sendResponseOk([], "Update task name ok");
   }
 
-  public function order(Request $request)
+  public function priority(Request $request, int $id, int $priority)
   {
-    $updated = Task::order($request->tasks);
-    return $this->sendResponseOk(["updated" => $updated], "Update task order ok");
+    $updated = Task::priority($id, $priority);
+    return $this->sendResponseOk(["updated" => $updated], "Update task priority ok");
   }
 
   public function update(Request $request, int $id)
@@ -112,7 +112,8 @@ class TaskController extends Controller
     $data = $request->validate([
       'name' => 'required|between:2,100',
       'status' => 'required|in:'.join(',', Task::STATUSES),
-      'due' => 'date'
+      'due' => 'date',
+      'priority' => 'required|in:'.join(',', Task::PRIORITIES)
     ]);
     return $this->sendResponseOk(Task::put($id, $data), "Update task ok");
   }

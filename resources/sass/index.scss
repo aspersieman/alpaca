@@ -151,3 +151,15 @@ html, body {
 .chart-footer {
   background-color: $selected-light-grey;
 }
+
+.priority-0 {
+  display: none;
+}
+.priority-1 {
+  display: default;
+  color: $brand-danger;
+}
+.priority-2 {
+  display: default;
+  color: $brand-warning;
+}

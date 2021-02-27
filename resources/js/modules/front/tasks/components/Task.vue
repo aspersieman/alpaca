@@ -7,12 +7,6 @@
       flat
       class="transparent"
     >
-      <v-icon
-        size="20"
-        class="handle"
-      >
-        drag_indicator
-      </v-icon>
       <v-layout
         row
         wrap
@@ -34,6 +28,18 @@
             :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}"
           >
             <div class="ellipsis ml-2">
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-icon
+                    :class="`priority-${task.priority}`"
+                    size="20"
+                    v-on="on"
+                  >
+                    priority_high
+                  </v-icon>
+                </template>
+                Priority: {{ getPriorityDescription(task.priority) }}
+              </v-tooltip>
               {{ task.name }}
             </div>
           </div>
@@ -387,15 +393,6 @@ export default {
 
 .theme--light.v-btn.overdue {
   color: $task-status-overdue;
-}
-
-.handle {
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  bottom: 50%;
-  vertical-align: middle;
-  cursor: move;
 }
 
 .transparent {

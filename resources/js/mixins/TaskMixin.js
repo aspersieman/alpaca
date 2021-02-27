@@ -22,6 +22,7 @@ export default {
         self.tasks = response.data.data;
         self.$store.commit('setTasks', response.data.data);
         self.tasksCopy = response.data.data;
+        self.$eventBus.$emit(EventNames.TASKS_LOADED);
       });
     },
     saveOrder() {
@@ -171,6 +172,21 @@ export default {
         totalDuration += timer.duration || 0;
       });
       return this.$appFormatters.duration(totalDuration, 'seconds');
+    },
+    getPriorityDescription(priority) {
+      let description = '';
+      switch (priority) {
+        case 1:
+          description = 'High';
+          break;
+        case 2:
+          description = 'Medium';
+          break;
+        case 3:
+          description = 'Low';
+          break;
+      }
+      return description;
     }
   }
 }

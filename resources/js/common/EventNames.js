@@ -24,6 +24,7 @@ export default {
   TASK_DELETED: "task-deleted",
   TASK_UPDATED: "task-updated",
   TASK_UPDATE_DIALOG: "task-update-dialog",
+  TASKS_LOADED: "tasks-loaded",
   TIMER_ADDED: "timer-added",
   TIMER_ADD_DIALOG: "timer-add-dialog",
   TIMER_DELETED: "timer-deleted",

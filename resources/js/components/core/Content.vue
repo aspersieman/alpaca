@@ -1,11 +1,11 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container fluid>
       <transition name="fade">
         <router-view />
       </transition>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
