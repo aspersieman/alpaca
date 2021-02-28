@@ -9,7 +9,6 @@
       :value="drawerState"
       :width="navigation.width"
       :touchless="true"
-      @input="updateNoteDrawerState"
     >
       <div
         v-if="$vuetify.breakpoint.mdAndUp"
@@ -32,7 +31,9 @@
           <v-icon>note</v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-content>
+        <v-list-item-content
+          v-if="!showSearch"
+        >
           <v-list-item-title>Notes</v-list-item-title>
           <v-list-item-subtitle>
             <v-icon small>
@@ -41,6 +42,33 @@
             {{ task.name }}
           </v-list-item-subtitle>
         </v-list-item-content>
+        <v-list-item-content
+          v-if="showSearch"
+        >
+          <v-text-field
+            ref="searchInput"
+            v-model="search"
+            outlined
+            dense
+            label="Search"
+            class="search-input"
+            type="text"
+            append-icon="close"
+            @click:append="searchShow(false)"
+          >
+            <v-icon slot="prepend">
+              search
+            </v-icon>
+          </v-text-field>
+        </v-list-item-content>
+        <v-btn
+          v-if="!showSearch"
+          icon
+          light
+          @click="searchShow(true)"
+        >
+          <v-icon>search</v-icon>
+        </v-btn>
         <v-btn
           icon
           light
@@ -57,7 +85,7 @@
         <v-list-item>
           <v-list-item-content>
             <note-list 
-              :notes="notes" 
+              :notes="searchNotes" 
             />
           </v-list-item-content>
         </v-list-item>
@@ -101,7 +129,9 @@ export default {
         width: 450,
         borderSize: 3,
         maxWidth: 700
-      }
+      },
+      search: '',
+      showSearch: false
     };
   },
   computed: {
@@ -114,6 +144,21 @@ export default {
           this.close();
         }
       },
+    },
+    searchNotes() {
+      const self = this;
+      return this.notes.filter(note => {
+        if (self.search != '' && self.search != null) {
+          if (note.name.toLowerCase().includes(self.search)) {
+            return note;
+          }
+          if (note.content.toLowerCase().includes(self.search)) {
+            return note;
+          }
+        } else {
+          return note;
+        }
+      });
     },
   },
   created() {
@@ -260,16 +305,15 @@ export default {
       );
     },
 
-    close () {
+    close() {
       this.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, false);
       this.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, 0);
     },
 
-    updateNoteDrawerState(state) {
-      if (state) {
-        //this.close();
-      }
-    }
+    searchShow(value) {
+      this.search = '';
+      this.showSearch = value;
+    },
   },
 }
 </script>
@@ -302,5 +346,9 @@ export default {
   z-index: 1;
   background-color: $theme-light-background;
   border-left: solid 1px $border-light-grey;
+}
+
+.search-input {
+  margin-bottom: -29px;
 }
 </style>

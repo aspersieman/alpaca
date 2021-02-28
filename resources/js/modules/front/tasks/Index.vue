@@ -88,7 +88,11 @@
             class="search-input"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
             type="text"
-          />
+          >
+            <v-icon slot="prepend">
+              search
+            </v-icon>
+          </v-text-field>
           <v-combobox
             v-model="status"
             outlined
@@ -133,7 +137,7 @@
             dense
             :items="sortList"
             label="Sort"
-            class="search-input"
+            class="search-input sort-input"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
             prepend-icon="filter_list"
             @change="sortTasks()"
@@ -468,5 +472,9 @@ export default {
 
 .tasks-container {
   margin-top: -50px;
+}
+
+.sort-input {
+  max-width: 165px;
 }
 </style>
