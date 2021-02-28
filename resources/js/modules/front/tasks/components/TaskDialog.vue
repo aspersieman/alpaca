@@ -378,7 +378,7 @@ export default {
       this.name = null;
       this.timers = [];
       this.status = 'ongoing';
-      this.priority = null;
+      this.priority = { id: 0, name: '' };
     },
 
     getPriorityById(priorityId) {

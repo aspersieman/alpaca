@@ -129,6 +129,18 @@
             :clearable="clearable"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
           />
+          <v-combobox
+            v-model="priority"
+            class="search-input"
+            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
+            :items="priorities"
+            :clearable="clearable"
+            item-text="name"
+            item-value="id"
+            label="Priority"
+            outlined
+            dense
+          />
           <v-spacer />
           <v-combobox
             v-model="sort"
@@ -245,7 +257,13 @@ export default {
         'Status'
       ],
       filtersCount: 0,
-      clearable: true
+      clearable: true,
+      priority: null,
+      priorities: [
+        { id: 1, name: 'High' },
+        { id: 2, name: 'Medium' },
+        { id: 3, name: 'Low' },
+      ],
     }
   },
   computed: {
@@ -261,6 +279,10 @@ export default {
         if (self.status.length > 0) {
           statusFound = self.status.includes(task.status);
         }
+        let priorityFound = true;
+        if (self.priority) {
+          priorityFound = task.priority === self.priority.id;
+        }
         let datesFound = true;
         if (self.dates && self.dates.length > 0) {
           let fromDate = self.$appFormatters.dateOnly(self.dates[0])
@@ -275,7 +297,7 @@ export default {
           const dueDate = self.$appFormatters.dateOnly(task.due);
           datesFound = (dueDate >= fromDate) && (dueDate <= toDate);
         }
-        if (searchFound && statusFound && datesFound) {
+        if (searchFound && statusFound && datesFound && priorityFound) {
           return task;
         }
       });
@@ -289,6 +311,9 @@ export default {
       this.countFilters();
     },
     dates: function() {
+      this.countFilters();
+    },
+    priority: function() {
       this.countFilters();
     }
   },
@@ -331,6 +356,8 @@ export default {
       localStorage.setItem('tasks-status', parsedStatus);
       const parsedDateRange = JSON.stringify(this.dates);
       localStorage.setItem('tasks-date-range', parsedDateRange);
+      const parsedPriority = JSON.stringify(this.priority);
+      localStorage.setItem('tasks-priority', parsedPriority);
       const parsedSort = JSON.stringify(this.sort);
       localStorage.setItem('tasks-sort', parsedSort);
     },
@@ -357,6 +384,13 @@ export default {
           localStorage.removeItem('tasks-date-range');
         }
       }
+      if (localStorage.getItem('tasks-priority')) {
+        try {
+          this.priority = JSON.parse(localStorage.getItem('tasks-priority'));
+        } catch(e) {
+          localStorage.removeItem('tasks-priority');
+        }
+      }
       if (localStorage.getItem('tasks-sort')) {
         try {
           this.sort = JSON.parse(localStorage.getItem('tasks-sort'));
@@ -377,6 +411,9 @@ export default {
         activeFilters += 1;
       }
       if (this.dates && this.dates.length > 0) {
+        activeFilters += 1;
+      }
+      if (this.priority) {
         activeFilters += 1;
       }
       this.filtersCount = activeFilters;
