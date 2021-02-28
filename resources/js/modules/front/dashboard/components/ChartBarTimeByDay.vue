@@ -73,7 +73,70 @@
     <v-card-subtitle
       class="chart-footer"
     >
-      Total time: {{ totalTime }}
+      <v-layout row>
+        <v-flex
+          class="time-footer-heading"
+        >
+          Total time:
+        </v-flex>
+        <v-flex
+          class="time-footer-item"
+        >
+          {{ totalTime[0] }}
+        </v-flex>
+        <v-flex
+          class="time-footer-colon"
+        >
+          :
+        </v-flex>
+        <v-flex
+          class="time-footer-item"
+        >
+          {{ totalTime[1] }}
+        </v-flex>
+        <v-flex
+          class="time-footer-colon"
+        >
+          :
+        </v-flex>
+        <v-flex
+          class="time-footer-item"
+        >
+          {{ totalTime[2] }}
+        </v-flex>
+      </v-layout>
+      <v-layout row>
+        <v-flex
+          class="time-footer-heading"
+        >
+          &nbsp;
+        </v-flex>
+        <v-flex
+          class="time-footer-item time-footer-value"
+        >
+          HH
+        </v-flex>
+        <v-flex
+          class="time-footer-colon"
+        >
+          &nbsp;
+        </v-flex>
+        <v-flex
+          class="time-footer-item time-footer-value"
+        >
+          MM
+        </v-flex>
+        <v-flex
+          class="time-footer-colon"
+        >
+          &nbsp;
+        </v-flex>
+        <v-flex
+          class="time-footer-item time-footer-value"
+        >
+          SS
+        </v-flex>
+      </v-layout>
     </v-card-subtitle>
   </v-card>
 </template>
@@ -99,7 +162,7 @@ export default {
       loading: false,
       chartData: [],
       totalDuration: 0,
-      totalTime: "00:00:00"
+      totalTime: [ "00", "00", "00" ],
     }
   },
   computed: {
@@ -137,12 +200,13 @@ export default {
       window.axios.post('/api/chart/byday', params).then(response => {
         self.chartData = [];
         let days = response.data;
+        self.totalTime = [ "00", "00", "00" ];
         days.forEach(day => {
           let formattedDay = this.$appFormatters.dateTimeFormat(day[0], "ddd, D MMM")
           self.totalDuration += parseInt(day[1]);
           self.chartData.push([formattedDay, self.$appFormatters.secondsToMinutes(day[1])]);
         });
-        self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds');
+        self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds').split(':');
         self.loading = false;
       });
     },
@@ -152,5 +216,19 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../../../sass/index";
-
+.time-footer-heading {
+  width: 70px;
+}
+.time-footer-item {
+  width: 17px;
+  max-width: 17px;
+}
+.time-footer-colon {
+  width: 4px;
+  max-width: 4px;
+}
+.time-footer-value {
+  padding-left: 2px;
+  font-size: 8px;
+}
 </style>

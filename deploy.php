@@ -113,31 +113,20 @@ task('deploy:release', function () {
   }
 });
 
-desc("Build resources");
-task('build', function () {
-  run('npm install');
-  run('npm run production');
-  run('rm -f ./public/storage');
-})->local();
-
-desc("Clean storage");
-task('clean_storage', function() {
-});
-
 desc("Install vendor packages");
 task('deploy:vendors', function() {
   run('composer install');
-})->local();
-
-desc("Upload resources");
-task('upload', function () {
-  upload(__DIR__ . "/public", '{{release_path}}');
-  upload(__DIR__ . "/vendor", '{{release_path}}');
 });
 
 desc("Maintenance mode with message");
 task('artisan:down', function () {
-  run('if [ -f {{release_path}}/artisan ]; then /usr/bin/php {{release_path}}/artisan down --message="Down for maintenance. Back shortly"; fi');
+  $output = run('if [ -f {{deploy_path}}/current/artisan ]; then {{bin/php}} {{deploy_path}}/current/artisan down --message="Down for maintenance. Back shortly"; fi');
+  writeln('<info>' . $output . '</info>');
+});
+
+desc("Override artisan:optimize task from laravel recipe");
+task('artisan:optimize', function () {
+    writeln("Skipping...");
 });
 
 desc("Set the VERSION file and populate with tag|branch|revision");
@@ -168,8 +157,6 @@ after('deploy:failed', 'artisan:up');
 after('cleanup', 'artisan:up');
 before('artisan:view:cache', 'set_version');
 after('deploy:symlink', 'artisan:migrate');
-after('deploy:update_code', 'build');
-after('build', 'upload');
 
 // Migrate database before symlink new release.
 before('deploy:prepare', 'artisan:down');
