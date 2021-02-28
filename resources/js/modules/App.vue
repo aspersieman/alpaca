@@ -32,7 +32,7 @@ export default {
     'core-footer': CoreFooter,
     'home-snack-bar': SnackBar,
     'confirm-dialog': ConfirmDialog,
-    'note-dialog': NoteDialog
+    'note-dialog': NoteDialog,
   },
   computed: {
     showLoader() {

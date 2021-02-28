@@ -26,6 +26,7 @@ class Task extends Model
   ];
 
   const PRIORITIES = [
+    0, // none
     1, // high
     2, // medium
     3 // low

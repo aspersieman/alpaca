@@ -2,6 +2,7 @@
   <div>
     <v-navigation-drawer
       ref="drawer"
+      clipped
       app
       right
       hide-overlay
@@ -300,7 +301,6 @@ export default {
   top: 0;
   z-index: 1;
   background-color: $theme-light-background;
-  box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
   border-left: solid 1px $border-light-grey;
 }
 </style>

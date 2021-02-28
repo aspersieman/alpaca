@@ -12,7 +12,6 @@ export default new Vuex.Store({
     // breadcrumbs
     breadcrumbs: [],
     drawer: false,
-    appBarBreakpoint: false,
     // loader
     showLoader: false,
     // snackbar
@@ -152,9 +151,6 @@ export default new Vuex.Store({
     setNoteDrawer(state, value) {
       state.noteDrawer = value;
     },
-    setAppBarBreakpoint(state, value) {
-      state.appBarBreakpoint = value;
-    },
   },
   getters: {
     //logged in user
@@ -229,9 +225,6 @@ export default new Vuex.Store({
     },
     getNoteDrawer: state => {
       return state.noteDrawer
-    },
-    getAppBarBreakpoint: state => {
-      return state.appBarBreakpoint
     },
   },
   actions: {

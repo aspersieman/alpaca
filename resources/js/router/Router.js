@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '../common/Store';
+import EventNames from '../common/EventNames';
 
 Vue.use(Router);
 
@@ -120,6 +121,9 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
+  if (to.name !== "tasks") {
+    store.commit("setNoteDrawer", false);
+  }
   setTimeout(()=>{
     store.commit("hideLoader");
   },1000);

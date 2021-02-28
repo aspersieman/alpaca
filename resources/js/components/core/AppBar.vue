@@ -7,6 +7,7 @@
       app 
       light
       clipped-left
+      clipped-right
     >
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.smAndDown || this.$store.getters.menu.length > 0"
@@ -33,7 +34,7 @@
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard"
@@ -41,7 +42,7 @@
             Dashboard
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/tasks"
@@ -49,7 +50,7 @@
             Tasks
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp && breakpoint != 'md' && breakpoint != 'sm' && breakpoint != 'xs'"
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/reports"
@@ -58,7 +59,7 @@
           </v-btn>
           <v-spacer />
           <base-btn-primary
-            v-if="$store.getters.isLoggedIn && breakpoint != 'sm' && breakpoint != 'xs'"
+            v-if="$store.getters.isLoggedIn"
             v-shortkey.once="['ctrl', 'alt', 't']"
             class="hidden-sm-and-down"
             dark
@@ -71,7 +72,7 @@
           </base-btn-primary>
           <timer-active />
           <v-btn
-            v-if="!$store.getters.isLoggedIn && !isSmall"
+            v-if="!$store.getters.isLoggedIn"
             class="d-none d-sm-flex"
             text
             link
@@ -84,7 +85,7 @@
         <timer-dialog @timerAdded="snackbar=true" />
       </v-container>
       <avatar 
-        v-if="$store.getters.isLoggedIn && !isSmall"
+        v-if="$store.getters.isLoggedIn"
         class="d-none d-sm-flex"
       />
     </v-app-bar>
@@ -102,7 +103,6 @@ import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
 import Avatar from './Avatar';
 import methods from '../../common/Methods';
 import TaskMixin from '../../mixins/TaskMixin';
-import EventNames from '../../common/EventNames';
 
 export default {
   name: 'CoreAppBar',
@@ -115,22 +115,9 @@ export default {
   mixins: [ 
     TaskMixin
   ],
-  data() {
-    return {
-      breakpoint: false
-    }
-  },
-  computed: {
-    isSmall: function() {
-      return this.breakpoint == 'xs' || this.breakpoint == 'sm';
-    }
-  },
   mounted() {
     var self = this;
     self.clickLogin = methods.clickLogin;
-    self.$eventBus.$on(EventNames.NOTE_DRAWER_RESIZE, (drawerWidth) => {
-      this.relativeBreakpoint(drawerWidth);
-    });
   },
   methods: {
     ...mapMutations(['toggleDrawer']),
@@ -139,12 +126,6 @@ export default {
       if (item.to || !item.href) return
       this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
     },
-    relativeBreakpoint(drawerWidth) {
-      const appBar = this.$refs.mainAppBar;
-      let computedWidth = appBar.offsetWidth - drawerWidth;
-      this.breakpoint = methods.getBreakpoint(computedWidth)
-      this.$store.commit('setAppBarBreakpoint', this.breakpoint);
-    }
   },
 }
 </script>

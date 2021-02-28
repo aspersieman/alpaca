@@ -248,6 +248,7 @@ export default {
       ],
       priority: { id: 0, name: '' },
       priorities: [
+        { id: 0, name: '' },
         { id: 1, name: 'High' },
         { id: 2, name: 'Medium' },
         { id: 3, name: 'Low' },

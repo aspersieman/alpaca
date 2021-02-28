@@ -402,6 +402,15 @@ export default {
         case 'id':
           this.tasks.sort((a, b) => a.status.localeCompare(b.status));
           break;
+        default:
+          this.tasks.sort((a, b) => {
+            let idA = a.id == 0 ? 4 : a.id;
+            let idB = b.id == 0 ? 4 : b.id;
+            if (idA > idB) return 1;
+            if (idB > idA) return -1;
+            return 0;
+          });
+          break;
       }
       this.setTasksSettings();
     }
@@ -454,7 +463,7 @@ export default {
 }
 
 .search-input-max-width {
-  max-width: 300px;
+  max-width: 220px;
 }
 
 .tasks-container {

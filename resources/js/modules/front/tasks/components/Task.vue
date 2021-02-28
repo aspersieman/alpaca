@@ -329,10 +329,6 @@ export default {
       onlyActive: true
     }
   },
-  mounted() { 
-    console.log(this.$store.state.activeTimer);
-    console.log(this.$store.state.activeTimerCounter);
-  },
   methods: {
     openNoteDrawer() {
       const self = this;
