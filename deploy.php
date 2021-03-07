@@ -115,7 +115,7 @@ task('deploy:release', function () {
 
 desc("Install vendor packages");
 task('deploy:vendors', function() {
-  run('{{bin/php}} {{deploy_path}}/composer.phar install');
+  run('{{bin/php}} {{deploy_path}}/current/composer.phar install');
 });
 
 desc("Maintenance mode with message");
