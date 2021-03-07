@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '../common/Store';
-import EventNames from '../common/EventNames';
 
 Vue.use(Router);
 
@@ -12,6 +11,11 @@ const router = new Router({
     {
       name: "index",
       path: "/",
+      component: require("../modules/Home"),
+    },
+    {
+      name: "home",
+      path: "/home",
       component: require("../modules/App"),
       redirect: { name: "index.home" },
       children: [
@@ -34,6 +38,11 @@ const router = new Router({
           path: '/reports',
           name: 'reports',
           component: require("../modules/front/reports/Index")
+        },
+        {
+          path: '/notes',
+          name: 'notes',
+          component: require("../modules/front/notes/Index")
         },
         {
           name: "admin.dashboard",

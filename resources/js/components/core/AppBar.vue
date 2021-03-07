@@ -15,22 +15,12 @@
       />
       <router-link to="/">
         <v-img
-          :src="require('../../../img/logo/llama_emoji.png')"
+          :src="require('../../../img/logo/logo-and-alpaca-text-primary-button.png')"
           class="mr-5"
           contain
           height="48"
-          width="48"
-          max-width="48"
         />
       </router-link>
-      <v-toolbar-title
-        v-if="!($store.state.activeTimerCounter.timer.id != null && $vuetify.breakpoint.smAndDown)"
-        class="toolbar-title"
-      >
-        <router-link to="/">
-          {{ this.$store.state.appName }}
-        </router-link>
-      </v-toolbar-title>
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
@@ -48,6 +38,14 @@
             to="/tasks"
           >
             Tasks
+          </v-btn>
+          <v-btn
+            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
+            class="d-none d-sm-flex appbar-button"
+            text
+            to="/notes"
+          >
+            Notes
           </v-btn>
           <v-btn
             v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"

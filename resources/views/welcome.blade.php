@@ -13,9 +13,6 @@
 
   <title>{{ config('app.name', 'Laravel') }}</title>
 
-  <!-- Styles -->
-  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
-
   <!-- index.css here -->
   <link href="{{ asset('css/index.css') }}?@version" rel="stylesheet">
 

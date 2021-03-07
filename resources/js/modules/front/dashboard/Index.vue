@@ -3,37 +3,60 @@
     id="dasboard"
     class="page_wrap_vue pa-3"
   >
-    <v-layout 
-      row 
-      class="mb-3" 
-      wrap
-    >
-      <v-avatar>
-        <v-icon>
-          dashboard
-        </v-icon>
-      </v-avatar>
-      <h1 class="subheading grey--text ml-4">
-        Dashboard
-      </h1>
-    </v-layout>
-    <v-container fluid>
+    <v-container class="my-2">
       <v-row>
-        <v-col align="center">
-          <div
-            class="date-picker-container"
+        <v-col
+          class="mb-3" 
+        >
+          <v-layout 
+            row 
+            wrap
           >
-            <date-range-picker 
-              v-model="dates"
-            />
-            <base-btn-primary
-              @click="search()"
-            >
-              Go
-            </base-btn-primary>
-          </div>
+            <v-avatar>
+              <v-icon>
+                dashboard
+              </v-icon>
+            </v-avatar>
+            <h1 class="subheading grey--text ml-4">
+              Dashboard
+            </h1>
+          </v-layout>
+          <v-layout 
+            v-if="$vuetify.breakpoint.mdAndUp"
+            row 
+            wrap
+          >
+            <h4 class="subheading grey--text ml-4">
+              Get an overeview of your productivity
+            </h4>
+          </v-layout>
         </v-col>
       </v-row>
+      <v-layout 
+        row 
+        class="mb-1 mt-1 " 
+        wrap
+        transition="scroll-y-transition"
+      >
+        <span
+          class="date-picker-container"
+        >
+          <date-range-picker 
+            v-model="dates"
+          />
+        </span>
+        <base-btn-primary
+          class="action-button"
+          @click="search()"
+        >
+          Go
+        </base-btn-primary>
+      </v-layout>
+    </v-container>
+    <v-container 
+      fluid
+      class="charts-container"
+    >
       <v-row>
         <v-col>
           <chart-timer-timeline
@@ -85,7 +108,17 @@ export default {
 }
 </script>
 <style scoped>
+.row {
+  margin-left: unset;
+  border-radius: unset !important;
+}
 .date-picker-container {
   max-width: 215px;
+}
+.action-button {
+  margin-left: 10px;
+}
+.charts-container {
+  margin-top: -50px;
 }
 </style>

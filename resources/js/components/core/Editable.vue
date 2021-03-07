@@ -10,10 +10,7 @@
         {{ label }}
       </v-label>
     </span>
-    <div 
-      class="edit-icon"
-      @click="handleClick"
-    >
+    <div class="edit-icon">
       <div 
         v-show="editing" 
         ref="me" 
@@ -83,15 +80,6 @@ export default {
         e.preventDefault()
         return;
       }
-    },
-    handleClick() {
-      if (!this.onlyEdit) {
-        this.editing = true
-      }
-      this.active = true;
-      setTimeout(()=>{
-        this.$refs.me.focus()
-      }, 10)
     },
     handleDone(e) {
       this.$emit('input', e.target.innerText)
