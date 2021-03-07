@@ -10,7 +10,10 @@
         {{ label }}
       </v-label>
     </span>
-    <div class="edit-icon">
+    <div 
+      class="edit-icon"
+      @click="handleClick"
+    >
       <div 
         v-show="editing" 
         ref="me" 
@@ -67,9 +70,7 @@ export default {
       // Get the clipboard data
       let paste = (e.clipboardData || window.clipboardData).getData('text/plain')
 
-      // Do something with paste like remove non-UTF-8 characters            
-      paste = paste.replace(/\x0D/gi, "\n")          
-      e.target.textContent += paste
+      document.execCommand("insertHTML", false, paste);
     })
   },
   methods: {
@@ -80,6 +81,15 @@ export default {
         e.preventDefault()
         return;
       }
+    },
+    handleClick() {
+      if (!this.onlyEdit) {
+        this.editing = true
+      }
+      this.active = true;
+      setTimeout(()=>{
+        this.$refs.me.focus()
+      }, 10)
     },
     handleDone(e) {
       this.$emit('input', e.target.innerText)

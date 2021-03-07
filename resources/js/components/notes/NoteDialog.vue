@@ -53,7 +53,6 @@
         <v-text-field
           v-model="name"
           label="Title"
-          autofocus
         />
         <editable
           v-model="content"
