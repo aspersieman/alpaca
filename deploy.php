@@ -113,9 +113,12 @@ task('deploy:release', function () {
   }
 });
 
-desc("Install vendor packages");
-task('deploy:vendors', function() {
-  run('cd {{deploy_path}}/current && {{bin/php}} composer.phar install');
+desc('Installing vendors');
+task('deploy:vendors', function () {
+    if (!commandExist('unzip')) {
+        writeln('<comment>To speed up composer installation setup "unzip" command with PHP zip extension https://goo.gl/sxzFcD</comment>');
+    }
+    run('cd {{release_path}} && {{bin/composer}} install');
 });
 
 desc("Maintenance mode with message");
