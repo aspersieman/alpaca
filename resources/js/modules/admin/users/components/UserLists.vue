@@ -274,6 +274,7 @@
 
 <script>
 import EventNames from '../../../../common/EventNames';
+window._ = require('lodash');
 
 export default {
   data () {

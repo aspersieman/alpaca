@@ -24,6 +24,7 @@ import CoreFooter from '../components/core/Footer.vue';
 import ConfirmDialog from '../components/core/ConfirmDialog.vue';
 import NoteDialog from '../components/notes/NoteDialog.vue';
 import SnackBar from './front/home/SnackBar.vue';
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 export default {
   components: {
     'core-drawer': CoreDrawer,
@@ -33,6 +34,7 @@ export default {
     'home-snack-bar': SnackBar,
     'confirm-dialog': ConfirmDialog,
     'note-dialog': NoteDialog,
+    'moon-loader': MoonLoader
   },
   computed: {
     showLoader() {
@@ -41,6 +43,7 @@ export default {
   },
   created() {
     const self = this;
+    this.$store.commit('showLoader');
     self.$store.commit('setAuthUser', window.APP_GLOBALS.AUTH_USER);
 
     window.axios.interceptors.response.use(undefined, function (err) {
@@ -57,6 +60,7 @@ export default {
   mounted() {
     const self = this;
     self.$store.dispatch('loadMenu');
+    this.$store.commit('hideLoader');
   },
   methods: { }
 }

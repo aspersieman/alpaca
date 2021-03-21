@@ -10,6 +10,17 @@ import Reports from '@/modules/front/reports/Index';
 import Notes from '@/modules/front/notes/Index';
 import AdminDashboard from '@/modules/admin/dashboard/Home';
 import AdminUsers from '@/modules/admin/users/Users';
+import AdminUserList from '@/modules/admin/users/components/UserLists';
+import AdminUserAdd from '@/modules/admin/users/components/UserFormAdd';
+import AdminUserEdit from '@/modules/admin/users/components/UserFormEdit';
+import AdminUserGroupList from '@/modules/admin/users/components/GroupLists';
+import AdminUserGroupAdd from '@/modules/admin/users/components/GroupFormAdd';
+import AdminUserGroupEdit from '@/modules/admin/users/components/GroupFormEdit';
+import AdminUserPermissionList from '@/modules/admin/users/components/PermissionLists';
+import AdminUserPermissionAdd from '@/modules/admin/users/components/PermissionFormAdd';
+import AdminUserPermissionEdit from '@/modules/admin/users/components/PermissionFormEdit';
+import AdminFiles from '@/modules/admin/files/Files';
+import AdminSettings from '@/modules/admin/settings/Settings';
 
 Vue.use(Router);
 
@@ -65,49 +76,49 @@ const router = new Router({
             {
               name:"admin.users.list",
               path:"/",
-              component: require("../modules/admin/users/components/UserLists")
+              component: AdminUserList
             },
             {
               name:"admin.users.create",
               path:"create",
-              component: require("../modules/admin/users/components/UserFormAdd")
+              component: AdminUserAdd
             },
             {
               name:"admin.users.edit",
               path:"edit/:id",
-              component: require("../modules/admin/users/components/UserFormEdit"),
+              component: AdminUserEdit,
               props: (route) => ({propUserId: route.params.id}),
             },
             {
               name:"admin.users.groups.list",
               path:"groups",
-              component: require("../modules/admin/users/components/GroupLists")
+              component: AdminUserGroupList
             },
             {
               name:"admin.users.groups.create",
               path:"groups/create",
-              component: require("../modules/admin/users/components/GroupFromAdd")
+              component: AdminUserGroupAdd
             },
             {
               name:"admin.users.groups.edit",
               path:"groups/edit/:id",
-              component: require("../modules/admin/users/components/GroupFromEdit"),
+              component: AdminUserGroupEdit,
               props: (route) => ({propGroupId: route.params.id}),
             },
             {
               name:"admin.users.permissions.list",
               path:"permissions",
-              component: require("../modules/admin/users/components/PermissionLists")
+              component: AdminUserPermissionList
             },
             {
               name:"admin.users.permissions.create",
               path:"permissions/create",
-              component: require("../modules/admin/users/components/PermissionFormAdd")
+              component: AdminUserPermissionAdd
             },
             {
               name:"admin.users.permissions.edit",
               path:"permissions/edit/:id",
-              component: require("../modules/admin/users/components/PermissionFormEdit"),
+              component: AdminUserPermissionEdit,
               props: (route) => ({propPermissionId: route.params.id}),
             },
           ]
@@ -115,12 +126,12 @@ const router = new Router({
         {
           name: "admin.files",
           path: "/admin/files",
-          component: require("../modules/admin/files/Files"),
+          component: AdminFiles,
         },
         {
           name: "admin.settings",
           path: "/admin/settings",
-          component: require("../modules/admin/settings/Settings"),
+          component: AdminSettings,
         }
       ]
     },

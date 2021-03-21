@@ -99,7 +99,6 @@ export default {
       dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
     }
   },
-  mounted() { },
   methods: {
     search() {
       this.$eventBus.$emit(EventNames.CHART_PARAMETERS_CHANGED, { 'dates': this.dates });

@@ -1,24 +1,24 @@
 // vendor
 require('./common/Bootstrap');
-window.Vue = require('vue');
 
 // 3rd party
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css';
 import Vue from 'vue';
-import vuetify from './plugins/vuetify'
-import viewprogressbar from './plugins/vueprogressbar'
+import vuetify from '@/plugins/vuetify'
+import viewprogressbar from '@/plugins/vueprogressbar'
 
 // app
-import router from '@/router';
+import router from '@/router/index';
 import store from '@/common/Store';
 import eventBus from '@/common/Event';
 import formatters from '@/common/Formatters';
 import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 import VueAnalytics from 'vue-analytics';
-import Chartkick from 'vue-chartkick'
-import Chart from 'chart.js'
-import './plugins/base'
+import Chartkick from 'vue-chartkick';
+import Chart from 'chart.js';
+import '@/plugins/base';
+
 Vue.config.productionTip = false;
 
 if (process.env.NODE_ENV === 'production') {
@@ -32,7 +32,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 Vue.use(formatters);
 Vue.use(eventBus);
-Vue.use(require('vue-shortkey'))
+const VueShortkey = require('vue-shortkey');
+Vue.use(VueShortkey)
 Vue.use(Chartkick.use(Chart))
 
 Vue.config.devtools = process.env.NODE_ENV === 'development';

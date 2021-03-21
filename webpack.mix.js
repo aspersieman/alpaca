@@ -22,10 +22,9 @@ mix.webpackConfig({
 });
 
 mix
+  .js('resources/js/app.js', 'public/js')
   .copyDirectory('resources/img', 'public/img')
   .copyDirectory('resources/fonts', 'public/fonts')
-  .js('resources/js/app.js', 'public/js')
   .sass('resources/sass/index.scss', 'public/css')
-  .extract(['vue','vue-router','moment','axios','lodash','dropzone'])
-  .sourceMaps()
-  .vue();
+  .extract(['vue', 'vue-router', 'vue-shortkey', 'moment', 'axios', 'lodash', 'dropzone'])
+  .sourceMaps();
