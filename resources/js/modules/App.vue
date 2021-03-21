@@ -43,7 +43,6 @@ export default {
   },
   created() {
     const self = this;
-    this.$store.commit('showLoader');
     self.$store.commit('setAuthUser', window.APP_GLOBALS.AUTH_USER);
 
     window.axios.interceptors.response.use(undefined, function (err) {
@@ -60,7 +59,6 @@ export default {
   mounted() {
     const self = this;
     self.$store.dispatch('loadMenu');
-    this.$store.commit('hideLoader');
   },
   methods: { }
 }
