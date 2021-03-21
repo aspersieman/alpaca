@@ -44,43 +44,6 @@
             type="text"
           />
         </v-flex>
-        <v-flex
-          xs6
-          md6
-          lg5
-        >
-          <div class="cmb-statuses">
-            <v-combobox
-              v-model="status"
-              outlined
-              clearable
-              dense
-              chips
-              :items="statuses"
-              multiple
-              label="Status"
-              class="search-input"
-              @change="searchByStatus()"
-            >
-              <template
-                #selection="data"
-              >
-                <v-chip
-                  :key="JSON.stringify(data.item)"
-                  :small="$vuetify.breakpoint.mdAndUp"
-                  :x-small="$vuetify.breakpoint.smAndDown"
-                  :class="`status ${data.item}`"
-                  :input-value="data.selected"
-                  :disabled="data.disabled"
-                  v-bind="data.attrs"
-                  @click:close="data.parent.selectItem(data.item)"
-                >
-                  {{ data.item }}
-                </v-chip>
-              </template>
-            </v-combobox>
-          </div>
-        </v-flex>
       </v-layout>
 
       <v-layout

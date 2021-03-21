@@ -13,6 +13,7 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
 {
   Route::get('/tasks/current', 'Front\\TaskController@current');
   Route::get('/tasks', 'Front\\TaskController@index');
+  Route::get('/tasks/{id}', 'Front\\TaskController@index');
   Route::post('/tasks', 'Front\\TaskController@store');
   Route::post('/tasks/order', 'Front\\TaskController@order');
   Route::delete('/tasks/{id}', 'Front\\TaskController@delete');

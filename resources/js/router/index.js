@@ -1,6 +1,15 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '../common/Store';
+import store from '@/common/Store';
+import Home from '@/modules/Home';
+import Index from '@/modules/App';
+import IndexHome from '@/modules/front/home/Index';
+import Dashboard from '@/modules/front/dashboard/Index';
+import Tasks from '@/modules/front/tasks/Index';
+import Reports from '@/modules/front/reports/Index';
+import Notes from '@/modules/front/notes/Index';
+import AdminDashboard from '@/modules/admin/dashboard/Home';
+import AdminUsers from '@/modules/admin/users/Users';
 
 Vue.use(Router);
 
@@ -11,47 +20,47 @@ const router = new Router({
     {
       name: "index",
       path: "/",
-      component: require("../modules/Home"),
+      component: Home,
     },
     {
       name: "home",
       path: "/home",
-      component: require("../modules/App"),
+      component: Index,
       redirect: { name: "index.home" },
       children: [
         {
           name: "index.home",
           path: "",
-          component: require("../modules/front/home/Index")
+          component: IndexHome
         },
         {
           path: '/dashboard',
           name: 'dashboard',
-          component: require("../modules/front/dashboard/Index")
+          component: Dashboard
         },
         {
           path: '/tasks',
           name: 'tasks',
-          component: require("../modules/front/tasks/Index")
+          component: Tasks
         },
         {
           path: '/reports',
           name: 'reports',
-          component: require("../modules/front/reports/Index")
+          component: Reports
         },
         {
           path: '/notes',
           name: 'notes',
-          component: require("../modules/front/notes/Index")
+          component: Notes
         },
         {
           name: "admin.dashboard",
           path: "/admin/dashboard",
-          component: require("../modules/admin/dashboard/Home"),
+          component: AdminDashboard,
         },
         {
           path: "/admin/users",
-          component: require("../modules/admin/users/Users"),
+          component: AdminUsers,
           children: [
             {
               name:"admin.users.list",

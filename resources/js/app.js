@@ -10,16 +10,15 @@ import vuetify from './plugins/vuetify'
 import viewprogressbar from './plugins/vueprogressbar'
 
 // app
-import router from './router/Router';
-import store from './common/Store';
-import eventBus from './common/Event';
-import formatters from './common/Formatters';
-import AxiosAjaxDetct from './common/AxiosAjaxDetect';
+import router from '@/router';
+import store from '@/common/Store';
+import eventBus from '@/common/Event';
+import formatters from '@/common/Formatters';
+import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 import VueAnalytics from 'vue-analytics';
 import Chartkick from 'vue-chartkick'
 import Chart from 'chart.js'
 import './plugins/base'
-
 Vue.config.productionTip = false;
 
 if (process.env.NODE_ENV === 'production') {
@@ -56,8 +55,6 @@ const app = new Vue({
       self.$Progress.finish();
     });
   },
-  computed: { },
-  methods: { }
 });
 
 if (process.env.NODE_ENV === 'development' && window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {

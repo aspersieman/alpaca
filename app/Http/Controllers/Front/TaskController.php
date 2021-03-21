@@ -15,7 +15,7 @@ class TaskController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth');
+    $this->middleware('auth')->only(['store', 'update', 'destroy']);
   }
 
   public function index()
@@ -28,6 +28,15 @@ class TaskController extends Controller
     return $this->sendResponseOk(
       $tasks,
       "Get tasks (".count($tasks).") ok"
+    );
+  }
+
+  public function show($id)
+  {
+    $task = Task::findOrFail($id);
+    return $this->sendResponseOk(
+      $task,
+      "Get task (".count($tasks).") ok"
     );
   }
 
@@ -77,7 +86,7 @@ class TaskController extends Controller
     );
   }
 
-  public function delete(Request $request, int $id)
+  public function destroy(Request $request, int $id)
   {
     Task::destroy($id);
     return $this->sendResponseOk([], "Task deleted");

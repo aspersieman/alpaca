@@ -25,26 +25,6 @@ export default {
         self.$eventBus.$emit(EventNames.TASKS_LOADED);
       });
     },
-    saveOrder() {
-      var tasks = [];
-      for (let index = 0; index < this.tasks.length; index++) {
-        const currentTask = this.tasks[index];
-        tasks.push({ "id": currentTask.id, "order": index });
-      }
-      if (tasks.length > 1) {
-        window.axios.post(`/api/tasks/order`, { "tasks": tasks })
-          .then()
-          .catch(error => {
-          console.log(error);
-          this.$store.commit('showSnackbar', {
-            message: error.response.data.data.message,
-            color: 'error',
-            duration: 3000
-          });
-        });
-      }
-    },
-
     deleteTask() {
       const self = this;
 

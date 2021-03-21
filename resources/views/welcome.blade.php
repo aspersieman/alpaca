@@ -26,10 +26,13 @@
     window.APP_GLOBALS.AUTH_USER = {!! json_encode($auth_user); !!};
     window.APP_GLOBALS.APP_VERSION = '@version()';
   </script>
+  <script src="http://alpaca.vagrant/js/manifest.js?HEAD"></script>
+  <script src="http://alpaca.vagrant/js/vendor.js?HEAD"></script>
+  <script src="http://alpaca.vagrant/js/app.js?HEAD"></script>
 </head>
 <body>
   <div id="app">
-    <router-view></router-view>
+    <router-view />
   </div>
 
   <!-- Scripts -->

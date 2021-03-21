@@ -1,4 +1,4 @@
-let mix = require('laravel-mix');
+const mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,9 +13,19 @@ let mix = require('laravel-mix');
 
 mix.disableSuccessNotifications();
 
-mix.copyDirectory('resources/img', 'public/img')
+mix.webpackConfig({
+  resolve: {
+    alias: {
+      '@': __dirname + '/resources/js'
+    }
+  }
+});
+
+mix
+  .copyDirectory('resources/img', 'public/img')
   .copyDirectory('resources/fonts', 'public/fonts')
   .js('resources/js/app.js', 'public/js')
   .sass('resources/sass/index.scss', 'public/css')
   .extract(['vue','vue-router','moment','axios','lodash','dropzone'])
-  .sourceMaps();
+  .sourceMaps()
+  .vue();
