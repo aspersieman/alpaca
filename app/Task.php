@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Filter;
 
 class Task extends Model
 {
-  use SoftDeletes;
+  use SoftDeletes, Filter;
 
   /**
    * {@inheritDoc}
@@ -17,7 +18,7 @@ class Task extends Model
   /**
    * {@inheritDoc}
    */
-  protected $with = ['user', 'project'];
+  protected $with = ['user', 'project', 'timers.tagged'];
 
   const STATUSES = [
     'complete',

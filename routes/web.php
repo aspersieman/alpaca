@@ -7,9 +7,9 @@ Route::get('files/{id}/download','Front\\FileController@fileDownload')->name('fr
 Route::get('files/{id}','Front\\FileController@show')->name('front.file.show');
 
 // api
-Route::get('/api/menu','Front\\MenuController@index')->name('front.menu');
+Route::get('/api-old/menu','Front\\MenuController@index')->name('front.menu');
 
-Route::prefix('/api')->middleware(['auth'])->group(function()
+Route::prefix('/api-old')->middleware(['auth'])->group(function()
 {
   Route::get('/tasks/current', 'Front\\TaskController@current');
   Route::get('/tasks', 'Front\\TaskController@index');
@@ -34,7 +34,7 @@ Route::prefix('/api')->middleware(['auth'])->group(function()
 });
 
 // admin
-Route::prefix('/api/admin')->namespace('Admin')->middleware(['auth'])->group(function()
+Route::prefix('/api-old/admin')->namespace('Admin')->middleware(['auth'])->group(function()
 {
   // resource routes
   Route::resource('users','UserController');
@@ -42,7 +42,6 @@ Route::prefix('/api/admin')->namespace('Admin')->middleware(['auth'])->group(fun
   Route::resource('permissions','PermissionController');
   Route::resource('files','FileController');
   Route::resource('file-groups','FileGroupController');
-  Route::resource('pictures','PictureController');
 });
 
 // Match all other routes to the SPA

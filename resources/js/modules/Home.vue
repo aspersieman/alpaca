@@ -6,7 +6,7 @@
              <div id="container-id-8-" data-element-type="container">
                 <div id="container-id-0-" data-element-type="container">
                    <div id="container-id-3-" data-element-type="container">
-                      <p id="text-id-9-" data-element-type="text">Get productive with LamOid</p>
+                      <p id="text-id-9-" data-element-type="text">Get productive with Lamoid</p>
                       <p id="text-id-10-" data-element-type="text">To-Do list and productivity tool to help you get things done</p>
                    </div>
                    <a id="button-id-2-" data-element-type="button" href="/layouts"><span>Get Started</span></a>
@@ -23,7 +23,7 @@
              <div id="container-id-22-" data-element-type="container">
                 <div id="container-id-9-" data-element-type="container">
                    <p id="text-id-49-" data-element-type="text">Getting things done starts with a list&nbsp;</p>
-                   <p id="text-id-13-" data-element-type="text">LamOid is a simple task list, time and productivity tracker that gets out of your way and lets you get things done</p>
+                   <p id="text-id-13-" data-element-type="text">Lamoid is a simple task list, time and productivity tracker that gets out of your way and lets you get things done</p>
                 </div>
              </div>
           </div>
@@ -75,7 +75,7 @@
              <div id="container-id-11-" data-element-type="container">
                 <div id="container-id-68-" data-element-type="container">
                    <div id="container-id-35-" data-element-type="container">
-                      <p id="text-id-29-" data-element-type="text">LamOid</p>
+                      <p id="text-id-29-" data-element-type="text">Lamoid</p>
                       <div id="container-id-30-" data-element-type="container"><a id="button-id-31-" data-element-type="button" href="/"><span id="element-id-32-">Home</span></a></div>
                    </div>
                    <div id="container-id-12-" data-element-type="container">
@@ -87,7 +87,7 @@
                       <div id="container-id-48-" data-element-type="container"><a id="button-id-44-" data-element-type="button" href="mailto:aspersieman@gmail.com"><span id="element-id-43-">Email</span></a><a id="button-id-48-" data-element-type="button" href="https://twitter.com/aspersieman" target="_blank"><span id="element-id-47-">Twitter</span></a></div>
                    </div>
                 </div>
-                <p id="text-id-70-" data-element-type="text">© {{ year }} LamOid, Inc. All rights reserved. {{ version }}</p>
+                <p id="text-id-70-" data-element-type="text">© {{ year }} Lamoid, Inc. All rights reserved. {{ version }}</p>
              </div>
           </div>
        </div>
