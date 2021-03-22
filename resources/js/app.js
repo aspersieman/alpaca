@@ -1,23 +1,26 @@
 // vendor
-require('./common/Bootstrap');
+require('./common/bootstrap');
 
-// 3rd party
+import Vue from 'vue';
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css';
-import Vue from 'vue';
-import vuetify from '@/plugins/vuetify'
-import viewprogressbar from '@/plugins/vueprogressbar'
 
-// app
-import router from '@/router/index';
-import store from '@/common/Store';
-import eventBus from '@/common/Event';
-import formatters from '@/common/Formatters';
-import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 import VueAnalytics from 'vue-analytics';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
+
+// app
+import router from '@/router/index';
+import store from '@/store';
+import eventBus from '@/common/Event';
+import formatters from '@/common/Formatters';
+import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
+
+import Authentication from '@/plugins/authentication'
+import Authorization from '@/plugins/authorization'
 import '@/plugins/base';
+import vuetify from '@/plugins/vuetify'
+import viewprogressbar from '@/plugins/vueprogressbar'
 
 Vue.config.productionTip = false;
 
@@ -30,6 +33,8 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
 }
+Vue.use(Authentication)
+Vue.use(Authorization)
 Vue.use(formatters);
 Vue.use(eventBus);
 const VueShortkey = require('vue-shortkey');

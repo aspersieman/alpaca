@@ -13,9 +13,9 @@ export const state = {
 
 export const mutations = {
     TASKS: (state, payload) => {
-        let blogs = state.blogs
-        blogs.push(...payload.data)
-        state.blogs = blogs
+        let tasks = state.tasks
+        tasks.push(...payload.data)
+        state.tasks = tasks
     },
 
     TASK: (state, payload) => state.task = payload
@@ -57,7 +57,7 @@ export const actions = {
         return new Promise((resolve, reject) => {
             getTasks(payload)
                 .then(({data}) => {
-                    //commit('BLOGS', data)
+                    commit('TASKS', data)
                     resolve(data)
                 })
                 .catch(error => reject(error))
@@ -68,7 +68,7 @@ export const actions = {
         return new Promise((resolve, reject) => {
             getTask(payload)
                 .then(({data}) => {
-                    commit('BLOG', data)
+                    commit('TASK', data)
                     resolve(data)
                 })
                 .catch(error => reject(error))
@@ -77,8 +77,8 @@ export const actions = {
 }
 
 export const getters = {
-    blogs : state => {
-        return state.blogs
+    tasks : state => {
+        return state.tasks
     },
 
     task: state => state.task
