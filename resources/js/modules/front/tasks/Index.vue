@@ -508,7 +508,7 @@ export default {
 }
 
 .tasks-container {
-  margin-top: -50px;
+  margin-top: -10px;
 }
 
 .sort-input {

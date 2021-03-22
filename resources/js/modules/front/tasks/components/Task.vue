@@ -348,10 +348,12 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../../../sass/index";
-
 .task-container {
-  border-bottom: 1px solid $border-light-grey;
   background-color: $theme-light-background;
+}
+.task {
+  border-bottom: 1px solid $border-light-grey;
+  margin-bottom: 10px;
 }
 .task.complete {
   border-left: 4px solid $task-status-complete;

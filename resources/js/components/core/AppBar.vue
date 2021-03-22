@@ -15,7 +15,7 @@
       />
       <router-link to="/">
         <v-img
-          :src="require('../../../img/logo/logo-and-alpaca-text-primary-button.png')"
+          src="/img/logo/logo-and-alpaca-text-primary-button.png"
           class="mr-5"
           contain
           height="48"
