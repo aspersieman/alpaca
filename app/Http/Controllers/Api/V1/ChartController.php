@@ -18,7 +18,7 @@ class ChartController extends Controller
    */
   public function __construct()
   {
-    $this->middleware('auth');
+    $this->middleware('auth:api');
   }
 
   /**
@@ -28,8 +28,8 @@ class ChartController extends Controller
    */
   public function byDay(Request $request)
   {
-    $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime("-{$defaultDays} days")));
-    $end = $request['end'] ?? new \DateTime('NOW');
+    $start = $request['start'] ?? (new \DateTime(date('Y-m-d', strtotime("-{$this->defaultDays} days"))))->format("Y-m-d");
+    $end = $request['end'] ?? (new \DateTime('NOW'))->format("Y-m-d");
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timeByDay = Timer::byDay($start, $end, $userIds)->toArray();
     $times = [];
@@ -46,8 +46,8 @@ class ChartController extends Controller
    */
   public function byTag(Request $request)
   {
-    $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime("-{$defaultDays} days")));
-    $end = $request['end'] ?? new \DateTime('NOW');
+    $start = $request['start'] ?? (new \DateTime(date('Y-m-d', strtotime("-{$this->defaultDays} days"))))->format("Y-m-d");
+    $end = $request['end'] ?? (new \DateTime('NOW'))->format("Y-m-d");
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timeByTag = Timer::byTag($start, $end, $userIds)->toArray();
     $times = [];
@@ -64,8 +64,8 @@ class ChartController extends Controller
    */
   public function byTimer(Request $request)
   {
-    $start = $request['start'] ?? new \DateTime(date('Y-m-d', strtotime("-{$defaultDays} days")));
-    $end = $request['end'] ?? new \DateTime('NOW');
+    $start = $request['start'] ?? (new \DateTime(date('Y-m-d', strtotime("-{$this->defaultDays} days"))))->format("Y-m-d");
+    $end = $request['end'] ?? (new \DateTime('NOW'))->format("Y-m-d");
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timers = Timer::byTimer($start, $end, $userIds);
     return $timers;

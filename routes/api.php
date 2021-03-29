@@ -18,8 +18,8 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::post('/task/{id}/timer', 'TimerController@store');
   Route::put('/task/{id}/timer/{timer_id}', 'TimerController@update');
   Route::delete('/task/{id}/timer/{timer_id}', 'TimerController@delete');
-  Route::post('/task/{id}/timer/stop', 'TimerController@stopRunning');
-  Route::get('/task/timer/active', 'TimerController@running');
+  Route::post('/task/{id}/timer/stop', 'TimerController@stop');
+  Route::get('/task/timer/running', 'TimerController@running');
 
   Route::post('/chart/byday', 'ChartController@byDay');
   Route::post('/chart/bytag', 'ChartController@byTag');
