@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
 use App\User;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
     public function __construct()
     {

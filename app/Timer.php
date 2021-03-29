@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Log;
 class Timer extends Model
 {
   use \Conner\Tagging\Taggable;
-  use SoftDeletes;
+
+  protected $table = 'timers';
 
   /**
    * {@inheritDoc}
@@ -82,7 +83,6 @@ class Timer extends Model
     $start = Carbon::createFromFormat('Y-m-d H:i:s', $timer->started_at);
     $end = Carbon::createFromFormat('Y-m-d H:i:s', $timer->stopped_at);
     $timer->duration = $end->diffInSeconds($start);
-    $timer->retag($data['tags']);
     $timer->save();
     return $timer;
   }

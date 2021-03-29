@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Front;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use App\Timer;
 
 use Illuminate\Support\Facades\Log;
 
-class ChartController extends FrontController
+class ChartController extends Controller
 {
   protected $defaultDays = 7;
   /**

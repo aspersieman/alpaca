@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-
 use App\Task;
 use App\Filters\TaskFilter;
 use App\Http\Controllers\Controller;
@@ -19,9 +15,14 @@ class TaskController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth:api')->only(['index', 'show', 'store', 'update', 'destroy', 'status']);
+    $this->middleware('auth:api');
   }
 
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
   public function index(TaskFilter $filter)
   {
     $tasks = Task::filter($filter)
@@ -34,43 +35,16 @@ class TaskController extends Controller
     );
   }
 
-  public function show($id)
-  {
-    $task = Task::findOrFail($id);
-    return $this->sendResponseOk(
-      $task,
-      "Get task (".count($tasks).") ok"
-    );
-  }
-
-  public function current()
-  {
-    $tasks = Task::mine()
-      ->with(['timers.tagged', 'project', 'notes'])
-      ->whereRaw(
-        '
-        (
-            tasks.status IN ("ongoing", "overdue")
-            OR (
-              DATE(tasks.updated_at) = CURDATE()
-            )
-        )
-        AND tasks.deleted_at IS NULL
-        '
-      )
-      ->orderBy('created_at', 'asc')
-      ->get()
-      ->toArray();
-    return $this->sendResponseOk(
-      $tasks,
-      "Get current tasks (".count($tasks).") ok"
-    );
-  }
-
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \App\Http\Requests\SaveTaskRequest  $request
+   * @return \Illuminate\Http\Response
+   */
   public function store(SaveTaskRequest $request)
   {
     $request->merge(['user_id' => auth()->user()->id]);
-    $task = Task::create($request);
+    $task = Task::create($request->all());
     $response = $task ? array_merge($task->toArray(), ['timers' => []]) : false;
     return $this->sendResponseOk(
       $response,
@@ -78,18 +52,45 @@ class TaskController extends Controller
     );
   }
 
-  public function destroy(int $id)
+  /**
+   * Display the specified resource.
+   *
+   * @param  \App\Task  $task
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Task $task)
   {
-    $this->authorize('delete', $blog);
-    Task::destroy($id);
-    return $this->sendResponseOk([], "Task deleted");
+    return $this->sendResponseOk(
+      $task,
+      "Get task ok"
+    );
   }
 
-  public function update(UpdateTaskRequest $request, int $id)
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \App\Http\Requests\UpdateTaskRequest  $request
+   * @param  \App\Task  $task
+   * @return \Illuminate\Http\Response
+   */
+  public function update(UpdateTaskRequest $request, Task $task)
   {
     $this->authorize('update', $task);
     $request->merge(['user_id' => auth()->user()->id]);
-    $task = Task::put($id, $data)->toArray();
+    $task = Task::put($task->id, $request->all())->toArray();
     return $this->sendResponseOk($task, "Update task ok");
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  \App\Task  $task
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy(Task $task)
+  {
+    $this->authorize('delete', $task);
+    Task::destroy($task->id);
+    return $this->sendResponseOk([], "Task deleted");
   }
 }

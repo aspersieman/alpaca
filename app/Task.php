@@ -10,6 +10,8 @@ class Task extends Model
 {
   use SoftDeletes, Filter;
 
+  protected $table = 'tasks';
+
   /**
    * {@inheritDoc}
    */
