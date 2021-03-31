@@ -5,6 +5,7 @@ namespace App\Traits;
 use Hash;
 use Illuminate\Support\Arr;
 use App\Models\Group;
+use App\Models\Permission;
 
 /**
  * Class UserTrait

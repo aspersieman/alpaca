@@ -21,6 +21,7 @@ class GroupController extends Controller
    */
   public function __construct(GroupRepository $groupRepository)
   {
+    $this->middleware('auth:api');
     $this->groupRepository = $groupRepository;
   }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\File\Models;
+namespace App\Models;
 
-use App\Components\User\Models\User;
+use App\Models\User;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;

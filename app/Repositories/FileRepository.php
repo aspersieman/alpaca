@@ -1,10 +1,9 @@
 <?php
-namespace App\Components\File\Repositories;
+namespace App\Repositories;
 
-
-use App\Components\Core\BaseRepository;
-use App\Components\Core\Utilities\Helpers;
-use App\Components\File\Models\File;
+use App\Repositories\BaseRepository;
+use App\Utilities\Helpers;
+use App\Models\File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 

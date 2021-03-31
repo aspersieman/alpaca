@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: darryldecode
- * Date: 2/21/2018
- * Time: 10:25 AM
- */
+namespace App\Traits;
 
-namespace App\Components\Core;
-
-
-Trait ResponseHelpers
+Trait ResponseTrait
 {
     /**
      * send response to ajax request

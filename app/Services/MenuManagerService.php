@@ -1,20 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: darryldecode
- * Date: 3/7/2018
- * Time: 9:48 AM
- */
-
-namespace App\Components\Core\Menu;
+namespace App\Services;
 
 
-use App\Components\User\Models\User;
+use App\Models\User;
 
-class MenuManager
+class MenuManagerService
 {
     /**
-     * the array of MenuItem objects
+     * the array of MenuItemService objects
      *
      * @var array
      */
@@ -40,15 +33,15 @@ class MenuManager
     /**
      * add menu
      *
-     * @param MenuItem $menuItem
+     * @param MenuItemService $menuItem
      */
-    public function addMenu(MenuItem $menuItem)
+    public function addMenu(MenuItemService $menuItem)
     {
         $this->menuItems[] = $menuItem;
     }
 
     /**
-     * add menu from given array of MenuItem objects
+     * add menu from given array of MenuItemService objects
      *
      * @param array $menus
      */
@@ -69,7 +62,7 @@ class MenuManager
     {
         $menus = collect($this->menuItems);
 
-        $menus = $menus->filter(function(MenuItem $menu)
+        $menus = $menus->filter(function(MenuItemService $menu)
         {
             if($menu->isDivider()) return true;
 
@@ -135,7 +128,7 @@ class MenuManager
         $found = false;
         $menus = $this->filter();
 
-        $menus->each(function(MenuItem $menuItem) use (&$found,$menuLabel)
+        $menus->each(function(MenuItemService $menuItem) use (&$found,$menuLabel)
         {
             if($menuItem->label === $menuLabel) $found = true;
         });

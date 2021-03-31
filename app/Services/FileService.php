@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: darryldecode
- * Date: 5/6/2018
- * Time: 1:14 PM
- */
+namespace App\Services;
 
-namespace App\Components\File\Services;
-
-
-use App\Components\Core\BaseService;
-use App\Components\File\Models\File;
-use App\Components\File\Repositories\FileRepository;
-use App\Components\File\Utilities\FileHelper;
+use App\Services\BaseService;
+use App\Models\File;
+use App\Repositories\FileRepository;
+use App\Utilities\FileHelper;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 

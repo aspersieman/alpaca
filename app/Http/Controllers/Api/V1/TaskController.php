@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Models\Task;
 use App\Filters\TaskFilter;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TaskCollection;
 use App\Http\Requests\SaveTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 
@@ -55,11 +54,15 @@ class TaskController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Models\Task  $task
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function show(Task $task)
+  public function show($id)
   {
+    $task = Task::find($id);
+
+    if(!$task) return $this->sendResponseNotFound();
+
     return $this->sendResponseOk(
       $task,
       "Get task ok"
@@ -70,10 +73,10 @@ class TaskController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \App\Http\Requests\UpdateTaskRequest  $request
-   * @param  \App\Models\Task  $task
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function update(UpdateTaskRequest $request, Task $task)
+  public function update(UpdateTaskRequest $request, $id)
   {
     $this->authorize('update', $task);
     $request->merge(['user_id' => auth()->user()->id]);
@@ -84,10 +87,10 @@ class TaskController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\Task  $task
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy(Task $task)
+  public function destroy($id)
   {
     $this->authorize('delete', $task);
     Task::destroy($task->id);

@@ -1,25 +1,24 @@
 <?php
 namespace App\Utilities;
 
-
-use App\Components\Core\Menu\MenuManager;
-use App\Components\User\Models\User;
+use App\Utilities\Menu\MenuManager;
+use App\Models\User;
 
 class MenuHelper
 {
-    public static function initMenu()
-    {
-        /**
-         * @var User $currentUser
-         */
-        $currentUser = \Auth::user();
-        $menus = config('menu',[]);
-        $menuManager = new MenuManager();
-        $menuManager->setUser($currentUser);
-        $menuManager->addMenus($menus);
+  public static function initMenu()
+  {
+    /**
+     * @var User $currentUser
+     */
+    $currentUser = \Auth::user();
+    $menus = config('menu',[]);
+    $menuManager = new MenuManager();
+    $menuManager->setUser($currentUser);
+    $menuManager->addMenus($menus);
 
-        $menus = $menuManager->getFiltered();
+    $menus = $menuManager->getFiltered();
 
-        view()->share('nav',$menus);
-    }
+    view()->share('nav',$menus);
+  }
 }
