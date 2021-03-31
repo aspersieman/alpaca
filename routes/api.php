@@ -18,7 +18,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::apiResource('files','FileController');
   Route::get('files/{id}/preview','FileController@filePreview')->name('front.file.preview');
   Route::get('files/{id}/download','FileController@fileDownload')->name('front.file.download');
-  // Route::apiResource('file-groups','FileGroupController');
+  Route::apiResource('file-groups','FileGroupController');
 
   Route::apiResource('tasks', 'TaskController');
 

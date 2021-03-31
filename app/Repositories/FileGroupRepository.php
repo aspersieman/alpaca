@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories;
 
-use App\BaseRepository;
+use App\Repositories\BaseRepository;
 use App\Models\FileGroup;
 use Illuminate\Support\Arr;
 
