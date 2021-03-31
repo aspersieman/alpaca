@@ -14,7 +14,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
 
   Route::apiResource('users','UserController');
   Route::apiResource('groups','GroupController');
-  // Route::apiResource('permissions','PermissionController');
+  Route::apiResource('permissions','PermissionController');
   Route::apiResource('files','FileController');
   Route::get('files/{id}/preview','FileController@filePreview')->name('front.file.preview');
   Route::get('files/{id}/download','FileController@fileDownload')->name('front.file.download');
@@ -22,13 +22,13 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
 
   Route::apiResource('tasks', 'TaskController');
 
-  Route::post('/tasks/{id}/timers', 'TimerController@store');
-  Route::put('/tasks/{id}/timers/{timer_id}', 'TimerController@update');
-  Route::delete('/tasks/{id}/timers/{timer_id}', 'TimerController@delete');
-  Route::post('/tasks/{id}/timers/stop', 'TimerController@stop');
-  Route::get('/tasks/timers/running', 'TimerController@running');
+  Route::post('tasks/{id}/timers', 'TimerController@store');
+  Route::put('tasks/{id}/timers/{timer_id}', 'TimerController@update');
+  Route::delete('tasks/{id}/timers/{timer_id}', 'TimerController@delete');
+  Route::post('tasks/{id}/timers/stop', 'TimerController@stop');
+  Route::get('tasks/timers/running', 'TimerController@running');
 
-  Route::post('/charts/byday', 'ChartController@byDay');
-  Route::post('/charts/bytag', 'ChartController@byTag');
-  Route::post('/charts/bytimer', 'ChartController@byTimer');
+  Route::post('charts/byday', 'ChartController@byDay');
+  Route::post('charts/bytag', 'ChartController@byTag');
+  Route::post('charts/bytimer', 'ChartController@byTimer');
 });

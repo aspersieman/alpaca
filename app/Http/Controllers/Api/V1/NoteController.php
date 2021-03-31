@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Models\Note;
 
-class NoteController extends FrontController
+class NoteController extends Controller
 {
   public function store(Request $request)
   {
