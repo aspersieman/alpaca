@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Group
- * @package App\Components\User\Models
+ * @package App\Models
  *
  * @property int $id
  * @property string $name

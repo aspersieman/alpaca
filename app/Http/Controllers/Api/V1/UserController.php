@@ -67,11 +67,13 @@ class UserController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  App\Models\User $user
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function show(User $user)
+  public function show($id)
   {
+    $user = $this->userRepository->find($id);
+
     if(!$user) return $this->sendResponseNotFound();
 
     return $this->sendResponseOk($user);
@@ -81,10 +83,10 @@ class UserController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @param  App\Models\User $user
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function update(UpdateUserRequest $request, User $user)
+  public function update(UpdateUserRequest $request, $id)
   {
     if($request->hasFile('avatar_image')){
       $avatarImagePath = $request->file('avatar_image')->store('avatar');
@@ -97,7 +99,7 @@ class UserController extends Controller
     // we will remove it to avoid updating password with unexpected value
     if(!Helpers::hasValue($payload['password'])) unset($payload['password']);
 
-    $updated = $this->userRepository->update($user->id,$payload);
+    $updated = $this->userRepository->update($id,$payload);
 
     if(!$updated) return $this->sendResponseBadRequest("Failed update");
 
@@ -121,16 +123,16 @@ class UserController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  App\Models\User $user
+   * @param  int $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy(User $user)
+  public function destroy($id)
   {
     // do not delete self
     if($user->id == auth()->user()->id) return $this->sendResponseForbidden();
 
     try {
-      $this->userRepository->delete($user->id);
+      $this->userRepository->delete($id);
     } catch (\Exception $e) {
       \Log::error($e->getMessage());
       return $this->sendResponseBadRequest("Failed to delete");

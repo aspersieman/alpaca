@@ -5,11 +5,11 @@ use Illuminate\Http\Request;
 Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],function() {
   Route::get('ping', 'PingController@index');
 
-  Route::get('files/{id}/preview','Front\\FileController@filePreview')->name('front.file.preview');
-  Route::get('files/{id}/download','Front\\FileController@fileDownload')->name('front.file.download');
-  Route::get('files/{id}','Front\\FileController@show')->name('front.file.show');
+  Route::get('files/{id}/preview','FileController@filePreview')->name('front.file.preview');
+  // Route::get('files/{id}/download','Front\\FileController@fileDownload')->name('front.file.download');
+  // Route::get('files/{id}','Front\\FileController@show')->name('front.file.show');
 
-  Route::get('menu','Front\\MenuController@index')->name('front.menu');
+  // Route::get('menu','Front\\MenuController@index')->name('front.menu');
 
   Route::post('login', 'LoginController@login');
   Route::get('logout', 'LoginController@logout');
@@ -18,9 +18,9 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
 
   Route::apiResource('users','UserController');
   Route::apiResource('groups','GroupController');
-  Route::apiResource('permissions','PermissionController');
-  Route::apiResource('files','FileController');
-  Route::apiResource('file-groups','FileGroupController');
+  // Route::apiResource('permissions','PermissionController');
+  // Route::apiResource('files','FileController');
+  // Route::apiResource('file-groups','FileGroupController');
 
   Route::apiResource('tasks', 'TaskController');
 
