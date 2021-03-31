@@ -44,8 +44,8 @@
 //   Route::resource('file-groups','FileGroupController');
 // });
 
-// Match all other routes to the SPA
-// Route::get(
-  // '/{vue_capture?}',
-  // 'Front\\HomeController@index'
-// )->where('vue_capture', '^(?!storage).*$');
+// Match all non-api routes to the SPA
+Route::any(
+  '{all}', 
+  'Front\\HomeController@index')
+  ->where('all', '^(?!api).*$');

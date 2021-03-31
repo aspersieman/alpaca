@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Task;
+use App\Models\Task;
 use App\Filters\TaskFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskCollection;
@@ -55,7 +55,7 @@ class TaskController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Task  $task
+   * @param  \App\Models\Task  $task
    * @return \Illuminate\Http\Response
    */
   public function show(Task $task)
@@ -70,7 +70,7 @@ class TaskController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \App\Http\Requests\UpdateTaskRequest  $request
-   * @param  \App\Task  $task
+   * @param  \App\Models\Task  $task
    * @return \Illuminate\Http\Response
    */
   public function update(UpdateTaskRequest $request, Task $task)
@@ -84,7 +84,7 @@ class TaskController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Task  $task
+   * @param  \App\Models\Task  $task
    * @return \Illuminate\Http\Response
    */
   public function destroy(Task $task)

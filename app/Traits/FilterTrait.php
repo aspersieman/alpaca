@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Traits;
 
 use App\Filters\FilterInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-trait Filter
+trait FilterTrait
 {
     public function scopeFilter(Builder $query, FilterInterface $filters): Builder
     {

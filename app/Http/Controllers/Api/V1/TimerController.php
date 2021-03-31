@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Timer;
-use App\Task;
+use App\Models\Timer;
+use App\Models\Task;
 use App\Http\Requests\SaveTimerRequest;
 use App\Http\Requests\UpdateTimerRequest;
 

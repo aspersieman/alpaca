@@ -1,17 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: darryl
- * Date: 10/6/2017
- * Time: 6:37 AM
- */
+namespace App\Repositories;
 
-namespace App\Components\User\Repositories;
-
-
-use App\Components\Core\BaseRepository;
-use App\Components\User\Models\User;
-use App\Components\Core\Utilities\Helpers;
+use App\Repositories\BaseRepository;
+use App\Models\User;
+use App\Utilities\Helpers as Helpers;
 
 class UserRepository extends BaseRepository
 {

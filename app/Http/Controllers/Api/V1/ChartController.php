@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Task;
-use App\Timer;
+use App\Models\Task;
+use App\Models\Timer;
 
 use Illuminate\Support\Facades\Log;
 

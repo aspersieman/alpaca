@@ -7,8 +7,8 @@ use App\Http\Requests\PasswordResetLinkEmailRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Notifications\PasswordResetSuccessfully;
 use App\Notifications\SendPasswordResetLink;
-use App\PasswordReset;
-use App\User;
+use App\Models\PasswordReset;
+use App\Models\User;
 
 class PasswordResetController extends Controller
 {

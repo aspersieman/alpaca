@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Timer;
+use App\Models\User;
+use App\Models\Timer;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TimerPolicy

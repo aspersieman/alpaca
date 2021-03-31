@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Front;
 use Illuminate\Http\Request;
 use App\Components\Core\Menu\MenuItem;
 use App\Components\Core\Menu\MenuManager;
-use App\User;
+use App\Models\User;
 
 class MenuController extends FrontController
 {

@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
-use App\Task;
-use App\Timer;
+use App\Models\Task;
+use App\Models\Timer;
 
 class TaskSeeder extends Seeder
 {

@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Task;
-use App\Timer;
+use App\Models\Task;
+use App\Models\Timer;
 
 class InitialImportSeeder extends Seeder
 {

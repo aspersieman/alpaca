@@ -7,6 +7,7 @@ use Throwable;
 use Request;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\ErrorHandler\Error\FatalError;
 
 class Handler extends ExceptionHandler
 {
@@ -55,13 +56,28 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-      if ((Request::isMethod('post') && $exception instanceof MethodNotAllowedHttpException) || (Request::isMethod('post') && $exception instanceof NotFoundHttpException)) {
+      if ($exception instanceof MethodNotAllowedHttpException) {
         return response()->json([
-          'message' => 'Page Not Found',
+          'message' => 'Method not allowed',
+          'status' => false
+        ], 405
+        );
+      }
+      if ($exception instanceof NotFoundHttpException) {
+        return response()->json([
+          'message' => 'Not Found',
+          'status' => false
+        ], 404
+        );
+      }
+      if ($exception instanceof FatalError) {
+        return response()->json([
+          'message' => 'Internal server error',
           'status' => false
         ], 500
         );
       }
+
       return parent::render($request, $exception);
     }
 }

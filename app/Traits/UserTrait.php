@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: darryl
- * Date: 5/27/2017
- * Time: 7:55 AM
- */
 
-namespace App\Components\User\Models;
+namespace App\Traits;
+
 use Hash;
 use Illuminate\Support\Arr;
+use App\Models\Group;
 
 /**
  * Class UserTrait

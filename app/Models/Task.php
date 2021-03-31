@@ -1,14 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Filter;
+use App\Traits\FilterTrait;
 
 class Task extends Model
 {
-  use SoftDeletes, Filter;
+  use SoftDeletes, FilterTrait;
 
   protected $table = 'tasks';
 

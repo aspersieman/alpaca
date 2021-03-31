@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\SocialAccountManager;
+use App\Models\SocialAccountManager;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Facades\Socialite as Socialite;
 
 class SocialAccountController extends Controller
 {
