@@ -5,7 +5,7 @@
     <v-card
       light
       flat
-      :loading="loading"
+      :loading="chartByTimerLoading"
     >
       <v-card-title class="pa-2 grey lighten-3">
         <v-avatar>
@@ -64,11 +64,12 @@
     </v-card>
     <v-card-text class="py-0">
       <v-timeline
+        v-if="chartByTimerTimers"
         align-top
         dense
       >
         <v-timeline-item
-          v-for="(timer, index) in timers"
+          v-for="(timer, index) in chartByTimerTimers"
           :key="index"
           :color="timelineItemColour(index)"
           small
@@ -133,6 +134,11 @@
           </div>
         </v-timeline-item>
       </v-timeline>
+      <div
+        v-else
+      >
+        No timers found
+      </div>
     </v-card-text>
     <v-card-subtitle
       class="chart-footer"
@@ -146,7 +152,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[0] }}
+          {{ chartByTimerTotalTime[0] }}
         </v-flex>
         <v-flex
           class="time-footer-colon"
@@ -156,7 +162,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[1] }}
+          {{ chartByTimerTotalTime[1] }}
         </v-flex>
         <v-flex
           class="time-footer-colon"
@@ -166,7 +172,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[2] }}
+          {{ chartByTimerTotalTime[2] }}
         </v-flex>
       </v-layout>
       <v-layout row>
@@ -206,6 +212,11 @@
 </template>
 <script>
 
+import { 
+  mapActions, 
+  mapGetters 
+} from 'vuex'
+
 import TimerMixin from '../../../../mixins/TimerMixin';
 import EventNames from '../../../../common/EventNames';
 
@@ -233,18 +244,16 @@ export default {
   data() {
     return {
       dateRangeMenu: false,
-      loading: false,
-      timers: [],
-      days: [],
-      totalDuration: 0,
-      totalTime: [ "00", "00", "00" ],
-      userIds: [ window.APP_GLOBALS.AUTH_USER ],
     }
   },
   computed: {
     dateRange () {
       return this.dates.join(' ~ ')
     },
+    ...mapGetters('chart', ['chartByTimerLoading']),
+    ...mapGetters('chart', ['chartByTimerData']),
+    ...mapGetters('chart', ['chartByTimerTotalTime']),
+    ...mapGetters('chart', ['chartByTimerTimers']),
   },
   created() {
     this.getData();
@@ -255,6 +264,9 @@ export default {
     });
   },
   methods: {
+    ...mapActions({
+        getChartByTimerData: 'chart/getChartByTimerData',
+    }),
     getData(parameters) {
       const self = this;
       let dateStart = self.dates[0];
@@ -266,31 +278,12 @@ export default {
         dateStart = parameters.dates[0];
         dateEnd = parameters.dates[1];
       }
-      self.loading = true;
       const params = {
         start: dateStart,
         end: dateEnd,
-        userIds: self.userIds
+        userIds: [ this.$auth.user?.id ]
       };
-      window.axios.post('/api/chart/bytimer', params).then(response => {
-        self.totalDuration = 0;
-        self.totalTime = [ "00", "00", "00" ];
-        let timers = response.data;
-        self.timers = [];
-        self.days = [];
-        timers.forEach(timer => {
-          let dateStarted = this.$appFormatters.dateTimeFormat(timer.started_at, "ddd, D MMM")
-          timer.dateStarted = null;
-          if (!self.days.includes(dateStarted)) {
-            self.days.push(dateStarted);
-            timer.dateStarted = dateStarted;
-          }
-          self.totalDuration += timer.duration || 0;
-          self.timers.push(timer);
-        });
-        self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds').split(':');
-        self.loading = false;
-      });
+      this.getChartByTimerData(params);
     },
     timelineItemColour(index) {
       const mod = index % 2;

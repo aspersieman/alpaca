@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from '@/common/Store';
-import Home from '@/modules/Home';
+import Home from '@/modules/front/Index';
 import Index from '@/modules/App';
-import IndexHome from '@/modules/front/home/Index';
+import FrontHome from '@/modules/front/home/Index';
 import Dashboard from '@/modules/front/dashboard/Index';
 import Tasks from '@/modules/front/tasks/Index';
 import Reports from '@/modules/front/reports/Index';
@@ -42,7 +42,7 @@ const router = new Router({
         {
           name: "index.home",
           path: "",
-          component: IndexHome
+          component: FrontHome
         },
         {
           path: '/dashboard',

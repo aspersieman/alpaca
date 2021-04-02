@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="llama-background">
     <core-drawer />
     <core-app-bar />
     <core-content />
@@ -17,14 +17,15 @@
   </v-app>
 </template>
 <script>
-import CoreDrawer from '../components/core/Drawer.vue';
-import CoreAppBar from '../components/core/AppBar.vue';
-import CoreContent from '../components/core/Content.vue';
-import CoreFooter from '../components/core/Footer.vue';
-import ConfirmDialog from '../components/core/ConfirmDialog.vue';
-import NoteDialog from '../components/notes/NoteDialog.vue';
-import SnackBar from './front/home/SnackBar.vue';
+import CoreDrawer from '@/components/core/Drawer.vue';
+import CoreAppBar from '@/components/core/AppBar.vue';
+import CoreContent from '@/components/core/Content.vue';
+import CoreFooter from '@/components/core/Footer.vue';
+import ConfirmDialog from '@/components/core/ConfirmDialog.vue';
+import NoteDialog from '@/components/notes/NoteDialog.vue';
+import SnackBar from '@/modules/front/home/SnackBar.vue';
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
+
 export default {
   components: {
     'core-drawer': CoreDrawer,
@@ -43,8 +44,6 @@ export default {
   },
   created() {
     const self = this;
-    self.$store.commit('setAuthUser', window.APP_GLOBALS.AUTH_USER);
-
     window.axios.interceptors.response.use(undefined, function (err) {
       return new Promise(function () {
         if (err.response.status === 401 
@@ -56,19 +55,10 @@ export default {
       });
     });
   },
-  mounted() {
-    const self = this;
-    self.$store.dispatch('loadMenu');
-  },
+  mounted() { },
   methods: { }
 }
 </script>
-<style scoped>
-#app {
-  background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255, .9)), url("/img/logo/llama-jen-transparent-sepia.png");
-  background-repeat: no-repeat, no-repeat;
-  background-size: 491px 911px;
-  background-position: center 20px;
-  background-attachment: fixed;
-}
+<style scoped lang="scss">
+@import "../../sass/home";
 </style>

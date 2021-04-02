@@ -3,9 +3,10 @@ import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate'
 
 import auth from './modules/auth';
-import task from './modules/task';
 import chart from './modules/chart';
+import menu from './modules/menu';
 import note from './modules/note';
+import task from './modules/task';
 import user from './modules/user';
 
 Vue.use(Vuex);
@@ -13,9 +14,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   modules: {
     auth,
-    task,
     chart,
+    menu,
     note,
+    task,
     user
   },
   plugins: [createPersistedState()]

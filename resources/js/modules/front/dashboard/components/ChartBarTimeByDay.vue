@@ -5,7 +5,7 @@
     <v-card
       light
       flat
-      :loading="loading"
+      :loading="chartByDayLoading"
     >
       <v-card-title class="pa-2 grey lighten-3">
         <v-avatar>
@@ -67,7 +67,7 @@
         xtitle="Date"
         ytitle="Time logged"
         :download="true" 
-        :data="chartData"
+        :data="chartByDayData"
       />
     </v-card-text>
     <v-card-subtitle
@@ -82,7 +82,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[0] }}
+          {{ chartByDayTotalTime[0] }}
         </v-flex>
         <v-flex
           class="time-footer-colon"
@@ -92,7 +92,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[1] }}
+          {{ chartByDayTotalTime[1] }}
         </v-flex>
         <v-flex
           class="time-footer-colon"
@@ -102,7 +102,7 @@
         <v-flex
           class="time-footer-item"
         >
-          {{ totalTime[2] }}
+          {{ chartByDayTotalTime[2] }}
         </v-flex>
       </v-layout>
       <v-layout row>
@@ -141,6 +141,10 @@
   </v-card>
 </template>
 <script>
+import { 
+  mapActions, 
+  mapGetters 
+} from 'vuex';
 import EventNames from '../../../../common/EventNames';
 
 export default {
@@ -158,21 +162,18 @@ export default {
     return {
       dateRangeMenu: false,
       dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
-      userIds: [ window.APP_GLOBALS.AUTH_USER ],
-      loading: false,
-      chartData: [],
-      totalDuration: 0,
-      totalTime: [ "00", "00", "00" ],
     }
   },
   computed: {
     dateRange () {
       return this.dates.join(' ~ ')
     },
+    ...mapGetters('chart', ['chartByDayLoading']),
+    ...mapGetters('chart', ['chartByDayData']),
+    ...mapGetters('chart', ['chartByDayTotalTime']),
   },
   created() {
-    const self = this;
-    self.getData();
+    this.getData();
   },
   mounted() {
     this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_BAR_TIME_BY_DAY_PARAMETERS_CHANGED ], (values) => {
@@ -180,10 +181,12 @@ export default {
     });
   },
   methods: {
+    ...mapActions({
+        getChartByDayData: 'chart/getChartByDayData',
+    }),
     getData(parameters) {
-      const self = this;
-      let dateStart = self.dates[0];
-      let dateEnd = self.dates[1];
+      let dateStart = this.dates[0];
+      let dateEnd = this.dates[1];
       if (
         typeof parameters !== 'undefined'
         && typeof parameters.dates !== 'undefined'
@@ -191,24 +194,12 @@ export default {
         dateStart = parameters.dates[0];
         dateEnd = parameters.dates[1];
       }
-      self.loading = true;
       const params = {
         start: dateStart,
         end: dateEnd,
-        userIds: self.userIds
+        userIds: [ this.$auth.user?.id ]
       };
-      window.axios.post('/api/chart/byday', params).then(response => {
-        self.chartData = [];
-        let days = response.data;
-        self.totalTime = [ "00", "00", "00" ];
-        days.forEach(day => {
-          let formattedDay = this.$appFormatters.dateTimeFormat(day[0], "ddd, D MMM")
-          self.totalDuration += parseInt(day[1]);
-          self.chartData.push([formattedDay, self.$appFormatters.secondsToMinutes(day[1])]);
-        });
-        self.totalTime = self.$appFormatters.duration(self.totalDuration, 'seconds').split(':');
-        self.loading = false;
-      });
+      this.getChartByDayData(params);
     },
   }
 }

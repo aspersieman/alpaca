@@ -10,7 +10,7 @@
       clipped-right
     >
       <v-app-bar-nav-icon
-        v-if="$vuetify.breakpoint.smAndDown || this.$store.getters.menu.length > 0"
+        v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
         @click="toggleDrawer" 
       />
       <router-link to="/">
@@ -24,7 +24,7 @@
       <v-container class="mx-auto py-0 main-container">
         <v-row align="center">
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
+            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/dashboard"
@@ -32,7 +32,7 @@
             Dashboard
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
+            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/tasks"
@@ -40,7 +40,7 @@
             Tasks
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
+            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/notes"
@@ -48,7 +48,7 @@
             Notes
           </v-btn>
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.mdAndUp"
+            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
             class="d-none d-sm-flex appbar-button"
             text
             to="/reports"
@@ -57,7 +57,7 @@
           </v-btn>
           <v-spacer />
           <base-btn-primary
-            v-if="$store.getters.isLoggedIn"
+            v-if="$auth.check"
             v-shortkey.once="['ctrl', 'alt', 't']"
             class="hidden-sm-and-down"
             dark
@@ -70,7 +70,7 @@
           </base-btn-primary>
           <timer-active />
           <v-btn
-            v-if="!$store.getters.isLoggedIn"
+            v-if="!$auth.check"
             class="d-none d-sm-flex"
             text
             link
@@ -83,7 +83,7 @@
         <timer-dialog @timerAdded="snackbar=true" />
       </v-container>
       <avatar 
-        v-if="$store.getters.isLoggedIn"
+        v-if="$auth.check"
         class="d-none d-sm-flex"
       />
     </v-app-bar>
@@ -93,6 +93,7 @@
 // Utilities
 import {
   mapMutations,
+  mapGetters
 } from 'vuex';
 
 import TimerActive from '../timer/TimerActive';
@@ -113,9 +114,12 @@ export default {
   mixins: [ 
     TaskMixin
   ],
+  computed: {
+    ...mapGetters('menu', ['menu'])
+  },
   mounted() {
-    var self = this;
-    self.clickLogin = methods.clickLogin;
+    this.$store.dispatch('menu/loadMenu');
+    this.clickLogin = methods.clickLogin;
   },
   methods: {
     ...mapMutations(['toggleDrawer']),

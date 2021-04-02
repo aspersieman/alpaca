@@ -5,7 +5,7 @@
     <v-card
       light
       flat
-      :loading="loading"
+      :loading="chartByTagLoading"
     >
       <v-card-title class="pa-2 grey lighten-3">
         <v-avatar>
@@ -65,17 +65,21 @@
     <v-card-text class="py-0">
       <pie-chart
         :download="true" 
-        :data="chartData"
+        :data="chartByTagData"
       />
     </v-card-text>
     <v-card-subtitle
       class="chart-footer"
     >
-      Total tags: {{ totalTags }}
+      Total tags: {{ chartByTagTotalTags }}
     </v-card-subtitle>
   </v-card>
 </template>
 <script>
+import { 
+  mapActions, 
+  mapGetters 
+} from 'vuex';
 import EventNames from '../../../../common/EventNames';
 
 export default {
@@ -93,16 +97,15 @@ export default {
     return {
       dateRangeMenu: false,
       dates: [ new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().substr(0, 10), new Date().toISOString().substr(0, 10) ],
-      userIds: [ window.APP_GLOBALS.AUTH_USER ],
-      loading: false,
-      chartData: [],
-      totalTags: 0,
     }
   },
   computed: {
     dateRange () {
       return this.dates.join(' ~ ')
     },
+    ...mapGetters('chart', ['chartByTagLoading']),
+    ...mapGetters('chart', ['chartByTagData']),
+    ...mapGetters('chart', ['chartByTagTotalTags']),
   },
   created() {
     const self = this;
@@ -114,6 +117,9 @@ export default {
     });
   },
   methods: {
+    ...mapActions({
+        getChartByTagData: 'chart/getChartByTagData',
+    }),
     getData(parameters) {
       const self = this;
       let dateStart = self.dates[0];
@@ -125,21 +131,12 @@ export default {
         dateStart = parameters.dates[0];
         dateEnd = parameters.dates[1];
       }
-      self.loading = true;
       const params = {
         start: dateStart,
         end: dateEnd,
         userIds: self.userIds
       };
-      window.axios.post('/api/chart/bytag', params).then(response => {
-        self.chartData = [];
-        let tags = response.data;
-        tags.forEach(tag => {
-          self.chartData.push([tag[0], self.$appFormatters.secondsToMinutes(tag[1])]);
-        });
-        self.totalTags = this.chartData.length;
-        self.loading = false;
-      });
+      this.getChartByTagData(params);
     },
   }
 }

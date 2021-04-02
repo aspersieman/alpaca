@@ -11,15 +11,16 @@ import Chart from 'chart.js';
 
 // app
 import router from '@/router/index';
+import formatters from '@/common/formatters';
 import store from '@/store';
 import eventBus from '@/common/Event';
-import formatters from '@/common/Formatters';
 import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 
 import Authentication from '@/plugins/authentication'
 import Authorization from '@/plugins/authorization'
 import '@/plugins/base';
 import vuetify from '@/plugins/vuetify'
+// TODO import and use like other plugins
 import viewprogressbar from '@/plugins/vueprogressbar'
 
 Vue.config.productionTip = false;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
-      v-if="$vuetify.breakpoint.smAndDown || $store.getters.menu.length > 0"
+      v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
       v-model="drawer"
       app
       clipped
@@ -37,7 +37,7 @@
           </v-list-item-content>
         </v-list-item>
         <div
-          v-for="item of $store.getters.menu"
+          v-for="item of menu"
           :key="item.label"
         >
           <v-divider 
@@ -88,7 +88,9 @@
 <script>
 import {
   mapMutations,
+  mapGetters
 } from 'vuex';
+
 import methods from '../../common/Methods';
 import Avatar from './Avatar';
 import AvatarMixin from '../../mixins/AvatarMixin';
@@ -117,8 +119,7 @@ export default {
         this.setDrawer(val)
       },
     },
-  },
-  created() {
+    ...mapGetters('menu', ['menu'])
   },
   mounted() {
     this.clickLogin = methods.clickLogin;

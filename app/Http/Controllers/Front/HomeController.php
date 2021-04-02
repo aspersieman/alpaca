@@ -2,8 +2,9 @@
 namespace App\Http\Controllers\Front;
 
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
-class HomeController extends FrontController
+class HomeController extends Controller
 {
   public function index()
   {
