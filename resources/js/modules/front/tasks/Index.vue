@@ -165,7 +165,7 @@
           class="col-12"
         >
           <v-layout
-            v-if="tasks.length == 0"
+            v-if="$store.getters['task/tasks'].length == 0"
             row
             justify-center
           >
@@ -210,6 +210,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import Task from './components/Task';
 import NoteDrawer from '../../../components/notes/NoteDrawer';
 import DateRangePicker from '../../../components/core/DateRangePicker';
@@ -270,7 +271,7 @@ export default {
     searchTasks() {
       const self = this;
       self.setTasksSettings();
-      return this.tasks.filter(task => {
+      return this.$store.getters['task/tasks'].filter(task => {
         let searchFound = true;
         if (self.search != '' && self.search != null) {
           searchFound = task.name.toLowerCase().includes(self.search);
@@ -320,14 +321,8 @@ export default {
   mounted() {
     const self = this;
     self.getTasksSettings();
-    self.$store.commit('setBreadcrumbs',[
-      {
-        label: 'Tasks',
-        to: { name:'tasks' }
-      },
-    ]);
     self.$eventBus.$on([EventNames.TASK_ADDED, EventNames.TASK_UPDATED, EventNames.TIMER_ADDED, EventNames.TIMER_UPDATED, EventNames.TIMER_DELETED, EventNames.NOTE_DELETED],()=>{
-      self.loadTasks();  
+      self.getTasks();  
     });
     self.$eventBus.$on([EventNames.TASKS_LOADED],()=>{
       self.sortTasks();  
@@ -341,10 +336,14 @@ export default {
   },
   created() {
     this.getTasksSettings();
-    this.loadTasks();
+    this.getTasks();
     this.setActiveTimer();
   },
   methods: {
+    ...mapActions({
+        setActiveTimer: 'timer/setRunningTimer',
+        getTasks: 'task/getTasks',
+    }),
     searchFocus() {
       this.$refs.searchInput.focus();
     },

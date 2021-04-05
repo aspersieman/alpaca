@@ -76,10 +76,7 @@
   </v-card>
 </template>
 <script>
-import { 
-  mapActions, 
-  mapGetters 
-} from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import EventNames from '../../../../common/EventNames';
 
 export default {
@@ -103,9 +100,7 @@ export default {
     dateRange () {
       return this.dates.join(' ~ ')
     },
-    ...mapGetters('chart', ['chartByTagLoading']),
-    ...mapGetters('chart', ['chartByTagData']),
-    ...mapGetters('chart', ['chartByTagTotalTags']),
+    ...mapGetters('chart', ['chartByTagLoading', 'chartByTagData', 'chartByTagTotalTags']),
   },
   created() {
     const self = this;

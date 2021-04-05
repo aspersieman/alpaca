@@ -7,6 +7,8 @@ Vue.config.devtools = process.env.NODE_ENV === 'development';
 
 export default new Vuex.Store({
   state: {
+    //logged in user
+    user: null,
     // breadcrumbs
     breadcrumbs: [],
     drawer: false,
@@ -28,6 +30,7 @@ export default new Vuex.Store({
     imageDialogFile: {
       name: ""
     },
+    menu: [],
     appName: "Alpaca",
     task: null,
     tasks: [],
@@ -62,6 +65,10 @@ export default new Vuex.Store({
     stoppedTimerValue: ""
   },
   mutations: {
+    //logged in user
+    setAuthUser(state, user) {
+      state.user = user;
+    },
     // breadcrumbs
     setBreadcrumbs(state, items) {
       items.unshift({label:"Home",to:{name:""}});
@@ -69,6 +76,7 @@ export default new Vuex.Store({
     },
     // drawer
     setDrawer: (state, payload) => (state.drawer = payload),
+    toggleDrawer: state => (state.drawer = !state.drawer),
     // loader
     showLoader(state) {
       state.showLoader = true
@@ -107,6 +115,9 @@ export default new Vuex.Store({
       state.dialogCancelCb();
       state.dialogShow = false;
     },
+    setMenu(state, menu) {
+      state.menu = menu.data;
+    },
     setImageDialogFile(state, data) {
       state.imageDialogFile = data;
     },
@@ -142,6 +153,10 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    //logged in user
+    isLoggedIn(state) {
+      return state.user !== null;
+    },
     // get breadcrumbs
     getBreadcrumbs: state => {
       return state.breadcrumbs
@@ -178,6 +193,9 @@ export default new Vuex.Store({
     imageDialogFile: state => {
       return state.imageDialogFile
     },
+    menu: state => {
+      return state.menu
+    },
     awardDialog: state => {
       return state.awardDialog;
     },
@@ -209,4 +227,13 @@ export default new Vuex.Store({
       return state.noteDrawer
     },
   },
+  actions: {
+    loadMenu({commit}) {
+      window.axios.get("/api/menu").then(menu => {
+        commit("setMenu", menu.data);
+      }).catch(error => {
+        throw new Error(`API ${error}`);
+      });
+    }
+  }
 });

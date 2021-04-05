@@ -13,7 +13,7 @@ import Chart from 'chart.js';
 import router from '@/router/index';
 import formatters from '@/common/formatters';
 import store from '@/store';
-import eventBus from '@/common/Event';
+import eventBus from '@/plugins/event-bus';
 import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 
 import Authentication from '@/plugins/authentication'
@@ -47,12 +47,8 @@ Vue.config.devtools = process.env.NODE_ENV === 'development';
 const app = new Vue({
   vuetify,
   el: '#app',
-  eventBus,
   router,
   store,
-  data: () => ({
-    drawer: false,
-  }),
   mounted() {
     const self = this;
     // progress bar top

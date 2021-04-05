@@ -1,40 +1,34 @@
 <template>
   <div>
     <v-snackbar
-       :timeout="snackbarDuration"
-       :color="snackbarColor"
+       :timeout="duration"
+       :color="color"
        top
-       v-model="showSnackbar">
-      {{ snackbarMessage }}
+       v-model="show">
+      {{ message }}
     </v-snackbar>
   </div>
 </template>
 <script>
-// Utilities
-import {
-  mapGetters,
-  mapMutations,
-} from 'vuex'
-
 export default {
-  name: 'HomeSnackBar',
+  name: 'SnackBar',
   computed: {
-    showSnackbar: {
+    show: {
       get() {
-        return this.$store.getters.showSnackbar;
+        return this.$store.getters['snackbar/show'];
       },
       set(val) {
-        if(!val) this.$store.commit('hideSnackbar');
+        if(!val) this.$store.dispatch('snackbar/hide');
       }
     },
-    snackbarMessage() {
-      return this.$store.getters.snackbarMessage;
+    message() {
+      return this.$store.getters['snackbar/message'];
     },
-    snackbarColor() {
-      return this.$store.getters.snackbarColor;
+    color() {
+      return this.$store.getters['snackbar/color'];
     },
-    snackbarDuration() {
-      return this.$store.getters.snackbarDuration;
+    duration() {
+      return this.$store.getters['snackbar/duration'];
     },
   }
 }

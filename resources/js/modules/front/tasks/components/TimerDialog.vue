@@ -168,9 +168,10 @@
 
 <script>
 
-import TimerMixin from '../../../../mixins/TimerMixin';
-import TaskMixin from '../../../../mixins/TaskMixin';
-import EventNames from '../../../../common/EventNames';
+import { mapActions } from 'vuex';
+import TimerMixin from '@/mixins/TimerMixin';
+import TaskMixin from '@/mixins/TaskMixin';
+import EventNames from '@/common/EventNames';
 
 export default {
   mixins: [
@@ -229,6 +230,9 @@ export default {
     });
   },
   methods: {
+    ...mapActions({
+        addTimer: 'timer/addTimer',
+    }),
     close() {
       this.dialog = false;
     },

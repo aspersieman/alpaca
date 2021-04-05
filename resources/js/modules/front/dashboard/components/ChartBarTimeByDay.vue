@@ -141,10 +141,7 @@
   </v-card>
 </template>
 <script>
-import { 
-  mapActions, 
-  mapGetters 
-} from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import EventNames from '../../../../common/EventNames';
 
 export default {
@@ -168,9 +165,7 @@ export default {
     dateRange () {
       return this.dates.join(' ~ ')
     },
-    ...mapGetters('chart', ['chartByDayLoading']),
-    ...mapGetters('chart', ['chartByDayData']),
-    ...mapGetters('chart', ['chartByDayTotalTime']),
+    ...mapGetters('chart', ['chartByDayLoading', 'chartByDayData', 'chartByDayTotalTime']),
   },
   created() {
     this.getData();

@@ -2,13 +2,14 @@
   <div>
     <v-navigation-drawer
       v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
-      v-model="drawer"
-      app
-      clipped
+      v-bind:value="value"
+      v-on:input="$emit('input', $event)"
+      temporary
+      absolute
       left
     >
       <template 
-        v-if="$store.getters.isLoggedIn && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
+        v-if="$auth.check && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
         #prepend
       >
         <v-list-item two-line>
@@ -21,7 +22,7 @@
       </template>
 
       <v-divider 
-        v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
+        v-if="$auth.check && $vuetify.breakpoint.smAndDown"
       />
       <v-list dense>
         <v-list-item
@@ -60,7 +61,7 @@
         </div>
         <v-divider horizontal />
         <v-list-item
-          v-if="!$store.getters.isLoggedIn"
+          v-if="!$auth.check"
           @click="clickLogin('/login')"
         >
           <v-list-item-action>
@@ -71,7 +72,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          v-if="$store.getters.isLoggedIn"
+          v-if="$auth.check"
           @click="clickLogout('/logout','/')"
         >
           <v-list-item-action>
@@ -86,14 +87,10 @@
   </div>
 </template>
 <script>
-import {
-  mapMutations,
-  mapGetters
-} from 'vuex';
-
-import methods from '../../common/Methods';
-import Avatar from './Avatar';
-import AvatarMixin from '../../mixins/AvatarMixin';
+import { mapGetters } from 'vuex';
+import methods from '@/common/Methods';
+import Avatar from '@/components/core/Avatar';
+import AvatarMixin from '@/mixins/AvatarMixin';
 
 export default {
   name: 'CoreDrawer',
@@ -103,6 +100,12 @@ export default {
   mixins: [ 
     AvatarMixin,
   ],
+  props: {
+    value: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     user: {
       initials: '',
@@ -111,28 +114,19 @@ export default {
     },
   }),
   computed: {
-    drawer: {
-      get () {
-        return this.$store.state.drawer
-      },
-      set (val) {
-        this.setDrawer(val)
-      },
-    },
-    ...mapGetters('menu', ['menu'])
+    ...mapGetters('menu', ['menu']),
   },
   mounted() {
     this.clickLogin = methods.clickLogin;
     this.clickLogout = methods.clickLogout;
-    if (this.$store.getters.isLoggedIn) {
-      this.user.name = window.APP_GLOBALS.AUTH_USER.name;
-      this.user.email = window.APP_GLOBALS.AUTH_USER.email;
+    if (this.$auth.check) {
+      this.user.name = this.$auth.user.name;
+      this.user.email = this.$auth.user.email;
       this.user.initials = this.getInitials(this.user.name);
       this.user.color = this.getAvatarColour(this.user.name);
     }
   },
   methods: {
-    ...mapMutations(['setDrawer']),
     getInitials(name) {
       var initials = name.match(/\b\w/g) || [];
       return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();

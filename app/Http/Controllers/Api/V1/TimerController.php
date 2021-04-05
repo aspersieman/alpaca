@@ -39,7 +39,7 @@ class TimerController extends Controller
       $timer->save();
     }
 
-    return $this->sendResponseOk($timer->with(['tagged'])->find($timer->id), "Created.");
+    return $this->sendResponseOk($timer->with(['task', 'tagged'])->find($timer->id), "Created.");
   }
 
   public function update(UpdateTimerRequest $request, int $id, int $timer_id)
@@ -71,7 +71,7 @@ class TimerController extends Controller
     return $this->sendResponseOk($runningTimer, "Running timer found ok");
   }
 
-  public function stopRunning(Request $request)
+  public function stop(Request $request)
   {
     if ($timer = Timer::mine()->running()->first()) {
       $this->authorize('update', $timer);

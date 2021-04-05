@@ -1,4 +1,6 @@
+console.log("NICOL REMOVE EventNames.js");
 export default {
+  /*
   CHART_PARAMETERS_CHANGED: "chart-parameters-changed",
   CHART_TIMER_TIMELINE_PARAMETERS_CHANGED: "chart-timer-timeline-parameters-changed",
   CHART_PIE_TIME_BY_TAG_PARAMETERS_CHANGED: "chart-pie-time-by-tag-parameters-changed",
@@ -34,4 +36,5 @@ export default {
   USER_ADDED: "user-added",
   USER_DELETED: "user-deleted",
   USER_UPDATED: "user-updated",
+  */
 };

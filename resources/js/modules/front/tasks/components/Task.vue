@@ -151,11 +151,11 @@
               </v-tooltip>
             </v-btn>
             <v-btn
-              v-if="!isActiveTimer()"
+              v-if="isRunningTimer() !== true"
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="openTimerAddDialog(task);"
+              @click="openTimerDialog(task);"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
@@ -234,7 +234,7 @@
                 <v-list-item
                   v-if="$store.state.activeTimerCounter.seconds == 0"
                   :class="`${task.status}`"
-                  @click="openTimerAddDialog(task);"
+                  @click="openTimerDialog(task);"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>more_time</v-icon>
@@ -292,10 +292,11 @@
 </template>
 <script>
 
-import TimerList from './TimerList';
-import TaskMixin from '../../../../mixins/TaskMixin';
-import TimerMixin from '../../../../mixins/TimerMixin';
-import EventNames from '../../../../common/EventNames';
+import { mapActions } from 'vuex';
+import TimerList from '@/modules/front/tasks/components/TimerList';
+import TaskMixin from '@/mixins/TaskMixin';
+import TimerMixin from '@/mixins/TimerMixin';
+import EventNames from '@/common/EventNames';
 
 export default {
   components: {
@@ -330,6 +331,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+        isRunningTimer: 'timer/isRunningTimer',
+        openTimerDialog: 'timer/openTimerDialog',
+        getTimers: 'task/getTimers',
+    }),
     openNoteDrawer() {
       const self = this;
       self.$store.commit('setNotes', self.task.notes);
@@ -337,10 +343,10 @@ export default {
       self.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, true);
     },
     countNotes(task) {
-      return task.notes.length > 0 ? task.notes.length : '';
+      return task?.notes?.length > 0 ? task?.notes?.length : '';
     },
     countTimers(task) {
-      return task.timers.length > 0 ? task.timers.length : '';
+      return task?.timers?.length > 0 ? task?.timers?.length : '';
     },
   },
 }

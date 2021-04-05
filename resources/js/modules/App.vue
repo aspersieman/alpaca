@@ -1,6 +1,5 @@
 <template>
   <v-app class="llama-background">
-    <core-drawer />
     <core-app-bar />
     <core-content />
     <core-footer />
@@ -11,13 +10,12 @@
       <moon-loader color="#ff4f4f" />
     </div>
     <vue-progress-bar />
-    <home-snack-bar />
+    <snack-bar />
     <confirm-dialog />
     <note-dialog />
   </v-app>
 </template>
 <script>
-import CoreDrawer from '@/components/core/Drawer.vue';
 import CoreAppBar from '@/components/core/AppBar.vue';
 import CoreContent from '@/components/core/Content.vue';
 import CoreFooter from '@/components/core/Footer.vue';
@@ -28,14 +26,13 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
   components: {
-    'core-drawer': CoreDrawer,
-    'core-app-bar': CoreAppBar,
-    'core-content': CoreContent,
-    'core-footer': CoreFooter,
-    'home-snack-bar': SnackBar,
-    'confirm-dialog': ConfirmDialog,
-    'note-dialog': NoteDialog,
-    'moon-loader': MoonLoader
+    CoreAppBar,
+    CoreContent,
+    CoreFooter,
+    SnackBar,
+    ConfirmDialog,
+    NoteDialog,
+    MoonLoader
   },
   computed: {
     showLoader() {

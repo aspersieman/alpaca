@@ -7,6 +7,7 @@ use App\Filters\TaskFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\TaskCollection;
 
 class TaskController extends Controller
 {

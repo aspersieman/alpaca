@@ -127,7 +127,7 @@ export const actions = {
           resolve(data)
         })
         .catch(error => reject(error))
-    })
+    });
   }
 }
 

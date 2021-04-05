@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isActiveTimer()"
+    v-if="isRunningTimer() === true"
   >
     <v-bottom-sheet inset>
       <template #activator="{ on, attrs }">
@@ -12,7 +12,7 @@
             v-bind="attrs"
             v-on="on"
           >
-            Active Timer
+            Running Timer
             <v-icon>
               access_time
             </v-icon>
@@ -64,42 +64,41 @@
 </template>
 <script>
 
+import { mapActions, mapGetters } from 'vuex';
 import TimerMixin from '../../mixins/TimerMixin';
-import EventNames from '../../common/EventNames';
 
 export default {
-  components: { },
   mixins: [ TimerMixin ],
-  data() {
-    return {
-    }
-  },
   computed: {
     taskName: function() {
-      return this.$store.state.activeTimerCounter.task.name;
+      return this.timerRunningCounter?.task?.name;
     },
     timerName: function() {
-      return this.$store.state.activeTimerCounter.timer.name;
+      return this.timerRunningCounter?.timer?.name;
     },
     timerTime: function() {
-      return this.$store.state.activeTimerCounter.title;
+      return this.timerRunningCounter?.title;
     },
     timerStarted: function() {
-      return this.timerFormat(this.$store.state.activeTimerCounter.timer.started_at, true);
+      return this.timerFormat(this.timerRunningCounter.timer.started_at, true);
     },
     showTimer: function() {
-      return this.$store.state.activeTimerCounter != null;
+      return this.timerRunningCounter != null;
+    },
+    ...mapGetters('timer', ['timer', 'timerRunning', 'timerRunningCounter'])
+  },
+  created() {
+    if (this.$auth.check) {
+      this.$store.dispatch('timer/setRunningTimer');
     }
   },
-  mounted() {
-    if (this.$store.getters.isLoggedIn) {
-      this.setActiveTimer();
-    }
-    this.$eventBus.$on(EventNames.TIMER_START, (timer) => {
-      this.startTimer(timer);
-    });
+  methods: {
+    ...mapActions({
+        startTimer: 'timer/startTimer',
+        stopTimer: 'timer/stopTimer',
+        isRunningTimer: 'timer/isRunningTimer',
+    }),
   },
-  methods: { },
 }
 </script>
 

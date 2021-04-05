@@ -1,40 +1,24 @@
-import methods from '../common/Methods';
-import EventNames from '../common/EventNames';
-
 export default {
   data(){
     return {
     }
   },
   methods: {
-    openTimerUpdateDialog(task, timer) {
-      const self = this;
-      self.$store.commit('setSelectedTask', task);
-      self.$store.commit('setSelectedTimer', timer);
-      self.$eventBus.$emit(EventNames.TIMER_UPDATE_DIALOG, true)
-    },
-
-    openTimerAddDialog(task) {
-      const self = this;
-      self.$store.commit('setSelectedTask', task);
-      self.$eventBus.$emit(EventNames.TIMER_ADD_DIALOG, true)
-    },
-
     /**
      * Conditionally pads a number with "0"
      */
-    _padNumber: number =>  (number > 9) ? number : "0" + number,
+    padNumber: number =>  (number > 9) ? number : "0" + number,
 
     /**
      * Splits seconds into hours, minutes, and seconds.
      */
-    _readableTimeFromSeconds: function(from, to) {
+    readableTimeFromSeconds: function(from, to) {
       const seconds = parseInt(window.moment.duration(to.diff(from)).asSeconds())
       const hours = 3600 > seconds ? 0 : parseInt(seconds / 3600, 10);
       return {
-        hours: this._padNumber(hours),
-        seconds: this._padNumber(seconds % 60),
-        minutes: this._padNumber(parseInt(seconds / 60, 10) % 60),
+        hours: this.padNumber(hours),
+        seconds: this.padNumber(seconds % 60),
+        minutes: this.padNumber(parseInt(seconds / 60, 10) % 60),
       }
     },
 
@@ -45,128 +29,15 @@ export default {
       if (timer.stopped_at != null) {
         const from = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
         const to = window.moment(timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-        const time = this._readableTimeFromSeconds(from, to);
+        const time = this.readableTimeFromSeconds(from, to);
         return `${time.hours}:${time.minutes}:${time.seconds}`; // for syntax highlighting: `
       }
       return '';
     },
 
     /**
-     * Determines if there is an active timer and whether it belongs to the task
-     * passed into the function.
+     * Format a datetime value for display in a timer
      */
-    showTimerForTask: function (task, timer) {
-      return this.$store.state.activeTimerCounter.timer &&
-        this.$store.state.activeTimerCounter.timer.id === timer.id &&
-        this.$store.state.activeTimerCounter.timer.task.id === task.id
-    },
-
-    isActiveTimer: function () {
-      return this.$store.state.activeTimerCounter.timer &&
-        this.$store.state.activeTimerCounter.timer.id != null;
-    },
-
-    /**
-     * Start counting the timer. Tick tock.
-     */
-    startTimer: function (timer) {
-      if (this.$store.state.activeTimerCounter.timer === null || this.$store.state.activeTimerCounter.timer.id != timer.id) {
-        // remove 'z' from timezone, moment doesn't like it
-        // when doing maths
-        const started = window.moment(timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-        const now = window.moment();
-        this.$store.commit('setActiveTimerCounter', {
-          seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()), 
-          timer: timer,
-          title: 'Timing...',
-          task: timer.task
-        });
-
-        this.$store.state.activeTimerCounter.ticker = setInterval(() => {
-          const from = window.moment(this.$store.state.activeTimerCounter.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-          const to = window.moment();
-          const time = this._readableTimeFromSeconds(from, to);
-          this.$store.state.activeTimerCounter.title = `${time.hours}:${time.minutes}:${time.seconds}`
-        }, 1000);
-      }
-    },
-
-    /**
-     * Stop the timer from the API and then from the local activeTimerCounter.
-     */
-    stopTimer: function () {
-      const timer = {
-        tz: Intl.DateTimeFormat().resolvedOptions().timeZone
-      };
-      window.axios.post(`/api/tasks/${this.$store.state.activeTimerCounter.timer.id}/timers/stop`, timer)
-        .then(response => {
-          // Stop the ticker
-          clearInterval(this.$store.state.activeTimerCounter.ticker)
-
-          this.$store.commit('setStoppedTimer', response.data.data);
-          this.$store.commit('setStoppedTimerValue', this.calculateTimeSpent(response.data.data));
-          // Reset the activeTimerCounter and timer string
-          const timer = {
-            id: null,
-            name: null,
-            task_id: null, 
-            user_id: null,
-            started_at: null,
-            stopped_at: null, 
-            duration: 0,
-            created_at: null,
-            updated_at: null,
-          };
-          this.$store.commit('setActiveTimerCounter', { seconds: 0, timer: timer });
-          this.$store.state.activeTimerCounter.title = 'Timing...';
-          this.$eventBus.$emit(EventNames.TIMER_UPDATED);
-        })
-    },
-
-    /**
-     * Delete a timer.
-     */
-    deleteTimer: function (task, timer) {
-      const self = this;
-      self.$store.commit('showDialog',{
-        type: "confirm",
-        icon: 'warning',
-        title: "Confirm deletion",
-        message: "Are you sure you want to delete this timer?",
-        okCb: ()=>{
-          window.axios.delete(`/api/tasks/${task.id}/timer/${timer.id}`)
-            .then(function(response) {
-              task.timers = task.timers.filter(function(element) {
-                return element.id !== timer.id;
-              });
-              self.$store.commit('showSnackbar',{
-                message: response.data.message,
-                color: 'success',
-                duration: 3000
-              });
-              self.$eventBus.$emit(EventNames.TIMER_DELETED);
-            })
-            .catch(error => {
-              self.$store.commit('hideLoader');
-              if (error.response) {
-                self.$store.commit('showSnackbar',{
-                  message: error.response.data.data.message,
-                  color: 'error',
-                  duration: 10000
-                });
-              } else if (error.request) {
-                console.log(error.request);
-              } else {
-                console.log('Error', error.message);
-              }
-            });
-        },
-        cancelCb: ()=>{
-          console.log("CANCEL");
-        }
-      });
-    },
-
     timerFormat(dateValue, time = false) {
       let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (time) {
@@ -176,130 +47,5 @@ export default {
         return window.moment.tz(dateValue, tz).format('YYYY-MM-DD');
       }
     },
-
-    setActiveTimer(timer = null) {
-      const self = this;
-      if (timer) {
-        self.$store.commit('setActiveTimer', timer);
-        self.$eventBus.$emit(EventNames.TIMER_START, timer)
-      } else {
-        window.axios.get('/api/tasks/timers/active').then(response => {
-          if (response.data.data.id !== undefined) {
-            self.$store.commit('setActiveTimer', response.data.data);
-            self.$eventBus.$emit(EventNames.TIMER_START, response.data.data)
-          }
-        });
-      }
-    },
-
-    addTimer() {
-      const task = this.$store.state.task;
-      const self = this;
-      if(this.name.length > 0) {
-        const timer = {
-          name: this.name,
-          task_id: this.task_id,
-          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          tags: this.tags
-        };
-        window.axios.post(`/api/tasks/${task.id}/timers`, timer)
-          .then(response => {
-            self.setActiveTimer(response.data.data);
-            this.$eventBus.$emit(EventNames.TIMER_ADDED);
-            this.$eventBus.$emit(EventNames.TIMER_START, response.data.data);
-            this.loading = false;
-            this.dialog = false;
-            this.formReset();
-            this.$store.commit('showSnackbar',{
-              message: "Timer added",
-              color: 'success',
-              duration: 1000
-            });
-          })
-          .catch(error => {
-          console.log(error);
-          self.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-          });
-        this.loading = true;
-      }
-    },
-    updateTimer() {
-      if(this.name.length > 0 && this.startDate.length >= 4) {
-        this.loading = true;
-        
-        const started_at = window.moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
-        const timer = {
-          name: this.name,
-          started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
-          stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss"),
-          tags: this.tags
-        };
-
-        window.axios.put(`/api/tasks/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
-          .then(response => {
-            this.loading = false;
-            this.dialog = false;
-            this.formReset();
-            this.$store.commit('showSnackbar',{
-              message: "Timer updated",
-              color: 'success',
-              duration: 1000
-            });
-            this.$eventBus.$emit(EventNames.TIMER_UPDATED);
-            return response;
-        })
-          .catch(error => {
-          console.log(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          this.loading = false;
-        });
-      }
-    },
   },
-
-  getTimersByDates(fromDate, toDate) {
-    methods.debug(fromDate);
-    methods.debug(toDate);
-
-    const started_at = window.moment(this.startDate + " " + this.startTime, "YYYY-MM-DD HH:mm:ss");
-    const timer = {
-      name: this.name,
-      started_at: started_at.format("YYYY-MM-DD HH:mm:ss"),
-      stopped_at: started_at.add(this.duration, 'minutes').format("YYYY-MM-DD HH:mm:ss"),
-      tags: this.tags
-    };
-
-    window.axios.put(`/api/timers/${this.$store.state.task.id}/timer/${this.$store.state.timer.id}`, timer)
-      .then(response => {
-        this.loading = false;
-        this.dialog = false;
-        this.formReset();
-        this.$store.commit('showSnackbar',{
-          message: "Timer updated",
-          color: 'success',
-          duration: 1000
-        });
-        this.$eventBus.$emit(EventNames.TIMER_UPDATED);
-        return response;
-      })
-      .catch(error => {
-        console.log(error);
-        this.$store.commit('showSnackbar',{
-          message: error.response.data.message,
-          color: 'error',
-          duration: 3000
-        });
-        this.loading = false;
-      });
-  }
 }
-

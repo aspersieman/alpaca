@@ -11,7 +11,7 @@
     >
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
-        @click="toggleDrawer" 
+        @click.stop="drawer = !drawer"
       />
       <router-link to="/">
         <v-img
@@ -66,7 +66,7 @@
             @shortkey="openTaskDialog()" 
             @click="openTaskDialog()"
           >
-            New task
+          New task
           </base-btn-primary>
           <timer-active />
           <v-btn
@@ -74,7 +74,7 @@
             class="d-none d-sm-flex"
             text
             link
-            @click="clickLogin('/login')"
+            go="/login"
           >
             Login
           </v-btn>
@@ -87,25 +87,22 @@
         class="d-none d-sm-flex"
       />
     </v-app-bar>
+    <core-drawer v-model="drawer" />
   </div>
 </template>
 <script>
-// Utilities
-import {
-  mapMutations,
-  mapGetters
-} from 'vuex';
-
-import TimerActive from '../timer/TimerActive';
-import TaskDialog from '../../modules/front/tasks/components/TaskDialog';
-import TimerDialog from '../../modules/front/tasks/components/TimerDialog';
-import Avatar from './Avatar';
-import methods from '../../common/Methods';
-import TaskMixin from '../../mixins/TaskMixin';
+import { mapActions, mapGetters } from 'vuex';
+import CoreDrawer from '@/components/core/Drawer.vue';
+import TimerActive from '@/components/timer/TimerActive';
+import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
+import TimerDialog from '@/modules/front/tasks/components/TimerDialog';
+import Avatar from '@/components/core/Avatar';
+import TaskMixin from '@/mixins/TaskMixin';
 
 export default {
   name: 'CoreAppBar',
   components: {
+    CoreDrawer,
     TimerActive,
     TaskDialog,
     TimerDialog,
@@ -117,17 +114,25 @@ export default {
   computed: {
     ...mapGetters('menu', ['menu'])
   },
+  data: () => ({
+    drawer: false,
+  }),
   mounted() {
-    this.$store.dispatch('menu/loadMenu');
-    this.clickLogin = methods.clickLogin;
+    this.$store.dispatch('menu/getMenu');
   },
   methods: {
-    ...mapMutations(['toggleDrawer']),
+    ...mapActions({
+      openTaskDialog: 'task/openTaskDialog',
+    }),
     onClick (e, item) {
       e.stopPropagation()
       if (item.to || !item.href) return
       this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
     },
+    logout() {
+      this.$store.dispatch('auth/logout')
+      this.$eventBus.userLoggedOut()
+    }
   },
 }
 </script>

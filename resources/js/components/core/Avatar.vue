@@ -74,13 +74,12 @@ export default {
     }
   }),
   mounted() {
-    var self = this;
     self.clickLogout = methods.clickLogout;
-    if (this.$store.getters.isLoggedIn) {
-      self.user.name = window.APP_GLOBALS.AUTH_USER.name;
-      self.user.email = window.APP_GLOBALS.AUTH_USER.email;
-      self.user.initials = self.getInitials(self.user.name);
-      self.user.color = self.getAvatarColour(self.user.name);
+    if (this.$auth.check) {
+      this.user.name = this.$auth.user.name;
+      this.user.email = this.$auth.user.email;
+      this.user.initials = this.getInitials(this.user.name);
+      this.user.color = this.getAvatarColour(this.user.name);
     }
   },
 

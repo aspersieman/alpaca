@@ -212,11 +212,7 @@
 </template>
 <script>
 
-import { 
-  mapActions, 
-  mapGetters 
-} from 'vuex'
-
+import { mapActions, mapGetters } from 'vuex'
 import TimerMixin from '../../../../mixins/TimerMixin';
 import EventNames from '../../../../common/EventNames';
 
@@ -250,10 +246,7 @@ export default {
     dateRange () {
       return this.dates.join(' ~ ')
     },
-    ...mapGetters('chart', ['chartByTimerLoading']),
-    ...mapGetters('chart', ['chartByTimerData']),
-    ...mapGetters('chart', ['chartByTimerTotalTime']),
-    ...mapGetters('chart', ['chartByTimerTimers']),
+    ...mapGetters('chart', ['chartByTimerLoading', 'chartByTimerData', 'chartByTimerTotalTime', 'chartByTimerTimers']),
   },
   created() {
     this.getData();

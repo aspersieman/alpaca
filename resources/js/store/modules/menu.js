@@ -1,6 +1,4 @@
-import {
-  getMenu
-} from '@/api/menu';
+import { getMenu } from '@/api/menu';
 
 export const state = {
   menu: []
@@ -13,7 +11,7 @@ export const mutations = {
 }
 
 export const actions = {
-  loadMenu({commit}, payload) {
+  getMenu({commit}, payload) {
     return new Promise((resolve, reject) => {
       getMenu(payload)
         .then(({data}) => {
