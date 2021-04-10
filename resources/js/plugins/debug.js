@@ -1,0 +1,28 @@
+export function debug(message, type = "info") {
+  let style = "";
+  switch (type) {
+    case 'info':
+      style = "color: black;"
+      break;
+    case 'error':
+      style = "color: red; font-weight: bold;"
+      break;
+  }
+  if (process.env.NODE_ENV === 'development') {
+    console.log('%c'+message, style);
+  }
+};
+
+export default {
+  install(Vue) {
+    Vue.prototype.$debug = {
+      info(message) {
+        return debug(message, "info");
+      },
+      error(message) {
+        return debug(message, "error");
+      },
+    }
+  }
+}
+

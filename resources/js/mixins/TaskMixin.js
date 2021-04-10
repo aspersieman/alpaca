@@ -1,9 +1,45 @@
 export default {
-  data(){
-    return {
-    }
-  },
   methods: {
+    getTasks(provider) {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('task/getTasks', provider)
+          .then(() =>{
+            this.$eventBus.tasksLoaded();
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
+    saveTask(provider) {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('task/saveTask', provider)
+          .then(() =>{
+            this.$eventBus.taskAdded();
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
+    updateTask(provider) {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('task/updateTask', provider)
+          .then(() =>{
+            this.$eventBus.taskUpdated();
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
+    deleteTask(provider) {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('task/deleteTask', provider)
+          .then(() =>{
+            this.$eventBus.taskDeleted();
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
     getTotalTime(task) {
       let totalDuration = 0;
       task.timers.forEach(timer => {
@@ -48,14 +84,12 @@ export default {
         default:
           break;
       }
-
       if (newStatus) {
         currentTask.status = newStatus
         this.$store.dispatch('task/updateTask', task);
         self.btnColor = btnColor
       }
     },
-
     getPriorityById(priorityId) {
       let priority = this.$store.getters['task/priorities']
         .filter(function(element) {

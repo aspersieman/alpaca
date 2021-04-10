@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import methods from '../../../../common/Methods';
 
 export default {
   data () {
@@ -161,7 +160,7 @@ export default {
                     duration: 3000
                 });
             } else if (error.request) {
-              methods.debug(error.request);
+              this.$debug(error.request);
             } else {
               console.error('Error', error.message);
             }

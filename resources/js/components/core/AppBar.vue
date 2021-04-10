@@ -63,8 +63,8 @@
             dark
             title="Add new Task"
             icon="add"
-            @shortkey="openTaskDialog()" 
-            @click="openTaskDialog()"
+            @shortkey="taskDialogAdd()" 
+            @click="taskDialogAdd()"
           >
           New task
           </base-btn-primary>
@@ -91,7 +91,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import CoreDrawer from '@/components/core/Drawer.vue';
 import TimerActive from '@/components/timer/TimerActive';
 import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
@@ -121,14 +121,14 @@ export default {
     this.$store.dispatch('menu/getMenu');
   },
   methods: {
-    ...mapActions({
-      openTaskDialog: 'task/openTaskDialog',
-    }),
     onClick (e, item) {
       e.stopPropagation()
       if (item.to || !item.href) return
       this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
     },
+    taskDialogAdd() {
+      this.$eventBus.taskDialogAdd(true);
+    }
   },
 }
 </script>

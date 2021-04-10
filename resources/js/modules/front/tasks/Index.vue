@@ -321,13 +321,13 @@ export default {
   mounted() {
     const self = this;
     self.getTasksSettings();
-    self.$eventBus.$on([EventNames.TASK_ADDED, EventNames.TASK_UPDATED, EventNames.TIMER_ADDED, EventNames.TIMER_UPDATED, EventNames.TIMER_DELETED, EventNames.NOTE_DELETED],()=>{
+    self.$eventBus.$on(['task-added', 'task-updated', 'timer-added', 'timer-updated', 'timer-deleted', 'note-deleted'],()=>{
       self.getTasks();  
     });
-    self.$eventBus.$on([EventNames.TASKS_LOADED],()=>{
+    self.$eventBus.$on(['tasks-loaded'],()=>{
       self.sortTasks();  
     });
-    self.$eventBus.$on([EventNames.TASK_DELETED], ()=> {
+    self.$eventBus.$on(['task-deleted'], ()=> {
       self.tasks = self.tasks
         .filter(function(element) {
           return element.id !== self.$store.state.task.id;
@@ -342,7 +342,6 @@ export default {
   methods: {
     ...mapActions({
         setActiveTimer: 'timer/setRunningTimer',
-        getTasks: 'task/getTasks',
     }),
     searchFocus() {
       this.$refs.searchInput.focus();

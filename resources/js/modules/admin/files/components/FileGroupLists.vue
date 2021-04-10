@@ -133,8 +133,7 @@
 <script>
 import FileGroupAdd from './FileGroupAdd.vue';
 import FileGroupEdit from './FileGroupEdit.vue';
-import methods from '../../../../common/Methods';
-import EventNames from '../../../../common/EventNames';
+import EventNames from '@/common/EventNames';
 
 export default {
   components: {
@@ -211,7 +210,7 @@ export default {
                 duration: 3000
               });
             } else if (error.request) {
-              methods.debug(error.request);
+              this.$debug(error.request);
             } else {
               console.error('Error', error.message);
             }

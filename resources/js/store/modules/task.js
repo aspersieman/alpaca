@@ -41,7 +41,6 @@ export const mutations = {
   TASKS: (state, payload) => state.tasks = payload,
   DIALOG_ADD: (state, payload) => state.dialogAdd = payload,
   DIALOG_UPDATE: (state, payload) => state.dialogUpdate = payload,
-  LOADING: (state, payload) => state.loading = payload,
 }
 
 export const actions = {
@@ -50,9 +49,9 @@ export const actions = {
       const task = {
         name: payload.name,
         due: moment(payload.due).format('YYYY-MM-DD'),
+        priority: payload.priority,
         status: 'ongoing'
       };
-      commit('LOADING', true);
       saveTask(task)
         .then(({data}) => {
           dispatch('snackbar/show',{
@@ -60,28 +59,25 @@ export const actions = {
             color: 'success',
             duration: 1000
           }, { root: true });
-          commit('LOADING', false);
           resolve(data)
         })
         .catch((error) => {
+          const message = error.response.data.message || 'ERROR';
           dispatch('snackbar/show',{
-            message: error.response.data.message,
+            message: message,
             color: 'error',
             duration: 3000
           }, { root: true });
-          commit('LOADING', false);
           reject(error);
         });
     });
   },
 
   updateTask({commit, dispatch}, payload) {
-    commit('LOADING', true);
     updateTask(payload)
       .then(({data}) => {
         commit('TASK', data);
         dispatch('getTasks');
-        commit('LOADING', false);
         resolve(data)
       })
       .catch((error) => {
@@ -90,7 +86,6 @@ export const actions = {
           color: 'error',
           duration: 3000
         }, { root: true });
-        commit('LOADING', false);
         reject(error);
       });
   },
@@ -103,7 +98,6 @@ export const actions = {
       message: 'Are you sure you want to delete this task?',
       okCb: ()=>{
         new Promise((resolve, reject) => {
-          commit('LOADING', true);
           deleteTask(payload)
             .then(({data}) => {
               commit('TASK', null);
@@ -113,7 +107,6 @@ export const actions = {
                 color: 'success',
                 duration: 3000
               }, { root: true });
-              commit('LOADING', false);
               resolve(data)
             })
             .catch(error => {
@@ -124,7 +117,6 @@ export const actions = {
                   duration: 10000
                 }, { root: true });
               }
-              commit('LOADING', false);
               reject(error);
             })
         });

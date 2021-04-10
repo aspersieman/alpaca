@@ -141,7 +141,7 @@
           text
           class="success mx-0 mt-3"
           :loading="loading"
-          @click="addTimer"
+          @click="saveTimer"
         >
           Start
         </v-btn>
@@ -168,10 +168,8 @@
 
 <script>
 
-import { mapActions } from 'vuex';
 import TimerMixin from '@/mixins/TimerMixin';
 import TaskMixin from '@/mixins/TaskMixin';
-import EventNames from '@/common/EventNames';
 
 export default {
   mixins: [
@@ -205,14 +203,14 @@ export default {
   },
   created() {
     const self = this;
-    this.$eventBus.$on(EventNames.TIMER_ADD_DIALOG, (value) => {
+    this.$eventBus.$on('timer-add-dialog', (value) => {
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
       self.subtitle = self.getActiveTask().name || '';
       self.name = self.getActiveTask().name || '';
     });
-    self.$eventBus.$on(EventNames.TIMER_UPDATE_DIALOG, (value) => {
+    self.$eventBus.$on('timer-update-dialog', (value) => {
       self.formReset();
       self.timer = self.$store.state.timer;
       self.name = self.timer.name;
@@ -230,9 +228,6 @@ export default {
     });
   },
   methods: {
-    ...mapActions({
-        addTimer: 'timer/addTimer',
-    }),
     close() {
       this.dialog = false;
     },

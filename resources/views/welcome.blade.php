@@ -27,7 +27,7 @@
   <style type="text/css">
     [v-cloak] > * { display:none; }
     [v-cloak]:before { 
-      content: "Loading...";
+      content: " ";
       display: block;
       width: 100%;
       height: 200px;

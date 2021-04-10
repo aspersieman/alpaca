@@ -143,8 +143,7 @@
 </template>
 
 <script>
-import methods from '../../../../common/Methods';
-import EventNames from '../../../../common/EventNames';
+import EventNames from '@/common/EventNames';
 
 export default {
   components: {},
@@ -215,7 +214,7 @@ export default {
     },
     downloadFile(file) {
       window.open(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
-      methods.debug(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
+      this.$debug(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
     },
     showDialog(dialog, data) {
       const self = this;
@@ -255,7 +254,7 @@ export default {
                 duration: 3000
               });
             } else if (error.request) {
-              methods.debug(error.request);
+              this.$debug(error.request);
             } else {
               console.error('Error', error.message);
             }

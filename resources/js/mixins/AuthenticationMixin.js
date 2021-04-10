@@ -15,6 +15,16 @@ export default {
           .catch(error => reject(error))
       })
     },
+    logout(provider) {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('auth/logout', provider)
+          .then(() =>{
+            this.$eventBus.userLoggedOut()
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
     socialLogin(provider) {
       return new Promise((resolve, reject) => {
         this.$store.dispatch('auth/socialLogin', provider)

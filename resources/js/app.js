@@ -1,4 +1,3 @@
-// vendor
 require('@/common/bootstrap');
 require('@/common/config');
 
@@ -13,6 +12,7 @@ import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 
 import analytics from '@/plugins/analytics';
 import formatters from '@/plugins/formatters';
+import debug from '@/plugins/debug';
 import Authentication from '@/plugins/authentication'
 import Authorization from '@/plugins/authorization'
 import '@/plugins/base';
@@ -26,6 +26,7 @@ Vue.use(...analytics, router);
 Vue.use(...progressbar);
 Vue.use(Authentication);
 Vue.use(Authorization);
+Vue.use(debug);
 Vue.use(formatters);
 Vue.use(eventBus);
 Vue.use(shortkey)

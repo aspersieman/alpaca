@@ -62,7 +62,7 @@
         <v-divider horizontal />
         <v-list-item
           v-if="!$auth.check"
-          @click="clickLogin('/login')"
+          @click="login()"
         >
           <v-list-item-action>
             <v-icon>meeting_room</v-icon>
@@ -73,7 +73,7 @@
         </v-list-item>
         <v-list-item
           v-if="$auth.check"
-          @click="clickLogout('/logout','/')"
+          @click="logout()"
         >
           <v-list-item-action>
             <v-icon>no_meeting_room</v-icon>
@@ -88,9 +88,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import methods from '@/common/Methods';
 import Avatar from '@/components/core/Avatar';
 import AvatarMixin from '@/mixins/AvatarMixin';
+import AuthenticationMixin from '@/mixins/AuthenticationMixin';
 
 export default {
   name: 'CoreDrawer',
@@ -99,6 +99,7 @@ export default {
   },
   mixins: [ 
     AvatarMixin,
+    AuthenticationMixin
   ],
   props: {
     value: {
@@ -117,8 +118,6 @@ export default {
     ...mapGetters('menu', ['menu']),
   },
   mounted() {
-    this.clickLogin = methods.clickLogin;
-    this.clickLogout = methods.clickLogout;
     if (this.$auth.check) {
       this.user.name = this.$auth.user.name;
       this.user.email = this.$auth.user.email;

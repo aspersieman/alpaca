@@ -212,22 +212,40 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import TimerList from '@/modules/front/tasks/components/TimerList';
 import moment from 'moment';
 import TaskMixin from '@/mixins/TaskMixin';
-import EventNames from '@/common/EventNames';
+import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: {
     TimerList
   },
   mixins: [ 
-    TaskMixin
+    TaskMixin,
+    TimerMixin
   ],
   data() {
     return {
+      dialog: false,
       valid: false,
+      loading: false,
+      task: {
+        id: null,
+        name: null,
+        due: null,
+        status: null,
+        priority: null,
+        order: null,
+        timers: []
+      },
+      mode: '',
+      name: '',
+      status: '',
+      timers: [],
+      due: moment().format('YYYY-MM-DD'),
+
       dateRules: [
         (v) => (v.length >= 4) || 'Invalid date format',
         (v) => !!v || 'Date is required',
@@ -236,82 +254,50 @@ export default {
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
       ],
+
       menu: false,
       activeTimerString: 'Timing...',
       counter: { seconds: 0, timer: null },
       onlyActive: false,
+      priority: { id: 0, name: '' },
     }
   },
   computed: {
     ...mapGetters('task', [
-      'task',
-      'loading',
       'statuses',
       'priorities',
     ]),
-    name: {
-      get () {
-        return this.task.name;
-      },
-      set (val) {
-        let task = this.task;
-        task.name = val;
-        this.$store.commit('task/TASK', task);
-      },
-    },
-    due:{
-      get () {
-        return this.task.due || moment().format('YYYY-MM-DD');
-      },
-      set (val) {
-        let task = this.task;
-        task.due = moment(val).format('YYYY-MM-DD');
-        this.$store.commit('task/TASK', task);
-      },
-    },
-    status: {
-      get () {
-        return this.task.status || 'ongoing';
-      },
-      set (val) {
-        let task = this.task;
-        task.status = val;
-        this.$store.commit('task/TASK', task);
-      },
-    },
-    priority: {
-      get () {
-        return this.getPriorityById(this.task.priority);
-      },
-      set (val) {
-        let task = this.task;
-        task.priority = val.id;
-        this.$store.commit('task/TASK', task);
-      },
-    },
-    dialog: function() {
-      return this.$store.getters['task/dialogAdd'] === true || this.$store.getters['task/dialogUpdate'] === true;
-    },
-    mode: function() {
-      return this.$store.getters['task/dialogUpdate'] ? 'UPDATE' : 'ADD';
-    },
-    timers: function() {
-      return this.task.timers || [];
-    },
   },
   created() {
-    this.$store.commit('task/LOADING', false);
+    const self = this;
+    self.$eventBus.$on('task-add-dialog', (value) => {
+      self.formReset();
+      self.dialog = value;
+      self.mode = 'ADD';
+    });
+    self.$eventBus.$on('task-update-dialog', (value) => {
+      self.formReset();
+      self.task = self.$store.getters['task'];
+      self.name = self.$store.getters['task'].name;
+      self.due = self.$store.getters['task'].due;
+      self.timers = self.$store.getters['task'].timers || [];
+      self.status = self.$store.getters['task'].status;
+      self.priority = self.getPriorityById(self.$store.getters['task'].priority);
+
+      self.dialog = value;
+      self.mode = 'UPDATE';
+    });
   },
   methods: {
-    ...mapActions({
-        saveTask: 'task/saveTask',
-        updateTask: 'task/updateTask',
-        openTimerDialog: 'timer/openTimerDialog',
-    }),
-    ...mapMutations('task', ['TASK']),
     save() {
       if (this.valid) {
-        this.saveTask(this.task)
+        const task = {
+          name: this.name,
+          due: this.due,
+          priority: this.priority.id,
+          status: this.status,
+        };
+        this.saveTask(task)
           .then(this.close());
       }
     },
@@ -322,8 +308,12 @@ export default {
       }
     },
     close() {
-      this.$store.dispatch('task/closeTaskDialog');
-      this.formReset();
+      this.dialog = false;
+    },
+    openTimerDialog() {
+      const self = this;
+      self.$store.commit('task/task', this.task);
+      self.$eventBus.$emit('timer-add-dialog', true)
     },
     formReset() {
       this.due = moment().format('YYYY-MM-DD');
@@ -336,7 +326,7 @@ export default {
         order: null,
         timers: []
       };
-      this.name = null;
+      this.name = '';
       this.timers = [];
       this.status = 'ongoing';
       this.priority = { id: 0, name: '' };
