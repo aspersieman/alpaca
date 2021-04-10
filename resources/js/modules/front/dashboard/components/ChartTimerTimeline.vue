@@ -64,7 +64,7 @@
     </v-card>
     <v-card-text class="py-0">
       <v-timeline
-        v-if="chartByTimerTimers"
+        v-if="chartByTimerTimers.length > 0"
         align-top
         dense
       >
@@ -86,7 +86,7 @@
             <v-col cols="4">
               <span class="caption">
                 {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
-                ({{ calculateTimeSpent(timer) }})
+                ({{ timerDuration(timer) }})
               </span>
             </v-col>
             <v-col cols="6">
@@ -111,7 +111,7 @@
           >
             <div class="caption fullwidth">
               {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
-              ({{ calculateTimeSpent(timer) }})
+              ({{ timerDuration(timer) }})
             </div>
             <div class="fullwidth ellipsis">
               <v-icon>
@@ -144,77 +144,17 @@
       class="chart-footer"
     >
       <v-layout row>
-        <v-flex
-          class="time-footer-heading"
-        >
-          Total time:
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByTimerTotalTime[0] }}
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          :
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByTimerTotalTime[1] }}
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          :
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByTimerTotalTime[2] }}
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex
-          class="time-footer-heading"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          HH
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          MM
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          SS
-        </v-flex>
+        Total time:
+        <v-spacer />
+        {{ chartByTimerTotalTime }}
       </v-layout>
     </v-card-subtitle>
   </v-card>
 </template>
 <script>
 
-import { mapActions, mapGetters } from 'vuex'
-import TimerMixin from '../../../../mixins/TimerMixin';
-import EventNames from '../../../../common/EventNames';
+import { mapActions, mapGetters } from 'vuex';
+import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: { },
@@ -252,7 +192,7 @@ export default {
     this.getData();
   },
   mounted() {
-    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_TIMER_TIMELINE_PARAMETERS_CHANGED ], (values) => {
+    this.$eventBus.$on([ 'dashboard-parameters-changed', 'dashboard-chart-timer-timeline-parameters-changed' ], (values) => {
       this.getData(values);
     });
   },
@@ -291,20 +231,5 @@ export default {
 
 .fullwidth {
   width: 100%;
-}
-.time-footer-heading {
-  width: 70px;
-}
-.time-footer-item {
-  width: 17px;
-  max-width: 17px;
-}
-.time-footer-colon {
-  width: 4px;
-  max-width: 4px;
-}
-.time-footer-value {
-  padding-left: 2px;
-  font-size: 8px;
 }
 </style>

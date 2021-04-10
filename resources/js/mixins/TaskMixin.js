@@ -9,7 +9,7 @@ export default {
       task.timers.forEach(timer => {
         totalDuration += timer.duration || 0;
       });
-      return this.$appFormatters.duration(totalDuration, 'seconds');
+      return this.$appFormatters.duration(totalDuration);
     },
     getPriorityDescription(priority) {
       let description = '';

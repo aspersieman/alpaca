@@ -71,13 +71,16 @@
     <v-card-subtitle
       class="chart-footer"
     >
-      Total tags: {{ chartByTagTotalTags }}
+      <v-layout row>
+        Total tags:
+        <v-spacer />
+        {{ chartByTagTotalTags }}
+      </v-layout>
     </v-card-subtitle>
   </v-card>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import EventNames from '../../../../common/EventNames';
 
 export default {
   name: 'ChartBarWeeklyTime',
@@ -107,7 +110,7 @@ export default {
     self.getData();
   },
   mounted() {
-    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_PIE_TIME_BY_TAG_PARAMETERS_CHANGED ], (values) => {
+    this.$eventBus.$on([ 'dashboard-parameters-changed', 'dashboard-chart-pie-time-by-tag-parameters-changed' ], (values) => {
       this.getData(values);
     });
   },

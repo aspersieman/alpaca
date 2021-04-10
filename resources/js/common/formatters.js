@@ -1,4 +1,4 @@
-export function formatDate(dateString,format) {
+export function formatDate(dateString, format) {
   if (dateString) {
     return window.moment(dateString).format(format ? format : 'MMMM DD, YYYY');
   } else {
@@ -20,16 +20,24 @@ export function dateTimeFormat(dateTimeValue, format) {
   return window.moment.tz(date, tz).format(format);
 }
 
-export function duration(seconds, format) {
-  if (format === 'seconds') {
-    return window.moment().startOf('day').seconds(seconds).format('HH:mm:ss');
-  } else {
-    return '';
-  }
+export function padNumber(number) {
+  return (number > 9) ? number : "0" + number;
+} 
+
+export function duration(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor(seconds % 3600 / 60);
+  let time = [];
+  seconds = Math.floor(seconds % 60);
+  time.push(padNumber(hours));
+  time.push(padNumber(minutes));
+  time.push(padNumber(seconds));
+  return time.join(':');
 };
 
-export function secondsToMinutes(seconds) {
-  const minutes = (parseInt(seconds) / 60) || 0;
+export function secondsToMinutes(seconds, round = true) {
+  let minutes = (parseInt(seconds) / 60) || 0;
+  minutes = round ? Math.floor(minutes) : minutes;
   return minutes;
 }
 
@@ -40,6 +48,19 @@ export function dateOnly(dateString) {
   date.setSeconds(0)
   date.setMilliseconds(0);
   return date;
+}
+
+/**
+ * Format a datetime value for display in a timer
+ */
+export function timerFormat(dateValue, time = false) {
+  let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (time) {
+    const date = window.moment(dateValue, 'YYYY-MM-DDTHH:mm:ss.SSS');
+    return window.moment.tz(date, tz).format('YYYY-MM-DD @ HH:mm:SS');
+  } else {
+    return window.moment.tz(dateValue, tz).format('YYYY-MM-DD');
+  }
 }
 
 export default {
@@ -65,6 +86,9 @@ export default {
       },
       dateOnly(dateString) {
         return dateOnly(dateString);
+      },
+      timerFormat(dateValue, time) {
+        return timerFormat(dateValue, time);
       }
     }
   }

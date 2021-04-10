@@ -147,7 +147,7 @@ export const actions = {
             clearInterval(getters['timerRunningCounter'].ticker)
             commit('TIMER_STOPPED', data);
             commit('TIMER_RUNNING', null);
-            commit('TIMER_STOPPED_VALUE', TimerMixin.methods.calculateTimeSpent(data));
+            commit('TIMER_STOPPED_VALUE', TimerMixin.methods.timerDuration(data));
             const timerRunningCounter = {
               seconds: 0,
               timer: {

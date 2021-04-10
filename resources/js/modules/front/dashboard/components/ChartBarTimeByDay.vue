@@ -74,75 +74,15 @@
       class="chart-footer"
     >
       <v-layout row>
-        <v-flex
-          class="time-footer-heading"
-        >
-          Total time:
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByDayTotalTime[0] }}
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          :
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByDayTotalTime[1] }}
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          :
-        </v-flex>
-        <v-flex
-          class="time-footer-item"
-        >
-          {{ chartByDayTotalTime[2] }}
-        </v-flex>
-      </v-layout>
-      <v-layout row>
-        <v-flex
-          class="time-footer-heading"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          HH
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          MM
-        </v-flex>
-        <v-flex
-          class="time-footer-colon"
-        >
-          &nbsp;
-        </v-flex>
-        <v-flex
-          class="time-footer-item time-footer-value"
-        >
-          SS
-        </v-flex>
+        Total time:
+        <v-spacer />
+        {{ chartByDayTotalTime }}
       </v-layout>
     </v-card-subtitle>
   </v-card>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import EventNames from '../../../../common/EventNames';
 
 export default {
   name: 'ChartBarWeeklyTime',
@@ -171,7 +111,7 @@ export default {
     this.getData();
   },
   mounted() {
-    this.$eventBus.$on([ EventNames.CHART_PARAMETERS_CHANGED, EventNames.CHART_BAR_TIME_BY_DAY_PARAMETERS_CHANGED ], (values) => {
+    this.$eventBus.$on([ 'dashboard-parameters-changed', 'dashboard-chart-bar-time-by-day-parameters-changed' ], (values) => {
       this.getData(values);
     });
   },
@@ -202,19 +142,4 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../../../sass/index";
-.time-footer-heading {
-  width: 70px;
-}
-.time-footer-item {
-  width: 17px;
-  max-width: 17px;
-}
-.time-footer-colon {
-  width: 4px;
-  max-width: 4px;
-}
-.time-footer-value {
-  padding-left: 2px;
-  font-size: 8px;
-}
 </style>

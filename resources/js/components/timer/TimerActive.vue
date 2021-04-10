@@ -80,7 +80,7 @@ export default {
       return this.timerRunningCounter?.title;
     },
     timerStarted: function() {
-      return this.timerFormat(this.timerRunningCounter.timer.started_at, true);
+      return this.$appFormatters.timerFormat(this.timerRunningCounter.timer.started_at, true);
     },
     showTimer: function() {
       return this.timerRunningCounter != null;

@@ -14,10 +14,10 @@ export const state = {
   chartByTimerLoading: false,
   chartByTimerData: [],
   chartByTimerTimers: [],
-  chartByTimerTotalTime: [ "00", "00", "00" ],
+  chartByTimerTotalTime: "00:00:00",
   chartByDayLoading: false,
   chartByDayData: [],
-  chartByDayTotalTime: [ "00", "00", "00" ],
+  chartByDayTotalTime: "00:00:00",
   chartByTagLoading: false,
   chartByTagData: [],
   chartByTagTotalTags: 0,
@@ -79,7 +79,7 @@ export const actions = {
             totalDuration += timer.duration || 0;
             timers.push(timer);
           });
-          totalTime = duration(totalDuration, 'seconds').split(':');
+          totalTime = duration(totalDuration);
           commit('CHART_BY_TIMER_TIMERS', timers);
           commit('CHART_BY_TIMER_TOTAL_TIME', totalTime);
           commit('CHART_BY_TIMER_LOADING', false);
@@ -99,9 +99,9 @@ export const actions = {
           days.forEach(day => {
             let formattedDay = dateTimeFormat(day[0], "ddd, D MMM")
             totalDuration += parseInt(day[1]);
-            chartData.push([formattedDay, secondsToMinutes(day[1])]);
+            chartData.push([formattedDay, secondsToMinutes(day[1]) + " minutes"]);
           });
-          let totalTime = duration(totalDuration, 'seconds').split(':');
+          let totalTime = duration(totalDuration);
           commit('CHART_BY_DAY_DATA', chartData);
           commit('CHART_BY_DAY_TOTAL_TIME', totalTime);
           commit('CHART_BY_DAY_LOADING', false);
@@ -118,7 +118,7 @@ export const actions = {
           let chartData = [];
           let tags = data;
           tags.forEach(tag => {
-            chartData.push([tag[0], secondsToMinutes(tag[1])]);
+            chartData.push([tag[0], secondsToMinutes(tag[1]) + " minutes"]);
           });
           let totalTags = chartData.length;
           commit('CHART_BY_TAG_DATA', chartData);

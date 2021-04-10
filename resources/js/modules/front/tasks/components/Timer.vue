@@ -32,7 +32,7 @@
               {{ timer.name }}
             </div>
             <div class="caption">
-              {{ timerFormat(timer.started_at, true) }}
+              {{ $appFormatters.timerFormat(timer.started_at, true) }}
             </div>
           </v-flex>
           <v-flex
@@ -109,7 +109,7 @@
                 v-else
                 class="horizontal-center fs-90"
               >
-                {{ calculateTimeSpent(timer) }}
+                {{ timerDuration(timer) }}
               </v-flex>
               <v-flex class="horizontal-center">
                 <v-btn 

@@ -17,6 +17,10 @@ const eventBus = {
         userLoggedOut() {
           this.$emit('user-logged-out');
         },
+
+        dashboardParametersChanged(parameters) {
+          this.$emit('dashboard-parameters-changed', parameters);
+        }
       }
     })
   }

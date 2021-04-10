@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="ui-canvas" style="margin: 0;">
-      <core-home-header />
+      <home-header />
     </div>
     <v-container class="my-2">
       <v-row>
@@ -42,11 +42,11 @@
   </div>
 </template>
 <script>
-import CoreHomeHeader from '@/components/core/HomeHeader.vue';
+import HomeHeader from '@/modules/front/home/Header.vue';
 
 export default {
   components: { 
-    CoreHomeHeader,
+    HomeHeader,
   },
 }
 </script>
