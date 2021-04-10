@@ -129,10 +129,6 @@ export default {
       if (item.to || !item.href) return
       this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
     },
-    logout() {
-      this.$store.dispatch('auth/logout')
-      this.$eventBus.userLoggedOut()
-    }
   },
 }
 </script>

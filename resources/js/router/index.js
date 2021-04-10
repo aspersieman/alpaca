@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from '@/common/Store';
+import store from '@/store';
 import Home from '@/modules/front/Index';
 import Index from '@/modules/App';
+import NotFound from '@/modules/NotFound';
 import FrontHome from '@/modules/front/home/Index';
 import Dashboard from '@/modules/front/dashboard/Index';
 import Tasks from '@/modules/front/tasks/Index';
@@ -21,6 +22,7 @@ import AdminUserPermissionAdd from '@/modules/admin/users/components/PermissionF
 import AdminUserPermissionEdit from '@/modules/admin/users/components/PermissionFormEdit';
 import AdminFiles from '@/modules/admin/files/Files';
 import AdminSettings from '@/modules/admin/settings/Settings';
+
 
 Vue.use(Router);
 
@@ -139,23 +141,9 @@ const router = new Router({
       // catch all 404 - define at the very end
       name: "notfound",
       path: "*",
-      component: require("../modules/NotFound")
+      component: NotFound
     },
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  store.commit("showLoader");
-  next();
-});
-
-router.afterEach((to, from) => {
-  if (to.name !== "tasks") {
-    store.commit("setNoteDrawer", false);
-  }
-  setTimeout(()=>{
-    store.commit("hideLoader");
-  },1000);
 });
 
 export default router;

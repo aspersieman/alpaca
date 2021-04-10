@@ -46,7 +46,7 @@
               depressed
               rounded
               text
-              @click="clickLogout('/logout','/')"
+              @click="logout()"
             >
               Logout
             </v-btn>
@@ -58,8 +58,7 @@
 </template>
 
 <script>
-import methods from '../../common/Methods';
-import AvatarMixin from '../../mixins/AvatarMixin';
+import AvatarMixin from '@/mixins/AvatarMixin';
 
 export default {
   mixins: [ 
@@ -74,7 +73,6 @@ export default {
     }
   }),
   mounted() {
-    self.clickLogout = methods.clickLogout;
     if (this.$auth.check) {
       this.user.name = this.$auth.user.name;
       this.user.email = this.$auth.user.email;
@@ -82,8 +80,12 @@ export default {
       this.user.color = this.getAvatarColour(this.user.name);
     }
   },
-
   methods: {
+    logout() {
+      this.$store.dispatch('auth/logout')
+      this.$eventBus.userLoggedOut()
+      this.$router.push("/");
+    }
   }
 }
 </script>

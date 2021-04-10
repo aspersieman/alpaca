@@ -60,17 +60,17 @@ export const actions= {
   logout({commit}) {
     return new Promise((resolve, reject) => {
       logout()
-        .then((response) => {
+        .then((data) => {
           commit('IS_AUTHENTICATED', {isAuthenticated: false})
           commit('SET_AUTH_USER', null)
           commit('SET_AUTH_TOKEN', null)
-          resolve()
+          resolve(data)
         })
         .catch(error => reject(error))
     });
   },
 
-  sendPasswordResetLink({commit}, payload) {
+  sendPasswordResetLink(payload) {
     return new Promise((resolve, reject) => {
       sendPasswordResetLink(payload)
         .then(({data}) => {

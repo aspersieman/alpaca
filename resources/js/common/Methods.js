@@ -1,4 +1,5 @@
 export default {
+  /*
   clickLogin: function(loginUrl) {
       window.location.href = loginUrl;
   },
@@ -28,4 +29,5 @@ export default {
       console.log(message);
     }
   },
+  */
 }

@@ -1,4 +1,4 @@
-window.moment = require('moment');
+window.moment = require('moment-timezone');
 window._ = require('lodash');
 window.Dropzone = require('dropzone');
 

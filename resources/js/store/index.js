@@ -6,6 +6,7 @@ import auth from './modules/auth';
 import chart from './modules/chart';
 import dialog from './modules/dialog';
 import drawer from './modules/drawer';
+import loader from './modules/loader';
 import menu from './modules/menu';
 import note from './modules/note';
 import snackbar from './modules/snackbar';
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     chart,
     dialog,
     drawer,
+    loader,
     menu,
     note,
     snackbar,

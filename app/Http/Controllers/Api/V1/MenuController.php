@@ -29,7 +29,6 @@ class MenuController extends Controller
      * @var User $currentUser
      */
     $currentUser = \Auth::user();
-    \Log::info($currentUser);
     $menus = [];
     if ($currentUser) {
       $menuManager = new MenuManager();

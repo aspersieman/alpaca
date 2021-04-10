@@ -5,9 +5,8 @@
     <core-footer />
     <div
       v-if="showLoader"
-      class="wask_loader bg_half_transparent"
+      class="llama-loader bg-half-transparent"
     >
-      <moon-loader color="#ff4f4f" />
     </div>
     <vue-progress-bar />
     <snack-bar />
@@ -20,9 +19,8 @@ import CoreAppBar from '@/components/core/AppBar.vue';
 import CoreContent from '@/components/core/Content.vue';
 import CoreFooter from '@/components/core/Footer.vue';
 import ConfirmDialog from '@/components/core/ConfirmDialog.vue';
+import SnackBar from '@/components/core/SnackBar.vue';
 import NoteDialog from '@/components/notes/NoteDialog.vue';
-import SnackBar from '@/modules/front/home/SnackBar.vue';
-import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
   components: {
@@ -31,29 +29,13 @@ export default {
     CoreFooter,
     SnackBar,
     ConfirmDialog,
-    NoteDialog,
-    MoonLoader
+    NoteDialog
   },
   computed: {
     showLoader() {
-      return this.$store.getters.showLoader;
+      return this.$store.getters['loader/loaderShow'];
     },
   },
-  created() {
-    const self = this;
-    window.axios.interceptors.response.use(undefined, function (err) {
-      return new Promise(function () {
-        if (err.response.status === 401 
-          && err.response.config 
-          && !err.response.config.__isRetryRequest
-          && self.$route.name != 'index') {
-          self.$router.push('/'); 
-        }
-      });
-    });
-  },
-  mounted() { },
-  methods: { }
 }
 </script>
 <style scoped lang="scss">

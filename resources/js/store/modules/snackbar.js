@@ -1,3 +1,4 @@
+console.log("TODO Nicol make into plugin");
 export const state = {
   show: false,
   message: "",

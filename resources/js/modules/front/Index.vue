@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <body id="ui-canvas" style="margin: 0;">
+    <div id="ui-canvas" style="margin: 0;">
       <div id="container-id-6-" data-element-type="container">
         <div id="section-id-7-" data-element-type="section">
           <div id="container-id-8-" data-element-type="container">
@@ -92,15 +92,18 @@
         </div>
       </div>
       <core-home-header />
-    </body>
+      <snack-bar />
+    </div>
   </v-app>
 </template>
 <script>
+import SnackBar from '@/components/core/SnackBar.vue';
 import CoreHomeHeader from '@/components/core/HomeHeader.vue';
 
 export default {
   components: { 
-    'core-home-header': CoreHomeHeader,
+    CoreHomeHeader,
+    SnackBar,
   },
   data: () => ({
     year: window.moment().format('YYYY'),
