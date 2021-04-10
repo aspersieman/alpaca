@@ -1,50 +1,37 @@
 // vendor
-require('./common/bootstrap');
+require('@/common/bootstrap');
+require('@/common/config');
 
 import Vue from 'vue';
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css';
 
-import VueAnalytics from 'vue-analytics';
-import Chartkick from 'vue-chartkick';
-import Chart from 'chart.js';
-
-// app
 import router from '@/router/index';
-import formatters from '@/common/formatters';
 import store from '@/store';
 import eventBus from '@/plugins/event-bus';
 import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 
+import analytics from '@/plugins/analytics';
+import formatters from '@/plugins/formatters';
 import Authentication from '@/plugins/authentication'
 import Authorization from '@/plugins/authorization'
 import '@/plugins/base';
 import vuetify from '@/plugins/vuetify'
-// TODO import and use like other plugins
-import viewprogressbar from '@/plugins/vueprogressbar'
+import progressbar from '@/plugins/progressbar'
+import shortkey from '@/plugins/shortkey'
+import Chartkick from 'vue-chartkick';
+import Chart from 'chart.js';
 
-Vue.config.productionTip = false;
-
-if (process.env.NODE_ENV === 'production') {
-  Vue.use(VueAnalytics, {
-    id: 'TODO INSERT ID HERE',
-    router,
-    debug: {
-      sendHitTask: process.env.NODE_ENV === 'production'
-    }
-  });
-}
-Vue.use(Authentication)
-Vue.use(Authorization)
+Vue.use(...analytics, router);
+Vue.use(...progressbar);
+Vue.use(Authentication);
+Vue.use(Authorization);
 Vue.use(formatters);
 Vue.use(eventBus);
-const VueShortkey = require('vue-shortkey');
-Vue.use(VueShortkey)
+Vue.use(shortkey)
 Vue.use(Chartkick.use(Chart))
 
-Vue.config.devtools = process.env.NODE_ENV === 'development';
-
-const app = new Vue({
+new Vue({
   vuetify,
   el: '#app',
   router,
@@ -59,7 +46,3 @@ const app = new Vue({
     });
   },
 });
-
-if (process.env.NODE_ENV === 'development' && window.__VUE_DEVTOOLS_GLOBAL_HOOK__) {
-  window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app.constructor;
-}

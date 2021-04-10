@@ -8,7 +8,7 @@ import {
   dateTimeFormat,
   duration,
   secondsToMinutes
-} from '@/common/formatters';
+} from '@/plugins/formatters';
 
 export const state = {
   chartByTimerLoading: false,
