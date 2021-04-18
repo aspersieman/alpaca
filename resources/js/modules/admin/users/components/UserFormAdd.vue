@@ -276,10 +276,9 @@ export default {
       };
       self.$store.commit('showLoader');
       window.axios.post('/api/admin/users',payload).then(function(response) {
-        self.$store.commit('showSnackbar',{
-          message: response.data.message,
-          color: 'success',
-          duration: 3000
+        self.$flash.success({
+          title: 'User added',
+          text: 'User added successfully'
         });
         self.$eventBus.$emit(EventNames.USER_ADDED);
         self.$store.commit('hideLoader');
@@ -287,17 +286,12 @@ export default {
         self.$refs.userFormAdd.reset();
         self.permissions = [];
       }).catch(function (error) {
-        self.$store.commit('hideLoader');
+        console.error(error);
         if (error.response) {
-          self.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
+          self.$flash.success({
+            title: 'User added',
+            text: 'Error adding user'
           });
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log('Error', error.message);
         }
       });
     },

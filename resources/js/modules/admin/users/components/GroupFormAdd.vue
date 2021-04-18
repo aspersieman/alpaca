@@ -163,29 +163,22 @@ export default {
         name: self.name,
         permissions: self.permissions
       };
-      self.$store.commit('showLoader');
-      window.axios.post('/api/admin/groups',payload).then(function(response) {
-        self.$store.commit('showSnackbar',{
-          message: response.data.message,
-          color: 'success',
-          duration: 3000
+      window.axios.post('/api/admin/groups',payload).then(function() {
+        self.$flash.success({
+          title: 'Group added',
+          text: 'Group added successfully'
         });
         self.$store.commit('hideLoader');
         self.$eventBus.$emit(EventNames.GROUP_ADDED);
         self.$refs.groupFormAdd.reset();
         self.permissions = [];
       }).catch(function (error) {
-        self.$store.commit('hideLoader');
+        console.error(error);
         if (error.response) {
-          self.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
+          self.$flash.success({
+            title: 'Group added',
+            text: 'Error adding group'
           });
-        } else if (error.request) {
-          this.$debug(error.request);
-        } else {
-          console.error('Error', error.message);
         }
       });
     },

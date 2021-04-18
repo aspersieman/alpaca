@@ -198,11 +198,10 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this.$store.dispatch('snackbar/show',{
-              message: 'Email or password incorrect',
-              color: 'error',
-              duration: 1000
-            }, { root: true });
+            this.$flash.error({
+              title: 'Log in error',
+              message: 'Email or password incorrect'
+            });
           })
       }
     },

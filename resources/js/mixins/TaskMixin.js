@@ -1,8 +1,8 @@
 export default {
   methods: {
-    getTasks(provider) {
+    getTasks(payload) {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('task/getTasks', provider)
+        this.$store.dispatch('task/getTasks', payload)
           .then(() =>{
             this.$eventBus.tasksLoaded();
             resolve()
@@ -10,44 +10,110 @@ export default {
           .catch(error => reject(error))
       })
     },
-    saveTask(provider) {
+
+    saveTask(task) {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('task/saveTask', provider)
+        this.$store.dispatch('task/saveTask', task)
           .then(() =>{
             this.$eventBus.taskAdded();
+            this.$flash.success({
+              title: 'Task added',
+              text: 'Task added successfully'
+            });
+            this.getTasks();
             resolve()
           })
-          .catch(error => reject(error))
-      })
+          .catch(error => {
+            const message = error.response.data.message || 'ERROR';
+            console.error(message);
+            this.$flash.error({
+              title: 'Error',
+              text: 'Error adding task'
+            });
+            reject(error);
+          });
+      });
     },
-    updateTask(provider) {
+
+    updateTask(payload) {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('task/updateTask', provider)
+        this.$store.dispatch('task/updateTask', payload)
           .then(() =>{
+            this.$flash.success({
+              title: 'Task updated',
+              text: 'Task updated successfully'
+            });
+            this.getTasks();
             this.$eventBus.taskUpdated();
             resolve()
           })
-          .catch(error => reject(error))
-      })
+          .catch(error => {
+            const message = error.response.data.message || 'ERROR';
+            console.error(message);
+            this.$flash.error({
+              title: 'Error',
+              text: 'Error updating task'
+            });
+            reject(error);
+          });
+      });
     },
-    deleteTask(provider) {
-      return new Promise((resolve, reject) => {
-        this.$store.dispatch('task/deleteTask', provider)
-          .then(() =>{
-            this.$eventBus.taskDeleted();
-            resolve()
-          })
-          .catch(error => reject(error))
-      })
+    
+    deleteTask(taskId) {
+      this.$store.dispatch('dialog/dialogShow',{
+        type: 'confirm',
+        icon: 'warning',
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete this task?',
+        okCb: ()=>{
+          new Promise((resolve, reject) => {
+            this.$store.dispatch('task/deleteTask', taskId)
+              .then(({data}) => {
+                this.getTasks();
+                this.$flash.success({
+                  title: 'Task deleted',
+                  text: 'Task deleted successfully'
+                });
+                this.$eventBus.taskDeleted();
+                this.$store.dispatch('dialog/dialogHide');
+                resolve(data)
+              }).catch((error) => {
+                console.error(error)
+                this.$flash.error({
+                  title: 'Task deleted',
+                  text: 'Error occurred deleting task'
+                });
+                this.$store.dispatch('dialog/dialogHide');
+                reject(error);
+              })
+          });
+        },
+        cancelCb: ()=>{
+          this.$store.dispatch('dialog/dialogHide');
+        }
+      });
     },
-    getTotalTime(task) {
+
+    getTaskActive() {
+      const task_id = this.$store.getters['task/task'].id == 0 
+        || typeof this.$store.getters['task/task'].id == 'undefined' 
+        ? null : this.$store.getters['task/task'].id;
+      let task = this.$store.getters['task/tasks']
+        .filter(function(element) {
+          return element.id === task_id;
+        });
+      return task.length > 0 ? task[0] : null;
+    },
+
+    getTaskTotalTime(task) {
       let totalDuration = 0;
       task.timers.forEach(timer => {
         totalDuration += timer.duration || 0;
       });
       return this.$appFormatters.duration(totalDuration);
     },
-    getPriorityDescription(priority) {
+
+    getTaskPriorityDescription(priority) {
       let description = '';
       switch (priority) {
         case 1:
@@ -62,41 +128,49 @@ export default {
       }
       return description;
     },
-    changeStatus() {
-      const self = this;
-      const currentTask = self.task;
 
+    changeTaskStatus(task) {
       var newStatus = null;
-      var btnColor = null;
-      switch (currentTask.status) {
+      switch (task.status) {
         case 'ongoing':
           newStatus = 'complete';
-          btnColor = 'success';
           break;
         case 'complete':
           newStatus = 'overdue';
-          btnColor = 'error';
           break;
         case 'overdue':
           newStatus = 'ongoing';
-          btnColor = 'info';
           break;
         default:
           break;
       }
       if (newStatus) {
-        currentTask.status = newStatus
-        this.$store.dispatch('task/updateTask', task);
-        self.btnColor = btnColor
+        task.status = newStatus
+        this.updateTask(task);
       }
     },
-    getPriorityById(priorityId) {
+
+    getTaskPriorityById(priorityId) {
       let priority = this.$store.getters['task/priorities']
         .filter(function(element) {
           return element.id == priorityId;
         })[0];
       priority = priority || { id: 0, name: '' };
       return priority;
-    }
+    },
+
+    getTaskTimers(task, onlyActive) {
+      const self = this;
+      if (onlyActive) {
+        let timers = task.timers
+          .filter(function(element) {
+            if (self.$store.getters['timer/timerRunning'].timer) {
+              return element.id === self.$store.getters['timer/timerRunning'].timer.id;
+            }
+          });
+        return timers.length > 0 ? [timers[0]] : [];
+      }
+      return task.timers;
+    },
   }
 }

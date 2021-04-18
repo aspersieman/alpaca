@@ -91,27 +91,22 @@ export default {
 
       self.isLoading = true;
 
-      window.axios.put('/api/admin/file-groups/' + self.propFileGroupId,payload).then(function(response) {
-        self.$store.commit('showSnackbar',{
-          message: response.data.message,
-          color: 'success',
-          duration: 3000
+      window.axios.put('/api/admin/file-groups/' + self.propFileGroupId,payload).then(function() {
+        self.$flash.success({
+          title: 'File group added',
+          message: 'File added successfully'
         });
 
         self.isLoading = false;
         self.$eventBus.$emit(EventNames.FILE_GROUP_UPDATED);
       }).catch(function (error) {
         self.isLoading = false;
+        console.error(error);
         if (error.response) {
-          self.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
+          self.$flash.error({
+            title: 'File group added',
+            message: 'Error adding file group'
           });
-        } else if (error.request) {
-          this.$debug(error.request);
-        } else {
-          console.error('Error', error.message);
         }
       });
     },

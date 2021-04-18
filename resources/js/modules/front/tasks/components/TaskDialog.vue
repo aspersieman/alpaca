@@ -99,7 +99,6 @@
             </v-combobox>
             <div
               v-if="task.timers.length > 0"
-              class="timers"
             >
               <div class="caption grey--text">
                 Timers
@@ -108,62 +107,64 @@
                 :only-active="onlyActive"
                 :task="task"
               />
-              <v-card 
-                text 
-                flat 
-              >
-                <div>
-                  <v-layout
-                    row
-                    wrap
-                    class="border-top"
-                  >
-                    <v-flex 
-                      xs1
-                      sm1
-                      md1
-                      lg1
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <v-layout
+                      row
+                      wrap
+                      class="border-top"
                     >
-                      &nbsp;
-                    </v-flex>
-                    <v-flex
-                      xs6
-                      sm3
-                      md3
-                      lg3
-                      class="ml-2 strong"
-                    >
-                      Total:
-                    </v-flex>
-                    <v-flex
-                      v-if="$vuetify.breakpoint.smAndUp"
-                      sm4
-                      md4
-                      lg4
-                    >
-                      &nbsp;
-                    </v-flex>
-                    <v-spacer />
-                    <v-flex
-                      xs4
-                      sm3
-                      md3
-                      lg3 
-                      class="fs-90"
-                    >
-                      <v-layout 
-                        row
+                      <v-flex 
+                        xs1
+                        sm1
+                        md1
+                        lg1
+                      >
+                        &nbsp;
+                      </v-flex>
+                      <v-flex
+                        xs6
+                        sm3
+                        md3
+                        lg3
+                        class="ml-2 strong"
+                      >
+                        Total:
+                      </v-flex>
+                      <v-flex
+                        v-if="$vuetify.breakpoint.smAndUp"
+                        sm4
+                        md4
+                        lg4
+                      >
+                        &nbsp;
+                      </v-flex>
+                      <v-spacer />
+                      <v-flex
+                        xs4
+                        sm3
+                        md3
+                        lg3 
+                        class="horizontal-center fs-90 strong total-timer-time"
+                      >
+                        {{ getTaskTotalTime(task) }}
+                      </v-flex>
+                      <v-layout row
                       >
                         <v-flex
-                          class="horizontal-center fs-90 strong"
+                          class="horizontal-center fs-90"
                         >
-                          {{ getTotalTime(task) }}
+                          &nbsp;
+                        </v-flex>
+                        <v-flex class="horizontal-center">
+                          &nbsp;
                         </v-flex>
                       </v-layout>
-                    </v-flex>
-                  </v-layout>
-                </div>
-              </v-card>
+                    </v-layout>
+                  </v-col>
+                </v-row>
+              </v-container>
             </div>
           </div>
         </v-form>
@@ -270,20 +271,19 @@ export default {
   },
   created() {
     const self = this;
-    self.$eventBus.$on('task-add-dialog', (value) => {
+    self.$eventBus.$on('task-dialog-add', (value) => {
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
     });
-    self.$eventBus.$on('task-update-dialog', (value) => {
+    self.$eventBus.$on('task-dialog-update', (value) => {
       self.formReset();
-      self.task = self.$store.getters['task'];
-      self.name = self.$store.getters['task'].name;
-      self.due = self.$store.getters['task'].due;
-      self.timers = self.$store.getters['task'].timers || [];
-      self.status = self.$store.getters['task'].status;
-      self.priority = self.getPriorityById(self.$store.getters['task'].priority);
-
+      self.task = self.$store.getters['task/task'];
+      self.name = self.task.name;
+      self.due = self.task.due;
+      self.timers = self.task.timers || [];
+      self.status = self.task.status;
+      self.priority = self.getTaskPriorityById(self.task.priority);
       self.dialog = value;
       self.mode = 'UPDATE';
     });
@@ -293,7 +293,7 @@ export default {
       if (this.valid) {
         const task = {
           name: this.name,
-          due: this.due,
+          due: moment(this.due).format('YYYY-MM-DD'),
           priority: this.priority.id,
           status: this.status,
         };
@@ -303,7 +303,14 @@ export default {
     },
     update() {
       if (this.valid) {
-        this.updateTask(this.task)
+        const task = {
+          id: this.task.id,
+          name: this.name,
+          due: this.due,
+          priority: this.priority.id,
+          status: 'ongoing',
+        };
+        this.updateTask(task)
           .then(this.close());
       }
     },
@@ -311,9 +318,8 @@ export default {
       this.dialog = false;
     },
     openTimerDialog() {
-      const self = this;
-      self.$store.commit('task/task', this.task);
-      self.$eventBus.$emit('timer-add-dialog', true)
+      this.$store.commit('task/task', this.task);
+      this.$eventBus.timerAddDialog(true);
     },
     formReset() {
       this.due = moment().format('YYYY-MM-DD');
@@ -362,7 +368,7 @@ export default {
 .border-top {
   border-top: 1px solid $border-dark-grey;
 }
-.timers {
-  max-width: 500px;
+.total-timer-time {
+  margin-right: 4px;
 }
 </style>

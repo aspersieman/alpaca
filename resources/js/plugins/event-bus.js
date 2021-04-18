@@ -38,7 +38,10 @@ const eventBus = {
           this.$emit('task-deleted');
         },
         taskDialogAdd(show) {
-          this.$emit('task-add-dialog', show);
+          this.$emit('task-dialog-add', show);
+        },
+        taskDialogUpdate(show) {
+          this.$emit('task-dialog-update', show);
         },
 
         /* Timers */
@@ -50,6 +53,12 @@ const eventBus = {
         },
         timerDeleted() {
           this.$emit('timer-deleted');
+        },
+        timerDialogAdd(show) {
+          this.$emit('timer-dialog-add', show);
+        },
+        timerDialogUpdate(show) {
+          this.$emit('timer-dialog-update', show);
         },
 
         /* Notes */

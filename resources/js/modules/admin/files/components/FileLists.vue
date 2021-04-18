@@ -234,11 +234,10 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this file?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/files/' + file.id).then(function(response) {
-            self.$store.commit('showSnackbar',{
-              message: response.data.message,
-              color: 'success',
-              duration: 3000
+          window.axios.delete('/api/admin/files/' + file.id).then(function() {
+            self.$flash.success({
+              title: 'File deleted',
+              text: 'File deleted successfully'
             });
 
             self.$eventBus.$emit(EventNames.FILE_DELETED);
@@ -247,17 +246,11 @@ export default {
             // lets close it.
             self.dialogs.view.show = false;
           }).catch(function (error) {
-            if (error.response) {
-              self.$store.commit('showSnackbar',{
-                message: error.response.data.message,
-                color: 'error',
-                duration: 3000
-              });
-            } else if (error.request) {
-              this.$debug(error.request);
-            } else {
-              console.error('Error', error.message);
-            }
+            console.error(error);
+            self.$flash.success({
+              title: 'File deleted',
+              text: 'Error deleting file'
+            });
           });
         },
         cancelCb: ()=>{

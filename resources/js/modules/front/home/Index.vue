@@ -92,18 +92,15 @@
         </div>
       </div>
       <home-header />
-      <snack-bar />
     </div>
   </v-app>
 </template>
 <script>
-import SnackBar from '@/components/core/SnackBar.vue';
 import HomeHeader from '@/modules/front/home/Header.vue';
 
 export default {
   components: { 
-    HomeHeader,
-    SnackBar,
+    HomeHeader
   },
   data: () => ({
     year: window.moment().format('YYYY'),

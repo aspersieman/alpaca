@@ -1,9 +1,4 @@
-import VueProgressBar from 'vue-progressbar';
-
-// this is the progress bar settings, you
-// can change colors here to fit on your needs or match
-// your theming above
-export default [ VueProgressBar,{
+const progressBarOptions = {
   color: '#ff4f4f',
   failedColor: '#bf5329',
   thickness: '5px',
@@ -14,4 +9,5 @@ export default [ VueProgressBar,{
   },
   autoRevert: true,
   inverse: false
-} ];
+};
+export default progressBarOptions;

@@ -1,11 +1,12 @@
-import { stopTimer, getRunningTimer, deleteTimer, saveTimer, updateTimer } from '@/api/timer';
+import { stopTimer, getTimerRunning, deleteTimer, saveTimer, updateTimer } from '@/api/timer';
 import TimerMixin from '@/mixins/TimerMixin';
+import { duration } from '@/plugins/formatters';
 
 export const state = {
   timer: null,
-  timerRunning: null,
-  timerRunningCounter: {
+  timerRunning: {
     seconds: 0,
+    title: 'Timing...',
     timer: {
       id: null,
       name: null,
@@ -17,46 +18,67 @@ export const state = {
       created_at: null,
       updated_at: null,
     },
-    title: 'Timing...',
-    task: {
-      id: null,
-      name: null,
-      due: null,
-      status: null,
-      order: null,
-    }
   },
   timerStopped: null,
   timerStoppedValue: "",
   timerDialogAdd: false,
-  timerDialogUpdate: false
+  timerDialogUpdate: false,
+  ticker: null,
 }
 
 export const mutations = {
-  TIMER: (state, payload) => {
-    state.timer = payload
-  },
-  TIMER_RUNNING: (state, payload) => {
-    state.timerRunning = payload
-  },
-  TIMER_RUNNING_COUNTER: (state, payload) => {
-    state.timerRunningCounter = payload
-  },
-  TIMER_STOPPED: (state, payload) => {
-    state.timerStopped = payload
-  },
-  TIMER_STOPPED_VALUE: (state, payload) => {
-    state.timerStoppedValue = payload
-  },
-  TIMER_DIALOG_ADD: (state, payload) => {
-    state.timerDialogAdd = payload
-  },
-  TIMER_DIALOG_UPDATE: (state, payload) => {
-    state.timerDialogUpdate = payload
-  },
+  TIMER: (state, payload) => { state.timer = payload; },
+  TIMER_RUNNING: (state, payload) => { state.timerRunning = payload; },
+  TIMER_STOPPED: (state, payload) => { state.timerStopped = payload; },
+  TIMER_STOPPED_VALUE: (state, payload) => { state.timerStoppedValue = payload; },
+  TIMER_DIALOG_ADD: (state, payload) => { state.timerDialogAdd = payload; },
+  TIMER_DIALOG_UPDATE: (state, payload) => { state.timerDialogUpdate = payload; },
+  TICKER: (state, payload) => { state.ticker = payload; },
 }
 
 export const actions = {
+  saveTimer({commit}, timer) {
+    return new Promise((resolve, reject) => {
+      saveTimer(timer.task_id, timer)
+        .then(({data}) => {
+          commit('TIMER', data);
+          resolve(data);
+        }).catch(error => {
+          reject(error);
+        })
+    });
+  },
+
+  updateTimer({}, payload) {
+    const started_at = window.moment(payload.startDate + ' ' + payload.startTime, 'YYYY-MM-DD HH:mm:ss');
+    const timer = {
+      name: payload.name,
+      started_at: started_at.format('YYYY-MM-DD HH:mm:ss'),
+      stopped_at: started_at.add(payload.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+      tags: payload.tags
+    };
+
+    return new Promise((resolve, reject) => {
+      updateTimer(taskId, timer)
+        .then(() => {
+          resolve(data);
+        }).catch(error => {
+          reject(error);
+        });
+    });
+  },
+
+  deleteTimer({commit}, taskId, timerId) {
+    deleteTimer(taskId, timerId)
+      .then(({data}) => {
+        commit('TIMER', null);
+        resolve(data)
+      })
+      .catch(error => {
+        reject(error);
+      });
+  },
+
   /**
    * Sets active timer and opens the timer add or update dialog
    */
@@ -70,108 +92,78 @@ export const actions = {
   },
 
   /**
-   * Determines if there is a running timer and whether it belongs to the task
-   * passed into the function.
-   */
-  showTimerForTask({getters}, task, timer) {
-    return getters['timerRunningCounter'].timer &&
-      getters['timerRunningCounter'].timer.id === timer.id &&
-      getters['timerRunningCounter'].timer.task.id === task.id
-  },
-
-  /**
-   * Checks if there is a running timer
-   */
-  isRunningTimer({getters}) {
-    return typeof getters['timerRunningCounter'].timer.id != 'undefined'
-      && getters['timerRunningCounter'].timer.id != null
-      && getters['timerRunningCounter'].timer.id != 0;
-  },
-
-  /**
    * Start counting the timer. Tick tock.
    */
-  startTimer({commit, getters}) {
-    if (getters['timerRunningCounter'].timer.id === null || getters['timerRunningCounter'].timer.id != getters['timerRunning'].id) {
-      // remove 'z' from timezone, moment doesn't like it
-      // when doing maths
-      const started = window.moment(getters['timerRunning'].started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-      const now = window.moment();
-      commit('TIMER_RUNNING_COUNTER', {
-        seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()), 
-        timer: getters['timerRunning'],
-        title: 'Timing...',
-        task: getters['timerRunning'].task
-      });
-      getters['timerRunningCounter'].ticker = setInterval(() => {
-        const from = window.moment(getters['timerRunning'].timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
-        const to = window.moment();
-        const time = TimerMixin.methods.readableTimeFromSeconds(from, to);
-        let timerRunningCounter = getters['timerRunningCounter'];
-        timerRunningCounter.title = `${time.hours}:${time.minutes}:${time.seconds}`; 
-        commit('TIMER_RUNNING_COUNTER', timerRunningCounter);
-      }, 1000);
+  startTimer({commit, getters, dispatch}, timer) {
+    if (getters['ticker'] === null) {
+      dispatch('getTimerRunning', timer)
+        .then(() => {
+          if(getters['isTimerRunning']) {
+            // remove 'z' from timezone, moment doesn't like it
+            // when doing maths
+            const started = window.moment(getters['timerRunning'].timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+            const now = window.moment();
+            commit('TIMER_RUNNING', {
+              seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()), 
+              title: 'Timing...',
+              timer: getters['timerRunning'].timer,
+            });
+            commit('TICKER', setInterval(() => {
+              const from = window.moment(getters['timerRunning'].timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
+              const to = window.moment();
+              const seconds = parseInt(window.moment.duration(to.diff(from)).asSeconds())
+              const timer = getters['timerRunning'].timer;
+              commit('TIMER_RUNNING', {
+                seconds: seconds,
+                title: duration(seconds),
+                timer: timer
+              });
+            }, 1000));
+          }
+        });
     }
   },
 
-  /**
-   * Sets the currently running timer
-   */
-  setRunningTimer({commit, dispatch}, timer = null) {
-    if (timer) {
-      commit('TIMER_RUNNING', timer);
-    } else {
-      return new Promise((resolve, reject) => {
-        getRunningTimer()
+  getTimerRunning({commit}, timer) {
+    return new Promise((resolve, reject) => {
+      if (timer != null && typeof timer != 'undefined') {
+        commit('TIMER_RUNNING', {
+          seconds: 0, 
+          title: 'Timing...',
+          timer: getters['timerRunning'].timer,
+        });
+        resolve();
+      } else {
+        getTimerRunning()
           .then(({data}) => {
-            commit('TIMER_RUNNING', data.data);
+            if (typeof data?.data != 'undefined') {
+              commit('TIMER_RUNNING', {
+                seconds: 0, 
+                title: 'Timing...',
+                timer: data.data,
+              });
+            }
             resolve(data);
-          }).then(() => {
-            dispatch('startTimer');
           }).catch(error => {
             reject(error);
           })
-      });
-    }
+      }
+    });
   },
 
   /**
-   * Stop the timer from the API and then from the local timerRunningCounter.
+   * Stop the timer from the API and then from the local timerRunning.
    */
   stopTimer({commit, getters, dispatch}) {
-    if (getters['timerRunning'] != null) {
-      const timerId = getters['timerRunningCounter'].timer.id;
+    if (getters['isTimerRunning']) {
       return new Promise((resolve, reject) => {
+        const timerId = getters['timerRunning'].timer.id;
         stopTimer(timerId)
           .then(({data}) => {
-            clearInterval(getters['timerRunningCounter'].ticker)
+            dispatch('resetTimerRunning');
+            clearInterval(getters['ticker']);
             commit('TIMER_STOPPED', data);
-            commit('TIMER_RUNNING', null);
             commit('TIMER_STOPPED_VALUE', TimerMixin.methods.timerDuration(data));
-            const timerRunningCounter = {
-              seconds: 0,
-              timer: {
-                id: null,
-                name: null,
-                task_id: null, 
-                user_id: null,
-                started_at: null,
-                stopped_at: null, 
-                duration: 0,
-                created_at: null,
-                updated_at: null,
-              },
-              title: 'Timing...',
-              task: {
-                id: null,
-                name: null,
-                due: null,
-                status: null,
-                order: null,
-              }
-            };
-            commit('TIMER_RUNNING_COUNTER', timerRunningCounter);
-            dispatch('task/getTasks');
             resolve(data)
           }).catch(error => {
             reject(error)
@@ -180,124 +172,45 @@ export const actions = {
     }
   },
 
-  /**
-   * Delete a timer.
-   */
-  deleteTimer({commit, dispatch}, task, timer) {
-    const settings = {
-      type: 'confirm',
-      icon: 'warning',
-      title: 'Confirm deletion',
-      message: 'Are you sure you want to delete this timer?',
-      okCb: ()=>{
-        new Promise((resolve, reject) => {
-          deleteTimer(task.id, timer.id)
-            .then(({data}) => {
-              task.timers = task.timers.filter(function(element) {
-                return element.id !== timer.id;
-              });
-              commit('TASK', task);
-              dispatch('snackbar/snackbarShow', {
-                message: response.data.message,
-                color: 'success',
-                duration: 3000
-              });
-              dispatch('task/getTasks');
-              resolve(data);
-            }).catch(error => {
-              reject(error);
-            })
-        });
+  resetTimerRunning({commit}) {
+    const timerRunning = {
+      seconds: 0,
+      timer: {
+        id: null,
+        name: null,
+        task_id: null, 
+        user_id: null,
+        started_at: null,
+        stopped_at: null, 
+        duration: 0,
+        created_at: null,
+        updated_at: null,
       },
-      cancelCb: ()=>{
-        console.log('CANCEL');
-      }
+      title: 'Timing...',
+      task: {
+        id: null,
+        name: null,
+        due: null,
+        status: null,
+        order: null,
+      },
     };
-    dispatch('dialog/dialogShow', settings);
-  },
-
-  saveTimer({getters, dispatch}, timer) {
-    const task = getters['task/task'];
-    if(timer.name.length > 0) {
-      return new Promise((resolve, reject) => {
-        const timer = {
-          name: timer.name,
-          task_id: timer.task_id,
-          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          tags: timer.tags
-        };
-        saveTimer(task.id, timer)
-          .then(({data}) => {
-            dispatch('setRunningTimer', data.data);
-            dispatch('task/getTasks');
-            dispatch('snackbar/snackbarShow', {
-              message: 'Timer added',
-              color: 'success',
-              duration: 1000
-            });
-            resolve(data);
-          }).then(() => {
-            dispatch('startTimer');
-          }).catch(error => {
-            reject(error);
-          })
-      });
-    }
-  },
-
-  updateTimer({commit, dispatch}, payload) {
-    const started_at = window.moment(payload.startDate + ' ' + payload.startTime, 'YYYY-MM-DD HH:mm:ss');
-    const timer = {
-      name: payload.name,
-      started_at: started_at.format('YYYY-MM-DD HH:mm:ss'),
-      stopped_at: started_at.add(payload.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-      tags: payload.tags
-    };
-
-    return new Promise((resolve, reject) => {
-      updateTimer(taskId, timer)
-        .then(() => {
-          commit('snackbar/snackbarShow',{
-            message: 'Timer updated',
-            color: 'success',
-            duration: 1000
-          });
-          dispatch('task/getTasks');
-          resolve(data);
-        }).catch(error => {
-          console.log(error);
-          commit('snackbar/snackbarShow',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
-          });
-          reject(error);
-        });
-    });
-  },
+    commit('TIMER_RUNNING', timerRunning);
+    commit('TICKER', null);
+  }
 }
 
 export const getters = {
-  timer : state => {
-    return state.timer
-  },
-  timerRunning : state => {
-    return state.timerRunning
-  },
-  timerRunningCounter : state => {
-    return state.timerRunningCounter
-  },
-  timerStopped : state => {
-    return state.timerStopped
-  },
-  timerStoppedValue : state => {
-    return state.timerStoppedValue
-  },
-  timerDialogAdd : state => {
-    return state.timerDialogAdd
-  },
-  timerDialogUpdate : state => {
-    return state.timerDialogUpdate
+  timer : state => { return state.timer },
+  timerRunning : state => { return state.timerRunning },
+  timerStopped : state => { return state.timerStopped },
+  timerStoppedValue : state => { return state.timerStoppedValue },
+  timerDialogAdd : state => { return state.timerDialogAdd },
+  timerDialogUpdate : state => { return state.timerDialogUpdate },
+  ticker : state => { return state.ticker },
+  isTimerRunning : state => { 
+    return state.timerRunning?.timer?.id != null
+      && state.timerRunning?.timer?.id != 0;
   },
 }
 

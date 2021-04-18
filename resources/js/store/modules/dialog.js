@@ -52,6 +52,11 @@ export const actions = {
     commit('DIALOG_CANCEL_CB', payload.cancelCb || function(){});
     commit('DIALOG_SHOW', true);
   },
+
+  dialogHide({commit, dispatch}) {
+    dispatch('dialogReset');
+    commit('DIALOG_SHOW', false);
+  },
 }
 
 export const getters = {

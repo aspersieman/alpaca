@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from '@/store/';
+import flash from '@/plugins/flash';
 import router from '@/router';
 
 export default function setup() {
@@ -19,11 +20,10 @@ export default function setup() {
         && err.response.config 
         && !err.response.config.__isRetryRequest
         && router.name != 'index') {
-        store.dispatch('snackbar/show',{
-          message: 'Please log in to continue',
-          color: 'error',
-          duration: 3000
-        }, { root: true });
+        flash.warn({
+          title: 'Log in',
+          text: 'Please log in to continue'
+        });
         store.dispatch('auth/logout');
         router.replace('/'); 
       }

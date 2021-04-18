@@ -119,7 +119,6 @@ export default {
       tasksCopy: [],
       userId: '',
       btnColor: '',
-      snackbar: false,
       search: "",
       status: [],
       statuses: [

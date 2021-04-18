@@ -351,25 +351,19 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this user?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/users/' + user.id).then(function(response) {
-            self.$store.commit('showSnackbar',{
-              message: response.data.message,
-              color: 'success',
-              duration: 3000
+          window.axios.delete('/api/admin/users/' + user.id).then(function() {
+            self.$flash.success({
+              title: 'User deleted',
+              text: 'User deleted successfully'
             });
             self.$eventBus.$emit(EventNames.USER_DELETED);
           }).catch(function (error) {
-            self.$store.commit('hideLoader');
+            console.error(error);
             if (error.response) {
-              self.$store.commit('showSnackbar',{
-                message: error.response.data.message,
-                color: 'error',
-                duration: 3000
+              self.$flash.error({
+                title: 'User deleted',
+                text: 'Error deleting user'
               });
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log('Error', error.message);
             }
           });
         },

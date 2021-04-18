@@ -79,9 +79,9 @@ class TaskController extends Controller
    */
   public function update(UpdateTaskRequest $request, $id)
   {
-    $this->authorize('update', $task);
+    //$this->authorize('update', $task);
     $request->merge(['user_id' => auth()->user()->id]);
-    $task = Task::put($task->id, $request->all())->toArray();
+    $task = Task::put($id, $request->all())->toArray();
     return $this->sendResponseOk($task, "Update task ok");
   }
 
@@ -93,8 +93,8 @@ class TaskController extends Controller
    */
   public function destroy($id)
   {
-    $this->authorize('delete', $task);
-    Task::destroy($task->id);
+    //$this->authorize('delete', $task);
+    Task::destroy($id);
     return $this->sendResponseOk([], "Task deleted");
   }
 }

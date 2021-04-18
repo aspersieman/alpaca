@@ -68,7 +68,7 @@
           >
           New task
           </base-btn-primary>
-          <timer-active />
+          <timer-running />
           <v-btn
             v-if="!$auth.check"
             class="d-none d-sm-flex"
@@ -93,7 +93,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import CoreDrawer from '@/components/core/Drawer.vue';
-import TimerActive from '@/components/timer/TimerActive';
+import TimerRunning from '@/components/timer/TimerRunning';
 import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
 import TimerDialog from '@/modules/front/tasks/components/TimerDialog';
 import Avatar from '@/components/core/Avatar';
@@ -103,7 +103,7 @@ export default {
   name: 'CoreAppBar',
   components: {
     CoreDrawer,
-    TimerActive,
+    TimerRunning,
     TaskDialog,
     TimerDialog,
     Avatar

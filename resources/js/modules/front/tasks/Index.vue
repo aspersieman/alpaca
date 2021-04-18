@@ -210,13 +210,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import Task from './components/Task';
-import NoteDrawer from '../../../components/notes/NoteDrawer';
-import DateRangePicker from '../../../components/core/DateRangePicker';
-import TaskMixin from '../../../mixins/TaskMixin';
-import TimerMixin from '../../../mixins/TimerMixin';
-import EventNames from '../../../common/EventNames';
+import NoteDrawer from '@/components/notes/NoteDrawer';
+import DateRangePicker from '@/components/core/DateRangePicker';
+import TaskMixin from '@/mixins/TaskMixin';
+import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: {
@@ -237,7 +235,6 @@ export default {
       newName: '',
       indexToEdit: 0,
       drag: true,
-      snackbar: false,
       search: '',
       searching: false,
       activeTimerString: 'Timing...',
@@ -337,12 +334,8 @@ export default {
   created() {
     this.getTasksSettings();
     this.getTasks();
-    this.setActiveTimer();
   },
   methods: {
-    ...mapActions({
-        setActiveTimer: 'timer/setRunningTimer',
-    }),
     searchFocus() {
       this.$refs.searchInput.focus();
     },

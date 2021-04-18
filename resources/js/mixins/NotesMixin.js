@@ -28,20 +28,18 @@ export default {
           newNote.id = response.data.data.id;
           notes.push(newNote);
           this.$store.commit('setNotes', notes);
-          this.$store.commit('showSnackbar',{
-            message: "Note added",
-            color: 'success',
-            duration: 1000
+          this.$flash.success({
+            title: "Note added",
+            text: "Note added successfully",
           });
           this.$emit(EventNames.NOTE_ADDED, false);
           return response;
         })
           .catch(error => {
           console.error(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
+          this.$flash.error({
+            title: "Note added",
+            text: "Error adding note",
           });
           this.loading = false;
         });
@@ -61,10 +59,9 @@ export default {
           this.loading = false;
           this.formReset();
           this.$eventBus.$emit(EventNames.NOTE_UPDATED, note);
-          this.$store.commit('showSnackbar',{
-            message: "Note updated",
-            color: 'success',
-            duration: 1000
+          this.$flash.success({
+            title: "Note update",
+            text: "Note updated successfully",
           });
           this.showEditForm = false;
           this.$emit(EventNames.NOTE_UPDATED, false);
@@ -72,10 +69,9 @@ export default {
         })
           .catch(error => {
           console.log(error);
-          this.$store.commit('showSnackbar',{
-            message: error.response.data.message,
-            color: 'error',
-            duration: 3000
+          this.$flash.success({
+            title: "Note update",
+            text: "Error updating note",
           });
           this.loading = false;
         });
@@ -93,29 +89,23 @@ export default {
         okCb: ()=>{
           const currentTask = self.task;
           window.axios.delete('/api/notes/'+parseInt(note.id))
-            .then(function(response) {
+            .then(function() {
               self.$store.commit('setSelectedTask', currentTask);
-              self.$store.commit('showSnackbar',{
-                message: response.data.message,
-                color: 'success',
-                duration: 3000
+              this.$flash.success({
+                title: "Note delete",
+                text: "Note deleted successfully",
               });
               self.noteName =  '';
               self.noteContent = '';
               self.$eventBus.$emit(EventNames.NOTE_DELETED, note);
             })
             .catch(error => {
-              self.$store.commit('hideLoader');
               if (error.response) {
-                self.$store.commit('showSnackbar',{
-                  message: error.response.data.data.message,
-                  color: 'error',
-                  duration: 10000
+                console.error(error);
+                this.$flash.success({
+                  title: "Note delete",
+                  text: "Error deleting note",
                 });
-              } else if (error.request) {
-                console.log(error.request);
-              } else {
-                console.log('Error', error.message);
               }
             });
         },

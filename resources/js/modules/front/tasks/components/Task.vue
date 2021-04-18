@@ -38,7 +38,7 @@
                     priority_high
                   </v-icon>
                 </template>
-                Priority: {{ getPriorityDescription(task.priority) }}
+                Priority: {{ getTaskPriorityDescription(task.priority) }}
               </v-tooltip>
               {{ task.name }}
             </div>
@@ -86,7 +86,7 @@
             v-if="task.timers.length > 0"
             class="mt-0 pt-0"
           >
-            {{ getTotalTime(task) }}
+            {{ getTaskTotalTime(task) }}
           </div>
         </v-flex>
         <v-flex
@@ -102,7 +102,7 @@
               small
               rounded
               :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
-              @click="changeStatus()"
+              @click="changeTaskStatus(task)"
             >
               {{ task.status }}
             </v-btn>
@@ -120,7 +120,7 @@
               icon
               class="pa-0 ma-0"
               :class="`${task.status}`"
-              @click="openTaskDialog(task);"
+              @click="taskDialogUpdate(task);"
             >
               <v-tooltip bottom>
                 <template 
@@ -137,7 +137,7 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="deleteTask()"
+              @click="deleteTask(task.id)"
             >
               <v-tooltip bottom>
                 <template
@@ -151,11 +151,11 @@
               </v-tooltip>
             </v-btn>
             <v-btn
-              v-if="isRunningTimer() !== true"
+              v-if="isTimerRunning !== true"
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="openTimerDialog(task);"
+              @click="timerDialogAdd(task);"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
@@ -215,7 +215,7 @@
               <v-list>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="openTaskDialog(task);"
+                  @click="taskDialogUpdate(task);"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>edit</v-icon>
@@ -224,7 +224,7 @@
                 </v-list-item>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="deleteTask()"
+                  @click="deleteTask(task.id)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>delete</v-icon>
@@ -232,9 +232,9 @@
                   <v-list-item-title>Delete</v-list-item-title>
                 </v-list-item>
                 <v-list-item
-                  v-if="$store.state.activeTimerCounter.seconds == 0"
+                  v-if="$store.getters['timer/timerRunning'].seconds == 0"
                   :class="`${task.status}`"
-                  @click="openTimerDialog(task);"
+                  @click="timerDialogAdd(task);"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>more_time</v-icon>
@@ -264,7 +264,7 @@
         </v-flex>
       </v-layout>
       <v-layout
-        v-if="getTimers(task, onlyActive).length > 0"
+        v-if="getTaskTimers(task, onlyActive).length > 0"
         row
         wrap
         :class="`pa-2 task ${task.status}`"
@@ -292,7 +292,7 @@
 </template>
 <script>
 
-import { mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import TimerList from '@/modules/front/tasks/components/TimerList';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
@@ -322,6 +322,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('timer', ['isTimerRunning'])
+  },
   data() {
     return {
       newValues: [],
@@ -331,11 +334,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-        isRunningTimer: 'timer/isRunningTimer',
-        openTimerDialog: 'timer/openTimerDialog',
-        getTimers: 'task/getTimers',
-    }),
     openNoteDrawer() {
       const self = this;
       self.$store.commit('setNotes', self.task.notes);
@@ -348,6 +346,14 @@ export default {
     countTimers(task) {
       return task?.timers?.length > 0 ? task?.timers?.length : '';
     },
+    taskDialogUpdate(task) {
+      this.$store.commit('task/TASK', task);
+      this.$eventBus.taskDialogUpdate(true);
+    },
+    timerDialogAdd(task) {
+      this.$store.commit('task/TASK', task);
+      this.$eventBus.timerDialogAdd(true);
+    }
   },
 }
 </script>
@@ -356,11 +362,9 @@ export default {
 @import "../../../../../sass/index";
 .task-container {
   background-color: $theme-light-background;
-}
-.task {
   border-bottom: 1px solid $border-light-grey;
-  margin-bottom: 10px;
 }
+
 .task.complete {
   border-left: 4px solid $task-status-complete;
 }
@@ -408,5 +412,9 @@ export default {
 
 .align-right {
   text-align: right;
+}
+
+.row {
+  margin: 0px;
 }
 </style>

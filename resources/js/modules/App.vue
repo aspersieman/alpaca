@@ -9,9 +9,9 @@
     >
     </div>
     <vue-progress-bar />
-    <snack-bar />
     <confirm-dialog />
     <note-dialog />
+    <notifications group="app" />
   </v-app>
 </template>
 <script>
@@ -19,7 +19,6 @@ import CoreAppBar from '@/components/core/AppBar.vue';
 import CoreContent from '@/components/core/Content.vue';
 import CoreFooter from '@/components/core/Footer.vue';
 import ConfirmDialog from '@/components/core/ConfirmDialog.vue';
-import SnackBar from '@/components/core/SnackBar.vue';
 import NoteDialog from '@/components/notes/NoteDialog.vue';
 
 export default {
@@ -27,7 +26,6 @@ export default {
     CoreAppBar,
     CoreContent,
     CoreFooter,
-    SnackBar,
     ConfirmDialog,
     NoteDialog
   },
@@ -36,6 +34,12 @@ export default {
       return this.$store.getters['loader/loaderShow'];
     },
   },
+  created() {
+    this.$store.dispatch('timer/resetTimerRunning')
+      .then(() => {
+        this.$store.dispatch('timer/startTimer');
+      });
+  }
 }
 </script>
 <style scoped lang="scss">

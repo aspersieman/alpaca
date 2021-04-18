@@ -9,7 +9,11 @@ export function debug(message, type = "info") {
       break;
   }
   if (process.env.NODE_ENV === 'development') {
-    console.log('%c'+message, style);
+    if (typeof message === 'object' || message === null) {
+      console.log(message);
+    } else {
+      console.log('%c'+message, style);
+    }
   }
 };
 

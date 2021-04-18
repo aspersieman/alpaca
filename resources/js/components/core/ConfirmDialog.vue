@@ -57,25 +57,25 @@ export default {
   computed: {
     showDialog: {
       get() {
-        return this.$store.getters.showDialog;
+        return this.$store.getters['dialog/dialogShow'];
       },
       set(val) {
         if(!val) {
-          self.$store.commit('hideDialog');
+          self.$store.commit('dialog/dialogHide');
         }
       }
     },
     dialogType() {
-      return this.$store.getters.dialogType
+      return this.$store.getters['dialog/dialogType'];
     },
     dialogTitle() {
-      return this.$store.getters.dialogTitle
+      return this.$store.getters['dialog/dialogTitle'];
     },
     dialogMessage() {
-      return this.$store.getters.dialogMessage
+      return this.$store.getters['dialog/dialogMessage'];
     },
     dialogIcon() {
-      return this.$store.getters.dialogIcon
+      return this.$store.getters['dialog/dialogIcon'];
     },
   },
   methods: {
@@ -91,10 +91,10 @@ export default {
       this.$emit('close');
     },
     dialogOk() {
-      this.$store.commit('dialogOk');
+      this.$store.getters['dialog/dialogOkCb']();
     },
     dialogCancel() {
-      this.$store.commit('dialogCancel');
+      this.$store.dispatch('dialog/dialogHide');
     }
   },
 }

@@ -9,7 +9,6 @@ import drawer from './modules/drawer';
 import loader from './modules/loader';
 import menu from './modules/menu';
 import note from './modules/note';
-import snackbar from './modules/snackbar';
 import task from './modules/task';
 import timer from './modules/timer';
 import user from './modules/user';
@@ -25,7 +24,6 @@ export default new Vuex.Store({
     loader,
     menu,
     note,
-    snackbar,
     task,
     timer,
     user

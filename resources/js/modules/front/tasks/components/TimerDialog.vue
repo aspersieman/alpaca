@@ -24,124 +24,130 @@
         {{ subtitle }}
       </v-card-subtitle>
       <v-divider />
-      <v-card-text>
-        <v-menu
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-        >
-          <template
-            #activator="{ on, attrs }"
+      <v-form
+        v-model="valid"
+        lazy-validation
+      >
+        <v-card-text>
+          <v-menu
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
           >
-            <v-text-field
-              v-model="name"
-              label="Description"
-              v-bind="attrs"
-              autofocus
-              v-on="on"
-            />
-          </template>
-        </v-menu>
-        <v-combobox
-          v-model="tags"
-          :items="tagItems"
-          chips
-          clearable
-          label="Categories"
-          multiple
-          prepend-icon="category"
-          solo
-        >
-          <template
-            #selection="{ attrs, item, select, selected }"
-          >
-            <v-chip
-              v-bind="attrs"
-              :input-value="selected"
-              close
-              @click="select"
-              @click:close="removeCategory(item)"
+            <template
+              #activator="{ on, attrs }"
             >
-              <strong>{{ item }}</strong>&nbsp;
-            </v-chip>
-          </template>
-        </v-combobox>
-        <v-container>
-          <v-row v-if="mode == 'UPDATE'">
-            <v-col>
-              <v-menu
-                v-model="dateMenu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-              >
-                <template #activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="startDate"
-                    :rules="dateRules"
-                    :value="formattedDate"
-                    label="Date"
-                    prepend-icon="event"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  />
-                </template>
-                <v-date-picker
-                  v-model="startDate"
-                  @input="menu = false"
-                />
-              </v-menu>
-            </v-col>
-            <v-col>
-              <v-menu
-                ref="menu"
-                v-model="startTimeMenu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                :return-value.sync="startTime"
-                transition="scale-transition"
-                offset-y
-              >
-                <template #activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="startTime"
-                    label="Start time"
-                    prepend-icon="access_time"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  />
-                </template>
-                <v-time-picker
-                  v-if="startTimeMenu"
-                  v-model="startTime"
-                  width="290"
-                  @click:minute="$refs.menu.save(startTime)"
-                />
-              </v-menu>
-            </v-col>
-            <v-col>
               <v-text-field
-                v-model="duration"
-                label="Duration"
-                type="number"
-                hint="minutes"
-                persistent-hint
+                v-model="name"
+                :rules="nameRules"
+                label="Description"
+                v-bind="attrs"
+                autofocus
+                v-on="on"
               />
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
+            </template>
+          </v-menu>
+          <v-combobox
+            v-model="tags"
+            :items="tagItems"
+            chips
+            clearable
+            label="Categories"
+            multiple
+            prepend-icon="category"
+            solo
+          >
+            <template
+              #selection="{ attrs, item, select, selected }"
+            >
+              <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="removeCategory(item)"
+              >
+                <strong>{{ item }}</strong>&nbsp;
+              </v-chip>
+            </template>
+          </v-combobox>
+          <v-container>
+            <v-row v-if="mode == 'UPDATE'">
+              <v-col>
+                <v-menu
+                  v-model="dateMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="startDate"
+                      :rules="dateRules"
+                      :value="formattedDate"
+                      label="Date"
+                      prepend-icon="event"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="startDate"
+                    @input="menu = false"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-menu
+                  ref="menu"
+                  v-model="startTimeMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  :return-value.sync="startTime"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="startTime"
+                      label="Start time"
+                      prepend-icon="access_time"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="startTimeMenu"
+                    v-model="startTime"
+                    width="290"
+                    @click:minute="$refs.menu.save(startTime)"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="duration"
+                  label="Duration"
+                  type="number"
+                  hint="minutes"
+                  persistent-hint
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-form>
       <v-divider />
       <v-card-actions>
         <v-btn
           v-if="mode == 'ADD'"
           text
           class="success mx-0 mt-3"
-          :loading="loading"
-          @click="saveTimer"
+          :disabled="!valid || loading"
+          @click="save()"
         >
           Start
         </v-btn>
@@ -149,7 +155,8 @@
           v-if="mode == 'UPDATE'"
           text
           class="success mx-0 mt-3"
-          @click="updateTimer"
+          :disabled="!valid || loading"
+          @click="update()"
         >
           Update timer
         </v-btn>
@@ -167,7 +174,6 @@
 </template>
 
 <script>
-
 import TimerMixin from '@/mixins/TimerMixin';
 import TaskMixin from '@/mixins/TaskMixin';
 
@@ -180,7 +186,9 @@ export default {
     return {
       mode: 'ADD',
       dialog: false,
+      valid: false,
       name: '',
+      task_id: '',
       startDate: '',
       startTime: '',
       endTime: '',
@@ -189,8 +197,9 @@ export default {
       loading: false,
       dateMenu: false,
       startTimeMenu: false,
-      dateRules: [
-        (v) => (v.length >= 4) || 'Invalid date format',
+      nameRules: [
+        (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
+        (v) => !!v || 'Name is required',
       ],
       tags: [],
       tagItems: [],
@@ -203,22 +212,25 @@ export default {
   },
   created() {
     const self = this;
-    this.$eventBus.$on('timer-add-dialog', (value) => {
+    self.$eventBus.$on('timer-dialog-add', (value) => {
+      const task = self.getTaskActive();
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
-      self.subtitle = self.getActiveTask().name || '';
-      self.name = self.getActiveTask().name || '';
+      self.subtitle = task.name || '';
+      self.name = task.name || '';
+      self.task_id = task.id;
     });
-    self.$eventBus.$on('timer-update-dialog', (value) => {
+    self.$eventBus.$on('timer-dialog-update', (value) => {
       self.formReset();
-      self.timer = self.$store.state.timer;
+      self.timer = self.$store.getters['timer/timer'];
       self.name = self.timer.name;
+      self.task_id = task.id;
       self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
       self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-      self.subtitle = self.getActiveTask().name || '';
+      self.subtitle = self.getTaskActive().name || '';
       self.dialog = value;
       self.mode = 'UPDATE';
       const tags = self.$store.state.timer.tagged.map(function (item) {
@@ -228,6 +240,31 @@ export default {
     });
   },
   methods: {
+    save() {
+      if (this.valid) {
+        const timer = {
+          name: this.name,
+          task_id: this.task_id,
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          tags: this.tags
+        };
+        this.saveTimer(timer)
+          .then(this.close());
+      }
+    },
+    update() {
+      if (this.valid) {
+        const timer = {
+          id: this.timer.id,
+          name: this.name,
+          task_id: this.task_id,
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          tags: this.tags
+        };
+        this.updateTimer(timer)
+          .then(this.close());
+      }
+    },
     close() {
       this.dialog = false;
     },

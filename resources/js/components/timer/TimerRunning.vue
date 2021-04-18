@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isRunningTimer() === true"
+    v-if="isTimerRunning === true"
   >
     <v-bottom-sheet inset>
       <template #activator="{ on, attrs }">
@@ -64,40 +64,28 @@
 </template>
 <script>
 
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import TimerMixin from '../../mixins/TimerMixin';
 
 export default {
   mixins: [ TimerMixin ],
   computed: {
     taskName: function() {
-      return this.timerRunningCounter?.task?.name;
+      return this.timerRunning?.task?.name;
     },
     timerName: function() {
-      return this.timerRunningCounter?.timer?.name;
+      return this.timerRunning?.timer?.name;
     },
     timerTime: function() {
-      return this.timerRunningCounter?.title;
+      return this.timerRunning?.title;
     },
     timerStarted: function() {
-      return this.$appFormatters.timerFormat(this.timerRunningCounter.timer.started_at, true);
+      return this.$appFormatters.timerFormat(this.timerRunning.timer.started_at, true);
     },
     showTimer: function() {
-      return this.timerRunningCounter != null;
+      return this.timerRunning != null;
     },
-    ...mapGetters('timer', ['timer', 'timerRunning', 'timerRunningCounter'])
-  },
-  created() {
-    if (this.$auth.check) {
-      this.$store.dispatch('timer/setRunningTimer');
-    }
-  },
-  methods: {
-    ...mapActions({
-        startTimer: 'timer/startTimer',
-        stopTimer: 'timer/stopTimer',
-        isRunningTimer: 'timer/isRunningTimer',
-    }),
+    ...mapGetters('timer', ['timer', 'timerRunning', 'isTimerRunning'])
   },
 }
 </script>

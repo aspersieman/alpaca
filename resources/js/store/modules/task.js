@@ -44,86 +44,42 @@ export const mutations = {
 }
 
 export const actions = {
-  saveTask({commit, dispatch}, payload) {
+  saveTask({commit}, payload) {
     return new Promise((resolve, reject) => {
-      const task = {
-        name: payload.name,
-        due: moment(payload.due).format('YYYY-MM-DD'),
-        priority: payload.priority,
-        status: 'ongoing'
-      };
-      saveTask(task)
+      saveTask(payload)
         .then(({data}) => {
-          dispatch('snackbar/show',{
-            message: 'Task added',
-            color: 'success',
-            duration: 1000
-          }, { root: true });
+          commit('TASK', data);
           resolve(data)
         })
         .catch((error) => {
-          const message = error.response.data.message || 'ERROR';
-          dispatch('snackbar/show',{
-            message: message,
-            color: 'error',
-            duration: 3000
-          }, { root: true });
           reject(error);
         });
     });
   },
 
-  updateTask({commit, dispatch}, payload) {
-    updateTask(payload)
-      .then(({data}) => {
-        commit('TASK', data);
-        dispatch('getTasks');
-        resolve(data)
-      })
-      .catch((error) => {
-        dispatch('snackbar/show',{
-          message: error.response.data.message,
-          color: 'error',
-          duration: 3000
-        }, { root: true });
-        reject(error);
-      });
+  updateTask({commit}, task) {
+    return new Promise((resolve, reject) => {
+      updateTask(task)
+        .then(({data}) => {
+          commit('TASK', data);
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
 
-  deleteTask({commit, dispatch}, payload) {
-    commit('dialog/dialogShow',{
-      type: 'confirm',
-      icon: 'warning',
-      title: 'Confirm deletion',
-      message: 'Are you sure you want to delete this task?',
-      okCb: ()=>{
-        new Promise((resolve, reject) => {
-          deleteTask(payload)
-            .then(({data}) => {
-              commit('TASK', null);
-              dispatch('getTasks');
-              dispatch('snackbar/show',{
-                message: payload.data.message,
-                color: 'success',
-                duration: 3000
-              }, { root: true });
-              resolve(data)
-            })
-            .catch(error => {
-              if (error.response) {
-                dispatch('snackbar/show',{
-                  message: error.response.data.data.message,
-                  color: 'error',
-                  duration: 10000
-                }, { root: true });
-              }
-              reject(error);
-            })
+  deleteTask({commit}, taskId) {
+    return new Promise((resolve, reject) => {
+      deleteTask(taskId)
+        .then(({data}) => {
+          commit('TASK', null);
+          resolve(data)
+        })
+        .catch(error => {
+          reject(error);
         });
-      },
-      cancelCb: ()=>{
-        console.log('CANCEL');
-      }
     });
   },
 
@@ -163,28 +119,6 @@ export const actions = {
     commit('TASK', getters['taskTemplate']);
     commit('DIALOG_ADD', false);
     commit('DIALOG_UPDATE', false);
-  },
-
-  getActiveTask({getters}) {
-    const task_id = getters['task'].id == 0 || typeof getters['task'].id == 'undefined' ? null : getters['task'].id;
-    let task = getters['tasks']
-      .filter(function(element) {
-        return element.id === task_id;
-      });
-    return task.length > 0 ? task[0] : null;
-  },
-
-  getTimers({getters}, task, onlyActive) {
-    if (onlyActive) {
-      let timers = task.timers
-        .filter(function(element) {
-          if (getters['timer/timerRunningCounter'].timer) {
-            return element.id === getters['timer/timerRunningCounter'].timer.id;
-          }
-        });
-      return timers.length > 0 ? [timer[0]] : [];
-    }
-    return task.timers;
   },
 }
 

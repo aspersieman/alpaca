@@ -49,7 +49,6 @@ export default {
   data: () => ({
     loginSignUpDialog: false
   }),
-  methods: { }
 }
 </script>
 <style scoped lang="scss">

@@ -117,12 +117,10 @@ export default {
       });
 
       self.dropzone.on("complete", function() {
-        self.$store.commit('showSnackbar',{
-          message: "File(s) uploaded successfully.",
-          color: 'success',
-          duration: 3000
+        self.$flash.success({
+          title: 'File upload',
+          message: 'File(s) uploaded successfully.'
         });
-
         self.$eventBus.$emit(EventNames.FILE_UPLOADED);
       });
     },
