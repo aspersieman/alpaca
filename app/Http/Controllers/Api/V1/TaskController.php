@@ -25,7 +25,8 @@ class TaskController extends Controller
    */
   public function index(TaskFilter $filter)
   {
-    $tasks = Task::filter($filter)
+    $tasks = Task::with(['user', 'project', 'notes', 'timers.tagged'])
+      ->filter($filter)
       ->mine()
       ->orderBy('created_at', 'asc')
       ->get();
