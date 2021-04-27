@@ -22,7 +22,7 @@ export function dateTimeFormat(dateTimeValue, format) {
 
 export function padNumber(number) {
   return (number > 9) ? number : "0" + number;
-} 
+}
 
 export function duration(seconds) {
   const hours = Math.floor(seconds / 3600);
@@ -43,8 +43,8 @@ export function secondsToMinutes(seconds, round = true) {
 
 export function dateOnly(dateString) {
   let date = new Date(dateString);
-  date.setHours(0); 
-  date.setMinutes(0); 
+  date.setHours(0);
+  date.setMinutes(0);
   date.setSeconds(0)
   date.setMilliseconds(0);
   return date;

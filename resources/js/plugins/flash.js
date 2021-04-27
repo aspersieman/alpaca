@@ -1,26 +1,25 @@
 const flash = {
-  install(Vue) {
+  install(Vue, { store }) {
     Vue.prototype.$flash = new Vue({
       methods: {
-        success({title, text}) {
-          this.notify({title, text, type: 'success'})
+        success({text}) {
+          this.notify({text, color: 'green'})
         },
-        error({title, text}) {
-          this.notify({title, text, type: 'error'})
+        error({text}) {
+          this.notify({text, color: 'red'})
         },
-        info({title, text}) {
-          this.notify({title, text, type: 'info'})
+        info({text}) {
+          this.notify({text, color: 'grey'})
         },
-        warn({title, text}) {
-          this.notify({title, text, type: 'warn'})
+        warn({text}) {
+          this.notify({text, color: 'orange'})
         },
-        notify({title, text, type}) {
-          this.$notify({
-            group: 'app',
-            title,
-            text,
-            type
-          });
+        notify({text, color}) {
+          store.commit(
+            'flash/showMessage',
+            { text, color },
+            { root: true }
+          );
         }
       }
     })

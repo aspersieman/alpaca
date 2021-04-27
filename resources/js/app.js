@@ -4,7 +4,6 @@ require('@/common/config');
 import Vue from 'vue';
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/dist/vuetify.min.css';
-import Notifications from 'vue-notification';
 
 import router from '@/router/index';
 import store from '@/store';
@@ -24,6 +23,7 @@ import VueProgressBar from 'vue-progressbar';
 import progressBarOptions from '@/plugins/progressbar';
 import shortkey from '@/plugins/shortkey';
 import flash from '@/plugins/flash'
+import overlay from '@/plugins/overlay'
 
 Vue.use(...analytics, router);
 Vue.use(VueProgressBar, progressBarOptions);
@@ -34,8 +34,8 @@ Vue.use(formatters);
 Vue.use(eventBus);
 Vue.use(shortkey);
 Vue.use(Chartkick.use(Chart));
-Vue.use(Notifications);
-Vue.use(flash);
+Vue.use(flash, { store });
+Vue.use(overlay, { store });
 
 new Vue({
   vuetify,

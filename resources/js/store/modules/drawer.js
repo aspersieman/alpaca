@@ -24,7 +24,6 @@ export const actions= {
 // You can use it as a state getter function (probably the best solution)
 export const getters = {
   navigationDrawer: state => state.navigationDrawer,
-
   noteDrawer: state => state.noteDrawer,
 }
 
@@ -35,4 +34,3 @@ export default {
   actions,
   getters
 }
-

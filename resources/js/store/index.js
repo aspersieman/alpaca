@@ -6,9 +6,11 @@ import auth from './modules/auth';
 import chart from './modules/chart';
 import dialog from './modules/dialog';
 import drawer from './modules/drawer';
+import flash from './modules/flash';
 import loader from './modules/loader';
 import menu from './modules/menu';
 import note from './modules/note';
+import overlay from './modules/overlay';
 import task from './modules/task';
 import timer from './modules/timer';
 import user from './modules/user';
@@ -21,9 +23,11 @@ export default new Vuex.Store({
     chart,
     dialog,
     drawer,
+    flash,
     loader,
     menu,
     note,
+    overlay,
     task,
     timer,
     user
