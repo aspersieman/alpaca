@@ -57,6 +57,16 @@ class MenuController extends Controller
         new MenuItem([
           'group_requirements' => [],
           'permission_requirements' => ['superuser'],
+          'label'=>'Notes',
+          'nav_type' => MenuItem::$NAV_TYPE_NAV,
+          'icon'=>'note',
+          'route_type'=>'vue',
+          'route_name'=>'notes',
+          'visible'=>true,
+        ]),
+        new MenuItem([
+          'group_requirements' => [],
+          'permission_requirements' => ['superuser'],
           'label'=>'Reports',
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'query_stats',
