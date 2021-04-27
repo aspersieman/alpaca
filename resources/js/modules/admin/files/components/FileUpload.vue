@@ -118,7 +118,6 @@ export default {
 
       self.dropzone.on("complete", function() {
         self.$flash.success({
-          title: 'File upload',
           message: 'File(s) uploaded successfully.'
         });
         self.$eventBus.$emit(EventNames.FILE_UPLOADED);

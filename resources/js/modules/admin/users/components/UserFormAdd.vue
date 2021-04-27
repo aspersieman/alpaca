@@ -128,7 +128,7 @@
             <v-flex xs12>
               <div class="permissions_container">
                 <v-chip
-                  v-for="(p,k) in permissions" 
+                  v-for="(p,k) in permissions"
                   :key="k"
                   class="white--text"
                   :class="{'green':(p.value==1),'red':(p.value==-1),'blue':(p.value==0)}"
@@ -143,7 +143,7 @@
                   </v-avatar>
                   <v-avatar
                     v-if="p.value==1"
-                    class="green darken-4" 
+                    class="green darken-4"
                     title="Allow"
                   >
                     <v-icon>check_circle</v-icon>
@@ -277,7 +277,6 @@ export default {
       self.$store.commit('showLoader');
       window.axios.post('/api/admin/users',payload).then(function(response) {
         self.$flash.success({
-          title: 'User added',
           text: 'User added successfully'
         });
         self.$eventBus.$emit(EventNames.USER_ADDED);
@@ -289,7 +288,6 @@ export default {
         console.error(error);
         if (error.response) {
           self.$flash.success({
-            title: 'User added',
             text: 'Error adding user'
           });
         }

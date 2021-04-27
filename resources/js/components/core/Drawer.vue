@@ -2,13 +2,13 @@
   <div>
     <v-navigation-drawer
       v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
-      v-bind:value="value"
-      v-on:input="$emit('input', $event)"
       temporary
       absolute
       left
+      :value="value"
+      @input="$emit('input', $event)"
     >
-      <template 
+      <template
         v-if="$auth.check && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
         #prepend
       >
@@ -21,7 +21,7 @@
         </v-list-item>
       </template>
 
-      <v-divider 
+      <v-divider
         v-if="$auth.check && $vuetify.breakpoint.smAndDown"
       />
       <v-list dense>
@@ -41,7 +41,7 @@
           v-for="item of menu"
           :key="item.label"
         >
-          <v-divider 
+          <v-divider
             v-if="item.navType == 'divider'"
             horizontal
           />
@@ -97,7 +97,7 @@ export default {
   components: {
     Avatar
   },
-  mixins: [ 
+  mixins: [
     AvatarMixin,
     AuthenticationMixin
   ],
@@ -107,6 +107,7 @@ export default {
       default: false
     }
   },
+  emits: [ 'input' ],
   data: () => ({
     user: {
       initials: '',
@@ -116,6 +117,9 @@ export default {
   }),
   computed: {
     ...mapGetters('menu', ['menu']),
+  },
+  created() {
+    this.$store.dispatch('menu/getMenu');
   },
   mounted() {
     if (this.$auth.check) {

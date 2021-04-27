@@ -1,9 +1,35 @@
 const eventBus = {
   install(Vue) {
     Vue.prototype.$eventBus = new Vue({
-      methods: { 
+      emits: [
+        'sign-up',
+        'sign-in',
+        'user-registered',
+        'user-logged-in',
+        'user-logged-out',
+        'dashboard-parameters-changed',
+        'tasks-loaded',
+        'task-added',
+        'task-updated',
+        'task-deleted',
+        'task-dialog-add',
+        'task-dialog-update',
+        'timer-added',
+        'timer-updated',
+        'timer-deleted',
+        'timer-dialog-add',
+        'timer-dialog-update',
+        'notes-loaded',
+        'note-added',
+        'note-updated',
+        'note-deleted',
+        'note-drawer-toggle',
+        'note-dialog-add',
+        'note-dialog-update',
+      ],
+      methods: {
         /* Auth */
-        signUp() { 
+        signUp() {
           this.$emit('sign-up');
         },
         signIn() {
@@ -62,6 +88,9 @@ const eventBus = {
         },
 
         /* Notes */
+        notesLoaded() {
+          this.$emit('notes-loaded');
+        },
         noteAdded() {
           this.$emit('note-added');
         },
@@ -70,6 +99,15 @@ const eventBus = {
         },
         noteDeleted() {
           this.$emit('note-deleted');
+        },
+        noteDrawerToggle(state) {
+          this.$emit('note-drawer-toggle', state);
+        },
+        noteDialogAdd(show) {
+          this.$emit('note-dialog-add', show);
+        },
+        noteDialogUpdate(show) {
+          this.$emit('note-dialog-update', show);
         },
       }
     })

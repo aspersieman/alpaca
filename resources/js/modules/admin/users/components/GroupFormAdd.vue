@@ -5,9 +5,9 @@
         <v-icon>groups</v-icon> Create Group
       </v-card-title>
       <v-divider />
-      <v-form 
-        ref="groupFormAdd" 
-        v-model="valid" 
+      <v-form
+        ref="groupFormAdd"
+        v-model="valid"
         lazy-validation
       >
         <v-container grid-list-md>
@@ -165,7 +165,6 @@ export default {
       };
       window.axios.post('/api/admin/groups',payload).then(function() {
         self.$flash.success({
-          title: 'Group added',
           text: 'Group added successfully'
         });
         self.$store.commit('hideLoader');
@@ -176,7 +175,6 @@ export default {
         console.error(error);
         if (error.response) {
           self.$flash.success({
-            title: 'Group added',
             text: 'Error adding group'
           });
         }

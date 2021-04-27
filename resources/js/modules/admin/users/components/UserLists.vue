@@ -100,18 +100,18 @@
                 v-if="header.value=='name'"
                 :class="`text-${header.align}`"
               >
-                <v-icon>mdi-person</v-icon> 
+                <v-icon>mdi-person</v-icon>
                 {{ header.text }}
               </div>
-              <div 
+              <div
                 v-else-if="header.value=='email'"
                 :class="`text-${header.align}`"
               >
-                <v-icon>mdi-email</v-icon> 
+                <v-icon>mdi-email</v-icon>
                 {{ header.text }}
               </div>
-              <div 
-                v-else-if="header.value=='permissions'" 
+              <div
+                v-else-if="header.value=='permissions'"
                 :class="`text-${header.align}`"
               >
                 <v-icon>mdi-vpn_key</v-icon>
@@ -131,7 +131,7 @@
                 <v-icon>mdi-av_timer</v-icon>
                 {{ header.text }}
               </div>
-              <div 
+              <div
                 v-else
                 :class="`text-${header.align}`"
               >
@@ -161,7 +161,7 @@
                     mdi-pencil
                   </v-icon>
                 </v-btn>
-                <v-btn 
+                <v-btn
                   class="ma-1"
                   small
                   outlined
@@ -190,7 +190,7 @@
               </v-btn>
             </td>
             <td>
-              <v-chip 
+              <v-chip
                 v-for="group in item.groups"
                 :key="group.id"
                 outlined
@@ -210,7 +210,7 @@
                 </v-icon>
                 <v-icon
                   v-else
-                  class="grey--text" 
+                  class="grey--text"
                 >
                   error_outline
                 </v-icon>
@@ -234,7 +234,7 @@
           </div>
         </v-card-title>
         <v-card-text>
-          <v-chip 
+          <v-chip
             v-for="(permission,key) in dialogs.showPermissions.items"
             :key="key"
             class="ma-1"
@@ -353,7 +353,6 @@ export default {
         okCb: ()=>{
           window.axios.delete('/api/admin/users/' + user.id).then(function() {
             self.$flash.success({
-              title: 'User deleted',
               text: 'User deleted successfully'
             });
             self.$eventBus.$emit(EventNames.USER_DELETED);
@@ -361,7 +360,6 @@ export default {
             console.error(error);
             if (error.response) {
               self.$flash.error({
-                title: 'User deleted',
                 text: 'Error deleting user'
               });
             }

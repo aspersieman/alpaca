@@ -1,8 +1,8 @@
 <template>
   <div class="llama-background">
-    <v-dialog 
-      v-model="dialog" 
-      max-width="600px" 
+    <v-dialog
+      v-model="dialog"
+      max-width="600px"
       min-width="360px"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -29,23 +29,23 @@
                 <v-form ref="loginForm" v-model="valid" lazy-validation>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field 
-                        v-model="loginEmail" 
-                        :rules="loginEmailRules" 
+                      <v-text-field
+                        v-model="loginEmail"
+                        :rules="loginEmailRules"
                         label="E-mail"
                         required
                       />
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field 
-                        v-model="loginPassword" 
-                        :append-icon="show1?'visibility':'visibility_off'" 
-                        :rules="[rules.required, rules.min]" 
-                        :type="show1 ? 'text' : 'password'" 
-                        name="input-10-1" 
-                        label="Password" 
-                        hint="At least 8 characters" 
-                        counter 
+                      <v-text-field
+                        v-model="loginPassword"
+                        :append-icon="show1?'visibility':'visibility_off'"
+                        :rules="[rules.required, rules.min]"
+                        :type="show1 ? 'text' : 'password'"
+                        name="input-10-1"
+                        label="Password"
+                        hint="At least 8 characters"
+                        counter
                         @click:append="show1 = !show1"
                       />
                     </v-col>
@@ -199,7 +199,6 @@ export default {
           .catch((error) => {
             console.log(error);
             this.$flash.error({
-              title: 'Log in error',
               message: 'Email or password incorrect'
             });
           })

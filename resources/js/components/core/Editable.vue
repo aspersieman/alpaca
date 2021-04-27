@@ -4,30 +4,30 @@
       class="editable-label"
       :class="{ 'editable-label-active': active }"
     >
-      <v-label 
-        v-if="label != ''" 
+      <v-label
+        v-if="label != ''"
       >
         {{ label }}
       </v-label>
     </span>
-    <div 
+    <div
       class="edit-icon"
       @click="handleClick"
     >
-      <div 
-        v-show="editing" 
-        ref="me" 
-        class="editable" 
-        contenteditable 
-        @input.stop="handleInput" 
-        @blur="handleDone" 
-        @keypress.stop="handleKeyPress"  
+      <div
+        v-show="editing"
+        ref="me"
+        class="editable"
+        contenteditable
+        @input.stop="handleInput"
+        @blur="handleDone"
+        @keypress.stop="handleKeyPress"
         v-text="value"
       />
-      <div 
+      <div
         v-if="!editing"
         class="editable"
-        v-text="value" 
+        v-text="value"
       />
     </div>
   </div>
@@ -52,8 +52,9 @@ export default {
       default: false
     }
   },
+  emits: [ 'input' ],
   data() {
-    return { 
+    return {
       editing: false,
       active: false
     }
@@ -63,8 +64,8 @@ export default {
   },
   mounted() {
     let contenteditable = document.querySelector('[contenteditable]')
-    contenteditable.addEventListener('paste', function(e){           
-      // Prevent the default pasting event and stop bubbling            
+    contenteditable.addEventListener('paste', function(e){
+      // Prevent the default pasting event and stop bubbling
       e.preventDefault()
       e.stopPropagation()
       // Get the clipboard data
@@ -111,10 +112,10 @@ export default {
 .editable {
   outline: 1px solid $border-dark-grey;
   padding: 4px;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
   width: 100%;
   height: 100%;
-  min-height: 30px;
+  min-height: 300px;
 }
 .editable-label label {
   font-size: 12px;

@@ -93,7 +93,6 @@ export default {
 
       window.axios.put('/api/admin/file-groups/' + self.propFileGroupId,payload).then(function() {
         self.$flash.success({
-          title: 'File group added',
           message: 'File added successfully'
         });
 
@@ -104,7 +103,6 @@ export default {
         console.error(error);
         if (error.response) {
           self.$flash.error({
-            title: 'File group added',
             message: 'Error adding file group'
           });
         }

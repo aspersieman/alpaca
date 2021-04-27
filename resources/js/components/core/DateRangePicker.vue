@@ -14,7 +14,7 @@
         <v-text-field
           v-model="selected"
           class="date-range-input"
-          label="Date range"
+          :label="label"
           :prepend-icon="getIcon()"
           :clearable="clearable"
           readonly
@@ -56,6 +56,11 @@ export default {
       required: false,
       type: Boolean,
       default: false
+    },
+    label: {
+      required: false,
+      type: String,
+      default: "Date range"
     }
   },
   data() {

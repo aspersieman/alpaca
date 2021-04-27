@@ -78,7 +78,6 @@ export default {
 
       window.axios.post('/api/admin/file-groups',payload).then(function() {
         self.$flash.success({
-          title: 'File group added',
           message: 'File roup added successfully'
         });
 
@@ -91,7 +90,6 @@ export default {
         console.error(error);
         if (error.response) {
           self.$flash.error({
-            title: 'File group added',
             message: 'Error adding file group'
           });
         }

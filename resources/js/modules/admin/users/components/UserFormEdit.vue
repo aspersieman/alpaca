@@ -19,7 +19,7 @@
               xs12
               sm6
             >
-              <v-text-field 
+              <v-text-field
                 v-model="name"
                 label="First Name"
                 :rules="nameRules"
@@ -36,7 +36,7 @@
               />
             </v-flex>
             <v-flex xs12>
-              <v-text-field 
+              <v-text-field
                 v-model="password"
                 label="Password (Leave blank if unchange)"
                 type="password"
@@ -115,7 +115,7 @@
                 <v-chip
                   v-for="(p,k) in permissions"
                   :key="k"
-                  close 
+                  close
                   class="white--text"
                   :class="{'green':(p.value==1),'red':(p.value==-1),'blue':(p.value==0)}"
                   @click:close="removePermission(k)"
@@ -268,7 +268,6 @@ export default {
 
       window.axios.put('/api/admin/users/'+self.propUserId,payload).then(function() {
         self.$flash.success({
-          title: 'User added',
           text: 'User added successfully'
         });
         self.$eventBus.$emit(EventNames.USER_UPDATED);
@@ -276,7 +275,6 @@ export default {
         console.error(error);
         if (error.response) {
           self.$flash.error({
-            title: 'User added',
             text: 'Error adding user'
           });
         }

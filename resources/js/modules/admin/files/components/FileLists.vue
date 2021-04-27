@@ -49,7 +49,7 @@
                   mdi-magnify
                 </v-icon>
               </v-btn>
-              <v-btn 
+              <v-btn
                 icon
                 small
                 @click="trash(props.item)"
@@ -88,7 +88,7 @@
           <v-btn
             icon
             dark
-            @click.native="dialogs.view.show = false" 
+            @click.native="dialogs.view.show = false"
           >
             <v-icon>close</v-icon>
           </v-btn>
@@ -236,7 +236,6 @@ export default {
         okCb: ()=>{
           window.axios.delete('/api/admin/files/' + file.id).then(function() {
             self.$flash.success({
-              title: 'File deleted',
               text: 'File deleted successfully'
             });
 
@@ -248,7 +247,6 @@ export default {
           }).catch(function (error) {
             console.error(error);
             self.$flash.success({
-              title: 'File deleted',
               text: 'Error deleting file'
             });
           });

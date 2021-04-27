@@ -28,6 +28,8 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::post('tasks/{id}/timers/stop', 'TimerController@stop');
   Route::get('tasks/timers/running', 'TimerController@running');
 
+  Route::apiResource('notes', 'NoteController');
+
   Route::post('charts/byday', 'ChartController@byDay');
   Route::post('charts/bytag', 'ChartController@byTag');
   Route::post('charts/bytimer', 'ChartController@byTimer');
