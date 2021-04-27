@@ -12,6 +12,13 @@ const mix = require('laravel-mix');
  */
 
 mix.disableSuccessNotifications();
+mix
+    .js('resources/js/app.js', 'public/js')
+    .vue()
+    .copyDirectory('resources/img', 'public/img')
+    .copyDirectory('resources/fonts', 'public/fonts')
+    .sass('resources/sass/index.scss', 'public/css')
+    .sourceMaps();
 
 mix.webpackConfig({
   resolve: {
@@ -20,11 +27,3 @@ mix.webpackConfig({
     }
   }
 });
-
-mix
-  .js('resources/js/app.js', 'public/js')
-  .copyDirectory('resources/img', 'public/img')
-  .copyDirectory('resources/fonts', 'public/fonts')
-  .sass('resources/sass/index.scss', 'public/css')
-  .extract(['vue', 'vue-router', 'vue-shortkey', 'moment', 'axios', 'lodash', 'dropzone'])
-  .sourceMaps();
