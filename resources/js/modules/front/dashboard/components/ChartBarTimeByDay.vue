@@ -63,10 +63,10 @@
       </v-container>
     </v-card>
     <v-card-text class="py-0">
-      <column-chart 
+      <column-chart
         xtitle="Date"
         ytitle="Time logged"
-        :download="true" 
+        :download="true"
         :data="chartByDayData"
       />
     </v-card-text>

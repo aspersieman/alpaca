@@ -99,7 +99,7 @@ export const actions = {
           days.forEach(day => {
             let formattedDay = dateTimeFormat(day[0], "ddd, D MMM")
             totalDuration += parseInt(day[1]);
-            chartData.push([formattedDay, secondsToMinutes(day[1]) + " minutes"]);
+            chartData.push([formattedDay, secondsToMinutes(day[1])]);
           });
           let totalTime = duration(totalDuration);
           commit('CHART_BY_DAY_DATA', chartData);
