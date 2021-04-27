@@ -171,6 +171,8 @@ after('deploy:failed', 'artisan:up');
 after('cleanup', 'artisan:up');
 before('artisan:view:cache', 'set_version');
 after('deploy:symlink', 'artisan:migrate');
+after('deploy:update_code', 'build');
+after('build', 'upload');
 
 // Migrate database before symlink new release.
 before('deploy:prepare', 'artisan:down');
