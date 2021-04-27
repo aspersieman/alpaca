@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\FilterTrait;
 
 class Note extends Model
 {
+  use FilterTrait;
   /**
    * {@inheritDoc}
    */
@@ -34,6 +36,17 @@ class Note extends Model
   public function task()
   {
     return $this->belongsTo(Task::class);
+  }
+
+  /**
+   * Get my notes
+   *
+   * @param  \Illuminate\Database\Eloquent\Builder $query
+   * @return \Illuminate\Database\Eloquent\Builder
+   */
+  public function scopeMine($query)
+  {
+    return $query->whereUserId(auth()->user()->id);
   }
 
   public static function put($id, $data)
