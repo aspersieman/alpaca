@@ -3,8 +3,8 @@
     id="mainAppBar"
     ref="mainAppBar"
   >
-    <v-app-bar 
-      app 
+    <v-app-bar
+      app
       light
       clipped-left
       clipped-right
@@ -16,9 +16,9 @@
       <router-link to="/">
         <v-img
           src="/img/logo/logo-and-alpaca-text-primary-button.png"
-          class="mr-5"
-          contain
+          :class="{ 'mr-5': $vuetify.breakpoint.mdAndUp }"
           height="48"
+          contain
         />
       </router-link>
       <v-container class="mx-auto py-0 main-container">
@@ -63,10 +63,10 @@
             dark
             title="Add new Task"
             icon="add"
-            @shortkey="taskDialogAdd()" 
+            @shortkey="taskDialogAdd()"
             @click="taskDialogAdd()"
           >
-          New task
+            New task
           </base-btn-primary>
           <timer-running />
           <v-btn
@@ -82,7 +82,7 @@
         <task-dialog @taskAdded="snackbar=true" />
         <timer-dialog @timerAdded="snackbar=true" />
       </v-container>
-      <avatar 
+      <avatar
         v-if="$auth.check"
         class="d-none d-sm-flex"
       />
@@ -93,11 +93,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import CoreDrawer from '@/components/core/Drawer.vue';
-import TimerRunning from '@/components/timer/TimerRunning';
+import TimerRunning from '@/modules/front/tasks/components/timer/TimerRunning';
 import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
-import TimerDialog from '@/modules/front/tasks/components/TimerDialog';
+import TimerDialog from '@/modules/front/tasks/components/timer/TimerDialog';
 import Avatar from '@/components/core/Avatar';
 import TaskMixin from '@/mixins/TaskMixin';
+import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   name: 'CoreAppBar',
@@ -108,17 +109,20 @@ export default {
     TimerDialog,
     Avatar
   },
-  mixins: [ 
-    TaskMixin
+  mixins: [
+    TaskMixin,
+    NoteMixin
   ],
-  computed: {
-    ...mapGetters('menu', ['menu'])
-  },
   data: () => ({
     drawer: false,
   }),
-  mounted() {
-    this.$store.dispatch('menu/getMenu');
+  computed: {
+    ...mapGetters('menu', ['menu'])
+  },
+  created() {
+    this.getTasks().then(() => {
+      this.getNotes();
+    });
   },
   methods: {
     onClick (e, item) {
@@ -128,7 +132,7 @@ export default {
     },
     taskDialogAdd() {
       this.$eventBus.taskDialogAdd(true);
-    }
+    },
   },
 }
 </script>
@@ -136,7 +140,7 @@ export default {
 .toolbar-title {
   width: 100px;
   min-width: 100px;
-} 
+}
 .main-container {
   margin-left: unset !important;
 }
