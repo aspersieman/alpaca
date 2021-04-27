@@ -20,7 +20,7 @@ class Task extends Model
   /**
    * {@inheritDoc}
    */
-  protected $with = ['user', 'project', 'timers.tagged'];
+  protected $with = [];
 
   const STATUSES = [
     'complete',
@@ -96,30 +96,6 @@ class Task extends Model
     return Task::withTrashed()
       ->where('id', $id)
       ->update(['status' => $status]);
-  }
-
-  /**
-   * Update name
-   *
-   * @return \Illuminate\Database\Eloquent\Relations\HasMany
-   */
-  public static function name($id, $name)
-  {
-    return Task::withTrashed()
-      ->where('id', $id)
-      ->update(['name' => $name]);
-  }
-
-  /**
-   * Update priority
-   *
-   * @return \Illuminate\Database\Eloquent\Relations\HasMany
-   */
-  public static function priority($id, $priority)
-  {
-    return Task::withTrashed()
-      ->where('id', $id)
-      ->update(['priority' => $priority]);
   }
 
   public static function put($id, $data)
