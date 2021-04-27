@@ -6,7 +6,7 @@
  * EXAMPLE: export DEP_USER=username && ./vendor/bin/dep deploy --tag=1.0.3 --env=true // this will deploy 1.0.3 and install your local .env file on the destination server
  *
  * NOTE:
- *  - If you want to install your local .env file add the --env parameter. If a .env file isn't found on the shared folder on the deploy target this deployment will fail 
+ *  - If you want to install your local .env file add the --env parameter. If a .env file isn't found on the shared folder on the deploy target this deployment will fail
  *  - If you want more output append the param -vvv
  *
  * Setup:
@@ -45,13 +45,13 @@ set('application', 'alpaca');
 set('repository', 'git@github.com:aspersieman/alpaca.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
-set('git_tty', true); 
+set('git_tty', true);
 
-// Shared files/dirs between deploys 
+// Shared files/dirs between deploys
 add('shared_files', [ '.env' ]);
 add('shared_dirs', [ ]);
 
-// Writable dirs by web server 
+// Writable dirs by web server
 add('writable_dirs', []);
 set('allow_anonymous_stats', false);
 
@@ -111,6 +111,17 @@ task('deploy:release', function () {
   if (isset($releasesList[1])) {
     set('previous_release', "{{deploy_path}}/releases/{$releasesList[1]}");
   }
+});
+
+desc("Build resources");
+task('build', function () {
+  run('npm install');
+  run('npm run production');
+})->local();
+
+desc("Upload resources");
+task('upload', function () {
+  upload(__DIR__ . "/public", '{{release_path}}');
 });
 
 desc('Installing vendors');
