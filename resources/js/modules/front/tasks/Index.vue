@@ -4,10 +4,10 @@
     <v-container class="my-2">
       <v-row>
         <v-col
-          class="mb-3" 
+          class="mb-3"
         >
-          <v-layout 
-            row 
+          <v-layout
+            row
             wrap
           >
             <v-avatar>
@@ -19,9 +19,9 @@
               Tasks
             </h1>
           </v-layout>
-          <v-layout 
+          <v-layout
             v-if="$vuetify.breakpoint.mdAndUp"
-            row 
+            row
             wrap
           >
             <h4 class="subheading grey--text ml-4">
@@ -33,7 +33,7 @@
           class="filter-toggle-container"
         >
           <span
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
+            v-if="$auth.check && $vuetify.breakpoint.smAndDown"
           >
             <v-badge
               :content="filtersCount"
@@ -64,14 +64,14 @@
         </v-col>
       </v-row>
       <v-fade-transition leave-absolute>
-        <v-layout 
+        <v-layout
           v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
-          row 
-          class="mb-1 mt-1 " 
+          row
+          class="mb-1 mt-1 "
           wrap
           transition="scroll-y-transition"
         >
-          <v-btn 
+          <v-btn
             v-shortkey.once="['ctrl', 'alt', '/']"
             style="display: none;"
             @shortkey="searchFocus()"
@@ -88,11 +88,8 @@
             class="search-input"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
             type="text"
-          >
-            <v-icon slot="prepend">
-              search
-            </v-icon>
-          </v-text-field>
+            prepend-icon="search"
+          />
           <v-combobox
             v-model="status"
             outlined
@@ -122,9 +119,10 @@
               </v-chip>
             </template>
           </v-combobox>
-          <date-range-picker 
+          <date-range-picker
             v-model="dates"
             class="search-input"
+            :label="dateRangeLabel"
             :value="dates"
             :clearable="clearable"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
@@ -170,14 +168,10 @@
             justify-center
           >
             <v-layout
-              column 
+              column
               align-center
             >
               <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here </span>
-              <v-img 
-                src="img/logo/llama_emoji.png" 
-                width="120px"
-              />
               <v-btn
                 text
                 color="primary"
@@ -191,14 +185,18 @@
           <task
             v-for="(task, index) in searchTasks"
             :key="index"
-            :task="task" 
+            :task="task"
           />
           <v-btn
-            v-if="$store.getters.isLoggedIn && $vuetify.breakpoint.smAndDown"
+            v-if="$auth.check && $vuetify.breakpoint.smAndDown"
             fab
-            dark
             small
-            class="task-add-button-mobile primary hidden-lg-and-up"
+            dark
+            fixed
+            bottom
+            right
+            color="primary"
+            class="task-add-button-mobile hidden-lg-and-up mr-12"
             @click="openTaskDialog()"
           >
             <v-icon>add</v-icon>
@@ -211,7 +209,7 @@
 
 <script>
 import Task from './components/Task';
-import NoteDrawer from '@/components/notes/NoteDrawer';
+import NoteDrawer from '@/modules/front/notes/components/NoteDrawer';
 import DateRangePicker from '@/components/core/DateRangePicker';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
@@ -222,7 +220,7 @@ export default {
     NoteDrawer,
     DateRangePicker
   },
-  mixins: [ 
+  mixins: [
     TaskMixin,
     TimerMixin
   ],
@@ -247,6 +245,7 @@ export default {
         'overdue'
       ],
       dates: [],
+      dateRangeLabel: "Due date range",
       showFilters: false,
       sort: '',
       sortList: [
@@ -317,23 +316,21 @@ export default {
   },
   mounted() {
     const self = this;
-    self.getTasksSettings();
+    this.$nextTick(function () {
+      self.getTasksSettings();
+    });
     self.$eventBus.$on(['task-added', 'task-updated', 'timer-added', 'timer-updated', 'timer-deleted', 'note-deleted'],()=>{
-      self.getTasks();  
+      self.getTasks();
     });
     self.$eventBus.$on(['tasks-loaded'],()=>{
-      self.sortTasks();  
+      self.sortTasks();
     });
     self.$eventBus.$on(['task-deleted'], ()=> {
       self.tasks = self.tasks
         .filter(function(element) {
-          return element.id !== self.$store.state.task.id;
+          return element.id !== self.$store.getters['task']?.id;
         });
     });
-  },
-  created() {
-    this.getTasksSettings();
-    this.getTasks();
   },
   methods: {
     searchFocus() {
@@ -411,6 +408,8 @@ export default {
     },
 
     sortTasks() {
+      console.log(this.sort);
+      this.tasks = this.$store.getters['task/tasks'];
       switch (this.sort) {
         case 'Due date':
           this.tasks.sort((a, b) => {
@@ -432,7 +431,7 @@ export default {
           this.tasks.sort((a, b) => a.status.localeCompare(b.status));
           break;
         case 'id':
-          this.tasks.sort((a, b) => a.status.localeCompare(b.status));
+          this.tasks.sort((a, b) => a.id.localeCompare(b.id));
           break;
         default:
           this.tasks.sort((a, b) => {
@@ -444,6 +443,7 @@ export default {
           });
           break;
       }
+      this.$store.commit('task/TASKS', this.tasks);
       this.setTasksSettings();
     }
   }
@@ -478,15 +478,6 @@ export default {
 
 .search-input {
   margin-left: 5px;
-}
-
-.task-add-button-mobile {
-  bottom: 10px;
-  right: 0;
-  position: sticky;
-  margin-left: 10px;
-  float: right;
-  z-index: 10;
 }
 
 .filter-toggle-container {

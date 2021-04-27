@@ -105,9 +105,9 @@
                   v-model="startTimeMenu"
                   :close-on-content-click="false"
                   :nudge-right="40"
-                  :return-value.sync="startTime"
                   transition="scale-transition"
                   offset-y
+                  @update:name="val => startTime = val"
                 >
                   <template #activator="{ on, attrs }">
                     <v-text-field
@@ -287,4 +287,3 @@ export default {
 </script>
 <style scoped>
 </style>
-

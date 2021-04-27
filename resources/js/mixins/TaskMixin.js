@@ -17,17 +17,15 @@ export default {
           .then(() =>{
             this.$eventBus.taskAdded();
             this.$flash.success({
-              title: 'Task added',
               text: 'Task added successfully'
             });
             this.getTasks();
             resolve()
           })
           .catch(error => {
-            const message = error.response.data.message || 'ERROR';
+            const message = error?.response?.data?.message || 'ERROR';
             console.error(message);
             this.$flash.error({
-              title: 'Error',
               text: 'Error adding task'
             });
             reject(error);
@@ -39,9 +37,8 @@ export default {
       return new Promise((resolve, reject) => {
         this.$store.dispatch('task/updateTask', payload)
           .then(() =>{
-            this.$flash.success({
-              title: 'Task updated',
-              text: 'Task updated successfully'
+            this.text.success({
+              content: 'Task updated successfully'
             });
             this.getTasks();
             this.$eventBus.taskUpdated();
@@ -51,14 +48,13 @@ export default {
             const message = error.response.data.message || 'ERROR';
             console.error(message);
             this.$flash.error({
-              title: 'Error',
               text: 'Error updating task'
             });
             reject(error);
           });
       });
     },
-    
+
     deleteTask(taskId) {
       this.$store.dispatch('dialog/dialogShow',{
         type: 'confirm',
@@ -71,7 +67,6 @@ export default {
               .then(({data}) => {
                 this.getTasks();
                 this.$flash.success({
-                  title: 'Task deleted',
                   text: 'Task deleted successfully'
                 });
                 this.$eventBus.taskDeleted();
@@ -80,7 +75,6 @@ export default {
               }).catch((error) => {
                 console.error(error)
                 this.$flash.error({
-                  title: 'Task deleted',
                   text: 'Error occurred deleting task'
                 });
                 this.$store.dispatch('dialog/dialogHide');
@@ -95,8 +89,8 @@ export default {
     },
 
     getTaskActive() {
-      const task_id = this.$store.getters['task/task'].id == 0 
-        || typeof this.$store.getters['task/task'].id == 'undefined' 
+      const task_id = this.$store.getters['task/task'].id == 0
+        || typeof this.$store.getters['task/task'].id == 'undefined'
         ? null : this.$store.getters['task/task'].id;
       let task = this.$store.getters['task/tasks']
         .filter(function(element) {

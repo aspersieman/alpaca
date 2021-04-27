@@ -3,9 +3,9 @@
     <v-container>
       <v-row>
         <v-col>
-          <v-card 
-            text 
-            flat 
+          <v-card
+            text
+            flat
           >
             <div
               :class="showTimerForTask(task, timer) ? 'active-timer' : ''"
@@ -14,7 +14,7 @@
                 row
                 wrap
               >
-                <v-flex 
+                <v-flex
                   xs1
                   sm1
                   md1
@@ -44,7 +44,7 @@
                   md4
                   lg4
                 >
-                  <div 
+                  <div
                     :class="{'mt-0 mx-0 px-0': $vuetify.breakpoint.smAndDown}"
                   >
                     <v-chip
@@ -62,10 +62,10 @@
                   xs4
                   sm3
                   md3
-                  lg3 
+                  lg3
                   class="fs-90"
                 >
-                  <v-layout 
+                  <v-layout
                     v-if="showTimerForTask(task, timer)"
                     row
                   >
@@ -75,18 +75,18 @@
                       {{ $store.getters['timer/timerRunning'].title }}
                     </v-flex>
                     <v-flex class="horizontal-center">
-                      <v-btn 
+                      <v-btn
                         disabled
                         icon
                       />
-                      <v-btn 
-                        v-if="showTimerForTask(task, timer)" 
-                        icon 
+                      <v-btn
+                        v-if="showTimerForTask(task, timer)"
+                        icon
                         @click="stopTimer()"
                       >
                         <v-tooltip bottom>
                           <template #activator="{ on }">
-                            <v-icon 
+                            <v-icon
                               class="timer-stop"
                               v-on="on"
                             >
@@ -98,8 +98,8 @@
                       </v-btn>
                     </v-flex>
                   </v-layout>
-                  <v-layout 
-                    v-else 
+                  <v-layout
+                    v-else
                     row
                   >
                     <v-flex
@@ -115,7 +115,7 @@
                       {{ timerDuration(timer) }}
                     </v-flex>
                     <v-flex class="horizontal-center">
-                      <v-btn 
+                      <v-btn
                         icon
                         @click="deleteTimer(task, timer)"
                       >
@@ -182,10 +182,10 @@ export default {
         return {
           id: null,
           name: null,
-          task_id: null, 
+          task_id: null,
           user_id: null,
           started_at: null,
-          stopped_at: null, 
+          stopped_at: null,
           duration: 0,
           created_at: null,
           updated_at: null
@@ -203,7 +203,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../../../sass/index";
+@import "../../../../../../sass/index";
 
 .active-timer {
   padding-right: 6px;

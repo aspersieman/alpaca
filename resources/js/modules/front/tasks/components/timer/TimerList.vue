@@ -1,9 +1,9 @@
 <template>
-  <div 
+  <div
     v-if="getTaskTimers(task, onlyActive).length > 0"
-  > 
-    <timer 
-      v-for="timer in getTaskTimers(task, onlyActive)" 
+  >
+    <timer
+      v-for="timer in getTaskTimers(task, onlyActive)"
       :key="timer.id"
       :timer="timer"
       :task="task"
@@ -54,6 +54,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../../../sass/index";
+@import "../../../../../../sass/index";
 </style>
-

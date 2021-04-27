@@ -6,7 +6,6 @@
     persistent
     :fullscreen="$vuetify.breakpoint.xs"
     :retain-focus="false"
-    :loading="loading"
   >
     <v-card>
       <v-card-title class="grey--text">
@@ -90,7 +89,7 @@
                   v-bind="data.attrs"
                   :input-value="data.selected"
                   :disabled="data.disabled"
-                  :class="`status ${data.item}`"
+                  :class="`uppercase status ${data.item}`"
                   @click:close="data.parent.selectItem(data.item)"
                 >
                   {{ data.item }}
@@ -115,7 +114,7 @@
                       wrap
                       class="border-top"
                     >
-                      <v-flex 
+                      <v-flex
                         xs1
                         sm1
                         md1
@@ -145,12 +144,13 @@
                         xs4
                         sm3
                         md3
-                        lg3 
+                        lg3
                         class="horizontal-center fs-90 strong total-timer-time"
                       >
                         {{ getTaskTotalTime(task) }}
                       </v-flex>
-                      <v-layout row
+                      <v-layout
+                        row
                       >
                         <v-flex
                           class="horizontal-center fs-90"
@@ -214,7 +214,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import TimerList from '@/modules/front/tasks/components/TimerList';
+import TimerList from '@/modules/front/tasks/components/timer/TimerList';
 import moment from 'moment';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
@@ -223,7 +223,7 @@ export default {
   components: {
     TimerList
   },
-  mixins: [ 
+  mixins: [
     TaskMixin,
     TimerMixin
   ],
@@ -297,8 +297,12 @@ export default {
           priority: this.priority.id,
           status: this.status,
         };
+        this.$overlay.show({ show: true });
         this.saveTask(task)
-          .then(this.close());
+          .then(() => {
+            this.close();
+            this.$overlay.show({ show: false });
+          });
       }
     },
     update() {
@@ -308,7 +312,7 @@ export default {
           name: this.name,
           due: this.due,
           priority: this.priority.id,
-          status: 'ongoing',
+          status: this.status,
         };
         this.updateTask(task)
           .then(this.close());
@@ -344,24 +348,6 @@ export default {
 <style scoped lang="scss">
 @import "../../../../../sass/index";
 @import "../../../../../sass/_variables";
-.v-list {
-  text-transform: uppercase;
-}
-.theme--light.v-chip.status {
-  text-transform: uppercase;
-}
-.theme--light.v-chip.status.complete {
-  color: white;
-  background-color: $task-status-complete;
-}
-.theme--light.v-chip.status.ongoing {
-  color: white;
-  background-color: $task-status-ongoing;
-}
-.theme--light.v-chip.status.overdue {
-  color: white;
-  background-color: $task-status-overdue;
-}
 .strong {
   font-weight: bold;
 }

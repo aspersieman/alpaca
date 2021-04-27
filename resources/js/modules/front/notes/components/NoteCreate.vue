@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import NotesMixin from '../../mixins/NotesMixin';
+import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
-  mixins: [ NotesMixin ],
+  mixins: [ NoteMixin ],
   data() {
     return { };
   },
@@ -21,7 +21,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-@import "../../../sass/index";
+@import "../../../../../sass/index";
 .drawer-buttons {
   width: 100%;
   border-top: 1px solid $border-light-grey;

@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="task-container"
   >
     <v-card
@@ -24,7 +24,7 @@
             Task Title
           </div>
           <div
-            v-if="!editMode" 
+            v-if="!editMode"
             :class="{'mt-0 mb-1': $vuetify.breakpoint.smAndDown}"
           >
             <div class="ellipsis ml-2">
@@ -72,7 +72,7 @@
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
           md2
-          lg2 
+          lg2
           class="pt-0"
         >
           <div
@@ -93,7 +93,7 @@
           xs3
           sm3
           md2
-          lg2 
+          lg2
           class="pt-0"
         >
           <div class="mt-0 pt-0">
@@ -123,7 +123,7 @@
               @click="taskDialogUpdate(task);"
             >
               <v-tooltip bottom>
-                <template 
+                <template
                   #activator="{ on }"
                 >
                   <v-icon v-on="on">
@@ -293,16 +293,15 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import TimerList from '@/modules/front/tasks/components/TimerList';
+import TimerList from '@/modules/front/tasks/components/timer/TimerList';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
-import EventNames from '@/common/EventNames';
 
 export default {
   components: {
     TimerList
   },
-  mixins: [ 
+  mixins: [
     TaskMixin,
     TimerMixin
   ],
@@ -322,9 +321,6 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters('timer', ['isTimerRunning'])
-  },
   data() {
     return {
       newValues: [],
@@ -333,12 +329,14 @@ export default {
       onlyActive: true
     }
   },
+  computed: {
+    ...mapGetters('timer', ['isTimerRunning'])
+  },
   methods: {
     openNoteDrawer() {
-      const self = this;
-      self.$store.commit('setNotes', self.task.notes);
-      self.$store.commit('setSelectedTask', self.task);
-      self.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, true);
+      this.$store.commit('note/NOTES', this.task.notes);
+      this.$store.commit('task/TASK', this.task);
+      this.$eventBus.noteDrawerToggle(true);
     },
     countNotes(task) {
       return task?.notes?.length > 0 ? task?.notes?.length : '';
@@ -364,56 +362,25 @@ export default {
   background-color: $theme-light-background;
   border-bottom: 1px solid $border-light-grey;
 }
-
-.task.complete {
-  border-left: 4px solid $task-status-complete;
-}
-
-.task.ongoing {
-  border-left: 4px solid $task-status-ongoing;
-}
-
-.task.overdue {
-  border-left: 4px solid $task-status-overdue;
-}
-
 .task button.status {
   min-width: 88px;
   height: 28px;
 }
-
-.theme--light.v-btn:not(.v-btn--icon).complete {
-  background-color: $task-status-complete;
+.task.complete {
+  border-left: 4px solid $task-status-complete;
 }
-
-.theme--light.v-btn:not(.v-btn--icon).ongoing {
-  background-color: $task-status-ongoing;
+.task.ongoing {
+  border-left: 4px solid $task-status-ongoing;
 }
-
-.theme--light.v-btn:not(.v-btn--icon).overdue {
-  background-color: $task-status-overdue;
+.task.overdue {
+  border-left: 4px solid $task-status-overdue;
 }
-
-.theme--light.v-btn.complete {
-  color: $task-status-complete;
-}
-
-.theme--light.v-btn.ongoing {
-  color: $task-status-ongoing;
-}
-
-.theme--light.v-btn.overdue {
-  color: $task-status-overdue;
-}
-
 .transparent {
   background-color: transparent;
 }
-
 .align-right {
   text-align: right;
 }
-
 .row {
   margin: 0px;
 }

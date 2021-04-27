@@ -9,7 +9,6 @@ export default {
                 this.$store.dispatch('task/getTasks');
               });
             this.$flash.success({
-              title: 'Timer added',
               text: 'Timer added successfully'
             });
             this.$eventBus.timerAdded();
@@ -17,7 +16,6 @@ export default {
           }).catch(error => {
             console.error(error);
             this.$flash.error({
-              title: 'Error',
               text: 'Error adding timer'
             });
             reject(error);
@@ -30,7 +28,6 @@ export default {
         this.$store.dispatch('timer/updateTimer', payload)
           .then(() =>{
             this.$flash.success({
-              title: 'Timer updated',
               text: 'Timer updated successfully'
             });
             this.$store.dispatch('task/getTasks');
@@ -40,7 +37,6 @@ export default {
           .catch((error) => {
             console.error(message);
             this.$flash.error({
-              title: 'Error',
               text: 'Error updating timer'
             });
             reject(error);
@@ -62,7 +58,6 @@ export default {
                   return element.id !== timer.id;
                 });
                 this.$flash.success({
-                  title: 'Timer deleted',
                   text: data.data.message,
                 });
                 this.$store.dispatch('task/getTasks');
@@ -72,7 +67,6 @@ export default {
               }).catch((error) => {
                 console.error(error)
                 this.$flash.error({
-                  title: 'Timer deleted',
                   text: 'Error occurred deleting timer'
                 });
                 this.$store.dispatch('dialog/dialogHide');
@@ -98,7 +92,6 @@ export default {
           }).catch(error => {
             console.error(error);
             this.$flash.error({
-              title: 'Error',
               text: 'Error stopping timer'
             });
             reject(error);

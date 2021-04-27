@@ -3,6 +3,7 @@
     v-model="dialog"
     max-width="600px"
     width="100%"
+    persistent
     scrollable
     :fullscreen="$vuetify.breakpoint.xs || fullscreen"
   >
@@ -10,7 +11,7 @@
       class="maximise-button text-right"
       :class="{ 'maximise-button-normal': !fullscreen, 'maximise-button-maximised': fullscreen }"
     >
-      <v-btn 
+      <v-btn
         v-if="!$vuetify.breakpoint.xs"
         ref="maximiseButton"
         class="text-sm-caption text-right"
@@ -56,7 +57,7 @@
         />
         <editable
           v-model="content"
-          label="Content" 
+          label="Content"
           only-edit.sync="onlyEdit"
         />
       </v-card-text>
@@ -68,7 +69,7 @@
           class="success mx-0 mt-3"
           :loading="loading"
           :disabled="loading"
-          @click="createNote()"
+          @click="save()"
         >
           Add note
         </v-btn>
@@ -78,7 +79,7 @@
           class="success mx-0 mt-3"
           :loading="loading"
           :disabled="loading"
-          @click="changeNote(note)"
+          @click="update(note)"
         >
           Update note
         </v-btn>
@@ -97,15 +98,14 @@
 
 <script>
 
-import EventNames from '../../common/EventNames';
-import NotesMixin from '../../mixins/NotesMixin';
-import TaskMixin from '../../mixins/TaskMixin';
-import Editable from '../../components/core/Editable';
+import NoteMixin from '@/mixins/NoteMixin';
+import TaskMixin from '@/mixins/TaskMixin';
+import Editable from '@/components/core/Editable';
 
 export default {
   components: { Editable },
-  mixins: [ 
-    NotesMixin, 
+  mixins: [
+    NoteMixin,
     TaskMixin
   ],
   data() {
@@ -127,26 +127,25 @@ export default {
   },
   created() {
     const self = this;
-    this.$eventBus.$on(EventNames.NOTE_ADD_DIALOG, (value) => {
+    this.$eventBus.$on('note-dialog-add', (value) => {
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
-      self.subtitle = self.getActiveTask().name || '';
+      self.subtitle = self.$store.getters['task/task']?.name || '';
     });
-    self.$eventBus.$on(EventNames.NOTE_UPDATE_DIALOG, (value) => {
+    self.$eventBus.$on('note-dialog-update', (value) => {
       self.formReset();
       self.dialog = value;
-      self.note = self.$store.state.note;
+      self.note = self.$store.getters['note/note'];
       self.name = self.note.name;
       self.content = self.note.content;
-      self.subtitle = self.getActiveTask().name || '';
+      self.subtitle = self.$store.getters['task/task']?.name || '';
       self.mode = 'UPDATE';
     });
-    self.$eventBus.$on([ EventNames.NOTE_ADDED, EventNames.NOTE_UPDATED ], (value) => {
+    self.$eventBus.$on([ 'note-added', 'note-updated' ], (value) => {
       self.formReset();
       self.dialog = value || false;
       this.loading = false;
-      this.close();
     });
   },
   methods: {
@@ -168,21 +167,26 @@ export default {
         content: ''
       };
     },
-    createNote() {
+    save() {
       if (this.name != '' && this.content != '') {
         this.loading = true;
         const name = this.name;
         const content = this.content;
-        const task_id = this.$store.state.task.id == 0 || typeof this.$store.state.task.id == 'undefined' ? null : this.$store.state.task.id;
+        const task_id = this.$store.getters['task/task'].id == 0 || typeof this.$store.getters['task/task'].id == 'undefined' ? null : this.$store.getters['task/task'].id;
         const note = {
           task_id,
           name,
           content,
         };
-        this.addNote(note);
+        this.$overlay.show({ show: true });
+        this.saveNote(note)
+          .then(() => {
+            this.$overlay.show({ show: false });
+            this.close();
+          });
       }
     },
-    changeNote() {
+    update() {
       if (this.name != '' && this.content != '') {
         this.loading = true;
         const noteUpdate = {
@@ -190,7 +194,12 @@ export default {
           name: this.name,
           content: this.content,
         };
-        this.updateNote(noteUpdate);
+        this.$overlay.show({ show: true });
+        this.updateNote(noteUpdate)
+          .then(() => {
+            this.$overlay.show({ show: false });
+            this.close();
+          });
       }
     },
     maximise() {

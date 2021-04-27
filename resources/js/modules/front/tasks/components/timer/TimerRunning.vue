@@ -12,10 +12,12 @@
             v-bind="attrs"
             v-on="on"
           >
-            Running Timer
-            <v-icon>
-              access_time
-            </v-icon>
+            <core-clock />
+            <span
+              v-if="$vuetify.breakpoint.mdAndUp"
+            >
+              Running Timer
+            </span>
           </v-btn>
           <span
             class="hidden-md-and-down"
@@ -65,9 +67,13 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import TimerMixin from '../../mixins/TimerMixin';
+import TimerMixin from '@/mixins/TimerMixin';
+import CoreClock from '@/components/core/Clock';
 
 export default {
+  components: {
+    CoreClock
+  },
   mixins: [ TimerMixin ],
   computed: {
     taskName: function() {
@@ -91,7 +97,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../sass/index";
+@import "../../../../../../sass/index";
 
 .timer-button {
   background-color: $active-green !important;
@@ -104,4 +110,3 @@ export default {
   border-radius: 4px;
 }
 </style>
-

@@ -1,95 +1,88 @@
 import {
-    saveTask,
-    updateTask,
-    deleteTask,
-    getTasks,
-    getTask,
-} from '@/api/task'
+  saveNote,
+  updateNote,
+  deleteNote,
+  getNotes,
+  getNote,
+} from '@/api/note'
 
 export const state = {
-    task: [],
-    tasks: []
+  note: [],
+  notes: []
 }
 
 export const mutations = {
-    TASKS: (state, payload) => {
-        let blogs = state.blogs
-        blogs.push(...payload.data)
-        state.blogs = blogs
-    },
-
-    TASK: (state, payload) => state.task = payload
+  NOTE: (state, payload) => state.note = payload,
+  NOTES: (state, payload) => state.notes = payload,
 }
 
 export const actions = {
-    saveTask({commit}, payload) {
-        return new Promise((resolve, reject) => {
-            saveTask(payload)
-                .then(({data}) => {
-                    resolve(data)
-                })
-                .catch(error => reject(error))
-
+  saveNote({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      saveNote(payload)
+        .then(({data}) => {
+          commit('NOTE', data);
+          resolve(data)
         })
-    },
+        .catch(error => reject(error))
 
-    updateTask({commit}, payload) {
-        return new Promise((resolve, reject) => {
-            updateTask(payload)
-                .then(({data}) => {
-                    resolve(data)
-                })
-                .catch(error => reject(error))
+    })
+  },
 
+  updateNote({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      updateNote(payload)
+        .then(({data}) => {
+          commit('NOTE', data);
+          resolve(data)
         })
-    },
+        .catch(error => reject(error))
 
-    deleteTask({commit}, payload) {
-        return new Promise((resolve, reject) => {
-            deleteTask(payload)
-                .then(({data}) => {
-                    resolve(data)
-                })
-                .catch(error => reject(error))
-        })
-    },
-    getTasks({commit}, payload) {
-        return new Promise((resolve, reject) => {
-            getTasks(payload)
-                .then(({data}) => {
-                    //commit('BLOGS', data)
-                    resolve(data)
-                })
-                .catch(error => reject(error))
-        })
-    },
+    })
+  },
 
-    getTask({commit}, payload) {
-        return new Promise((resolve, reject) => {
-            getTask(payload)
-                .then(({data}) => {
-                    commit('BLOG', data)
-                    resolve(data)
-                })
-                .catch(error => reject(error))
+  deleteNote({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      deleteNote(payload)
+        .then(({data}) => {
+          commit('NOTE', null);
+          resolve(data)
         })
-    },
+        .catch(error => reject(error))
+    })
+  },
+  getNotes({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      getNotes(payload)
+        .then(({data}) => {
+          commit('NOTES', data.data);
+          resolve(data)
+        })
+        .catch(error => reject(error))
+    })
+  },
+
+  getNote({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      getNote(payload)
+        .then(({data}) => {
+          commit('NOTE', data)
+          resolve(data)
+        })
+        .catch(error => reject(error))
+    })
+  },
 }
 
 export const getters = {
-    blogs : state => {
-        return state.blogs
-    },
-
-    task: state => state.task
+  note: state => state.note,
+  notes : state => state.notes,
 }
 
 export default {
-    namespaced: true,
-    state,
-    mutations,
-    actions,
-    getters
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters
 }
-
-

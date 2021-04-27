@@ -44,10 +44,10 @@ export default new Vuex.Store({
       timer: {
         id: null,
         name: null,
-        task_id: null, 
+        task_id: null,
         user_id: null,
         started_at: null,
-        stopped_at: null, 
+        stopped_at: null,
         duration: 0,
         created_at: null,
         updated_at: null,

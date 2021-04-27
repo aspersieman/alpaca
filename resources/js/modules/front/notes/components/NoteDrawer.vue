@@ -56,8 +56,10 @@
             append-icon="close"
             @click:append="searchShow(false)"
           >
-            <v-icon slot="prepend">
-              search
+            <v-icon>
+              <template #prepend>
+                search
+              </template>
             </v-icon>
           </v-text-field>
         </v-list-item-content>
@@ -84,8 +86,8 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <note-list 
-              :notes="searchNotes" 
+            <note-list
+              :notes="searchNotes"
             />
           </v-list-item-content>
         </v-list-item>
@@ -93,7 +95,7 @@
       <template
         #append
       >
-        <note-create @create-note="addNote" />
+        <note-create @create-note="saveNote" />
       </template>
     </v-navigation-drawer>
   </div>
@@ -102,19 +104,18 @@
 <script>
 import NoteList from './NoteList';
 import NoteCreate from './NoteCreate';
-import EventNames from '../../common/EventNames';
-import NotesMixin from '../../mixins/NotesMixin';
+import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   components: {
     NoteList,
     NoteCreate,
   },
-  mixins: [ 
-    NotesMixin
+  mixins: [
+    NoteMixin
   ],
   data() {
-    return { 
+    return {
       notes: [],
       task: {
         id: null,
@@ -130,14 +131,14 @@ export default {
         borderSize: 3,
         maxWidth: 700
       },
-      search: '',
+      search: "",
       showSearch: false
     };
   },
   computed: {
     drawerState: {
       get() {
-        return this.$store.getters.getNoteDrawer; 
+        return this.$store.getters['drawer/noteDrawer'];
       },
       set(state) {
         if (state) {
@@ -148,7 +149,7 @@ export default {
     searchNotes() {
       const self = this;
       return this.notes.filter(note => {
-        if (self.search != '' && self.search != null) {
+        if (self.search != "" && self.search != null) {
           if (note.name.toLowerCase().includes(self.search)) {
             return note;
           }
@@ -164,15 +165,12 @@ export default {
   created() {
     const self = this;
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
-    self.$eventBus.$on(EventNames.NOTE_DRAWER_TOGGLE, (value) => {
+    self.$eventBus.$on('note-drawer-toggle', (value) => {
       if (value == true) {
         self.notes = self.getNotes();
-        self.task = self.$store.state.task;
-        if (self.$refs.drawer) {
-          let w = self.$refs.drawer.$el.offsetWidth;
-          self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, w);
-        }
+        self.task = self.$store.getters['task/task'];
       } else {
+        value = false;
         self.notes = [];
         self.task = {
           name: null,
@@ -182,15 +180,15 @@ export default {
           timers: []
         };
       }
-      self.$store.commit('setNoteDrawer', value);
+      self.$store.commit('drawer/NOTE_DRAWER', value);
     });
-    self.$eventBus.$on(EventNames.NOTE_DELETED, (note) => {
+    self.$eventBus.$on('note-deleted', (note) => {
       self.notes = self.getNotes()
         .filter(function(element) {
           return element.id !== note.id;
         });
     });
-    self.$eventBus.$on(EventNames.NOTE_UPDATED, (note) => {
+    self.$eventBus.$on('note-updated', (note) => {
       self.notes = self.getNotes();
       const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
       self.notes[noteIndex].name = note.name;
@@ -205,10 +203,10 @@ export default {
   },
   methods: {
     getNotes() {
-      return this.$store.state.notes;
+      return this.$store.getters['note/notes'];
     },
     getTasks() {
-      return this.$store.state.tasks;
+      return this.$store.getters['task/tasks'];
     },
     setBorderWidth() {
       let i = this.$refs.drawer.$el.querySelector(
@@ -238,7 +236,6 @@ export default {
             : evt.clientX;
         if (f <= self.navigation.maxWidth) {
           el.style.width = f + "px";
-          self.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, f);
         }
       }
 
@@ -306,8 +303,7 @@ export default {
     },
 
     close() {
-      this.$eventBus.$emit(EventNames.NOTE_DRAWER_TOGGLE, false);
-      this.$eventBus.$emit(EventNames.NOTE_DRAWER_RESIZE, 0);
+      this.$eventBus.noteDrawerToggle(false);
     },
 
     searchShow(value) {
@@ -318,7 +314,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import "../../../sass/index";
+@import "../../../../../sass/index";
 .toggle {
   position: absolute;
   left: -10px;

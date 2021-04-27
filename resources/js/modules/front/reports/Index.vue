@@ -1,28 +1,28 @@
 <template>
   <div class="reports">
     <v-container class="my-2">
-      <v-layout 
-        row 
-        class="mb-3" 
+      <v-layout
+        row
+        class="mb-3"
         wrap
       >
         <h1 class="subheading grey--text ml-4">
           Reports
         </h1>
       </v-layout>
-      <v-layout 
-        row 
-        class="mb-1 mt-1" 
+      <v-layout
+        row
+        class="mb-1 mt-1"
         wrap
       >
-        <v-btn 
+        <v-btn
           v-shortkey.once="['ctrl', 'alt', '/']"
           style="display: none;"
           @shortkey="searchFocus()"
         >
           Search focus
         </v-btn>
-        <v-flex 
+        <v-flex
           class="search-input-container"
           xs3
           md3
@@ -84,21 +84,17 @@
         justify-center
       >
         <v-layout
-          column 
+          column
           align-center
         >
           <span :class="{'grey--text display-3': $vuetify.breakpoint.smAndUp, 'display-1 grey--text': $vuetify.breakpoint.xsOnly}">Nothing here </span>
-          <v-img 
-            src="img/logo/llama_emoji.png" 
-            width="120px"
-          />
         </v-layout>
       </v-layout>
 
       <task
         v-for="(task, index) in searchTasks"
         :key="index"
-        :task="task" 
+        :task="task"
       />
     </v-container>
   </div>
@@ -186,7 +182,7 @@ export default {
 }
 
 .search-input-container {
-  min-width: 111px; 
+  min-width: 111px;
 }
 .search-input {
   margin-left: 5px;
