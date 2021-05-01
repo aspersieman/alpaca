@@ -61,7 +61,8 @@ class TaskController extends Controller
    */
   public function show($id)
   {
-    $task = Task::find($id);
+    $task = Task::with(['user', 'project', 'notes', 'timers.tagged'])
+      ->find($id);
 
     if(!$task) return $this->sendResponseNotFound();
 
