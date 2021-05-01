@@ -18,7 +18,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.$store.dispatch('note/saveNote', note)
           .then(() =>{
-            this.$eventBus.taskAdded();
+            this.$eventBus.taskAdded(note.task);
             this.$flash.success({
               text: 'Note added successfully'
             });

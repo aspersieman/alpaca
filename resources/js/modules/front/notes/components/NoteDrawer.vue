@@ -167,7 +167,7 @@ export default {
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
     self.$eventBus.$on('note-drawer-toggle', (value) => {
       if (value == true) {
-        self.notes = self.getNotes();
+        self.notes = self.$store.getters['note/notes'];
         self.task = self.$store.getters['task/task'];
       } else {
         value = false;
@@ -183,13 +183,13 @@ export default {
       self.$store.commit('drawer/NOTE_DRAWER', value);
     });
     self.$eventBus.$on('note-deleted', (note) => {
-      self.notes = self.getNotes()
+      self.notes = self.$store.getters['note/notes']
         .filter(function(element) {
           return element.id !== note.id;
         });
     });
     self.$eventBus.$on('note-updated', (note) => {
-      self.notes = self.getNotes();
+      self.notes = self.$store.getters['note/notes'];
       const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
       self.notes[noteIndex].name = note.name;
       self.notes[noteIndex].content = note.content;
@@ -202,12 +202,6 @@ export default {
     }
   },
   methods: {
-    getNotes() {
-      return this.$store.getters['note/notes'];
-    },
-    getTasks() {
-      return this.$store.getters['task/tasks'];
-    },
     setBorderWidth() {
       let i = this.$refs.drawer.$el.querySelector(
         ".v-navigation-drawer__border"

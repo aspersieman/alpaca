@@ -103,10 +103,11 @@ export default {
       self.setNotesSettings();
       return this.$store.getters['note/notes'].filter(note => {
         if (self.search != '' && self.search != null) {
-          if (note.name.toLowerCase().includes(self.search)) {
+          let value = self.search.toLowerCase();
+          if (note.name.toLowerCase().includes(value)) {
             return note;
           }
-          if (note.content.toLowerCase().includes(self.search)) {
+          if (note.content.toLowerCase().includes(value)) {
             return note;
           }
         } else {
