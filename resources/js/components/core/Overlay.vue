@@ -1,25 +1,25 @@
 <template>
   <v-overlay :value="overlay">
-    <v-progress-circular
-      indeterminate
-      size="64"
-    />
+    <div class="llama-loader" />
   </v-overlay>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-      overlay: false,
-    }
-  },
-  created () {
-    this.$store.subscribe((mutation) => {
-      if (mutation.type === 'overlay/showOverlay') {
-        this.overlay = this.$store.getters['overlay/overlay'];
-      }
-    });
+  computed: {
+    overlay() {
+      return this.$store.getters['overlay/overlay'];
+    },
   },
 }
 </script>
+<style scoped>
+.llama-loader::after {
+  content: "Loading...";
+  display: block;
+  width: 100%;
+  height: 200px;
+  top: 100px;
+  text-align: center;
+}
+</style>
