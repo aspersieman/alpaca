@@ -76,14 +76,14 @@
           class="pt-0"
         >
           <div
-            v-if="task.timers.length > 0"
+            v-if="getTaskTotalTime(task) != '00:00:00'"
             class="caption grey--text"
             :class="{'ml-3': $vuetify.breakpoint.smAndDown}"
           >
             Time
           </div>
           <div
-            v-if="task.timers.length > 0"
+            v-if="getTaskTotalTime(task) != '00:00:00'"
             class="mt-0 pt-0"
           >
             {{ getTaskTotalTime(task) }}
@@ -137,7 +137,7 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="deleteTask(task.id)"
+              @click="deleteTask(task)"
             >
               <v-tooltip bottom>
                 <template
@@ -224,7 +224,7 @@
                 </v-list-item>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="deleteTask(task.id)"
+                  @click="deleteTask(task)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>delete</v-icon>
@@ -330,7 +330,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('timer', ['isTimerRunning'])
+    ...mapGetters('timer', ['isTimerRunning']),
   },
   methods: {
     openNoteDrawer() {

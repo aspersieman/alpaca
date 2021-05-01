@@ -213,6 +213,7 @@ import NoteDrawer from '@/modules/front/notes/components/NoteDrawer';
 import DateRangePicker from '@/components/core/DateRangePicker';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
+import SettingMixin from '@/mixins/SettingMixin';
 
 export default {
   components: {
@@ -222,7 +223,8 @@ export default {
   },
   mixins: [
     TaskMixin,
-    TimerMixin
+    TimerMixin,
+    SettingMixin
   ],
   data() {
     return {
@@ -314,15 +316,29 @@ export default {
       this.countFilters();
     }
   },
+  created() {
+    this.getTasksSettings();
+  },
   mounted() {
     const self = this;
     this.$nextTick(function () {
       self.getTasksSettings();
+      self.sortTasks();
     });
-    self.$eventBus.$on(['task-added', 'task-updated', 'timer-added', 'timer-updated', 'timer-deleted', 'note-deleted'],()=>{
-      self.getTasks();
+    self.$eventBus.$on([
+      'task-added',
+      'task-updated',
+      'timer-added',
+      'timer-updated',
+      'timer-deleted',
+      'timer-stopped',
+      'note-deleted'
+    ],()=>{
+      self.getTasksSettings();
+      self.sortTasks();
     });
     self.$eventBus.$on(['tasks-loaded'],()=>{
+      self.getTasksSettings();
       self.sortTasks();
     });
     self.$eventBus.$on(['task-deleted'], ()=> {
@@ -330,6 +346,7 @@ export default {
         .filter(function(element) {
           return element.id !== self.$store.getters['task']?.id;
         });
+      self.sortTasks();
     });
   },
   methods: {
@@ -338,58 +355,25 @@ export default {
     },
 
     setTasksSettings() {
-      const parsedSearch = JSON.stringify(this.search);
-      localStorage.setItem('tasks-search', parsedSearch);
-      const parsedStatus = JSON.stringify(this.status);
-      localStorage.setItem('tasks-status', parsedStatus);
-      const parsedDateRange = JSON.stringify(this.dates);
-      localStorage.setItem('tasks-date-range', parsedDateRange);
-      const parsedPriority = JSON.stringify(this.priority);
-      localStorage.setItem('tasks-priority', parsedPriority);
-      const parsedSort = JSON.stringify(this.sort);
-      localStorage.setItem('tasks-sort', parsedSort);
+      this.setSetting('tasks-search', this.search);
+      this.setSetting('tasks-status', this.status);
+      this.setSetting('tasks-date-range', this.dates);
+      this.setSetting('tasks-priority', this.priority);
+      this.setSetting('tasks-sort', this.sort);
     },
 
     getTasksSettings() {
-      if (localStorage.getItem('tasks-search')) {
-        try {
-          this.search = JSON.parse(localStorage.getItem('tasks-search'));
-        } catch(e) {
-          localStorage.removeItem('tasks-search');
-        }
-      }
-      if (localStorage.getItem('tasks-status')) {
-        try {
-          this.status = JSON.parse(localStorage.getItem('tasks-status'));
-        } catch(e) {
-          localStorage.removeItem('tasks-status');
-        }
-      }
-      if (localStorage.getItem('tasks-date-range')) {
-        try {
-          this.dates = JSON.parse(localStorage.getItem('tasks-date-range'));
-        } catch(e) {
-          localStorage.removeItem('tasks-date-range');
-        }
-      }
-      if (localStorage.getItem('tasks-priority')) {
-        try {
-          this.priority = JSON.parse(localStorage.getItem('tasks-priority'));
-        } catch(e) {
-          localStorage.removeItem('tasks-priority');
-        }
-      }
-      if (localStorage.getItem('tasks-sort')) {
-        try {
-          this.sort = JSON.parse(localStorage.getItem('tasks-sort'));
-        } catch(e) {
-          localStorage.removeItem('tasks-sort');
-        }
-      }
+      this.search = this.getSetting('tasks-search');
+      this.status = this.getSetting('tasks-status');
+      this.dates = this.getSetting('tasks-date-range');
+      this.priority = this.getSetting('tasks-priority');
+      this.sort = this.getSetting('tasks-sort');
     },
+
     toggleFilters() {
       this.showFilters = !this.showFilters;
     },
+
     countFilters() {
       let activeFilters = 0;
       if (this.search != '' && this.search != null) {
@@ -408,7 +392,6 @@ export default {
     },
 
     sortTasks() {
-      console.log(this.sort);
       this.tasks = this.$store.getters['task/tasks'];
       switch (this.sort) {
         case 'Due date':
@@ -444,7 +427,7 @@ export default {
           break;
       }
       this.$store.commit('task/TASKS', this.tasks);
-      this.setTasksSettings();
+      this.setSetting('tasks-sort', this.sort);
     }
   }
 }

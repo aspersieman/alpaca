@@ -37,7 +37,21 @@ export const state = {
 }
 
 export const mutations = {
-  TASK: (state, payload) => state.task = payload,
+  TASK: (state, payload) => {
+    state.task = payload?.task || payload;
+    let tasks = state.tasks;
+    var index = tasks.map((element) => {
+      return element.id;
+    }).indexOf(state.task.id);
+    const remove = payload?.remove || false;
+    if (remove === true) {
+      tasks.splice(index, 1);
+      state.task = state.taskTemplate;
+    } else {
+      tasks[index] = state.task;
+    }
+    state.tasks = tasks;
+  },
   TASKS: (state, payload) => state.tasks = payload,
   DIALOG_ADD: (state, payload) => state.dialogAdd = payload,
   DIALOG_UPDATE: (state, payload) => state.dialogUpdate = payload,
@@ -57,9 +71,9 @@ export const actions = {
     });
   },
 
-  updateTask({commit}, task) {
+  updateTask({commit}, payload) {
     return new Promise((resolve, reject) => {
-      updateTask(task)
+      updateTask(payload)
         .then(({data}) => {
           commit('TASK', data);
           resolve(data)
@@ -70,11 +84,11 @@ export const actions = {
     });
   },
 
-  deleteTask({commit}, taskId) {
+  deleteTask({commit}, task) {
     return new Promise((resolve, reject) => {
-      deleteTask(taskId)
+      deleteTask(task.id)
         .then(({data}) => {
-          commit('TASK', null);
+          commit('TASK', { task: task, remove: true });
           resolve(data)
         })
         .catch(error => {
@@ -98,11 +112,20 @@ export const actions = {
     return new Promise((resolve, reject) => {
       getTask(payload)
         .then(({data}) => {
-          commit('TASK', data)
+          commit('TASK', data.data)
           resolve(data)
         })
         .catch(error => reject(error))
     })
+  },
+
+  getTaskPriorityById({getters}, priorityId) {
+    let priority = getters['priorities']
+      .filter(function(element) {
+        return element.id == priorityId;
+      })[0];
+    priority = priority || { id: 0, name: '' };
+    return priority;
   },
 
   openTaskDialog({commit, getters}, task) {

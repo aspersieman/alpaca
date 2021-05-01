@@ -12,7 +12,9 @@
             v-bind="attrs"
             v-on="on"
           >
-            <core-clock />
+            <core-clock
+              v-if="$vuetify.breakpoint.smAndDown"
+            />
             <span
               v-if="$vuetify.breakpoint.mdAndUp"
             >

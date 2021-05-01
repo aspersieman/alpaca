@@ -54,13 +54,14 @@ export default {
 
     this.$eventBus.$on('user-logged-in', () => {
       this.getTasks();
-      this.getNotes();
+      this.$store.dispatch('note/getNotes')
+        .then(() => this.$eventBus.notesLoaded());
     });
   },
   methods: {
     reset() {
       this.$store.commit('drawer/NOTE_DRAWER', false);
-    }
+    },
   }
 }
 </script>

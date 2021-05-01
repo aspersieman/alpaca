@@ -4,7 +4,7 @@ export const state= {
 
 export const mutations = {
   showOverlay (state, payload) {
-    state.overlay = payload.show;
+    state.overlay = payload;
   }
 }
 

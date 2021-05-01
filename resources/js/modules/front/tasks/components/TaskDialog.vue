@@ -283,7 +283,7 @@ export default {
       self.due = self.task.due;
       self.timers = self.task.timers || [];
       self.status = self.task.status;
-      self.priority = self.getTaskPriorityById(self.task.priority);
+      self.priority = self.$store.dispatch('task/getTaskPriorityById', self.task.priority);
       self.dialog = value;
       self.mode = 'UPDATE';
     });

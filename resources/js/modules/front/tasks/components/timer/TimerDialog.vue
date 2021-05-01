@@ -213,7 +213,7 @@ export default {
   created() {
     const self = this;
     self.$eventBus.$on('timer-dialog-add', (value) => {
-      const task = self.getTaskActive();
+      const task = self.$store.getters['task/task'];
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
@@ -230,7 +230,7 @@ export default {
       self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
       self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-      self.subtitle = self.getTaskActive().name || '';
+      self.subtitle = self.$store.getters['task/task']?.name || '';
       self.dialog = value;
       self.mode = 'UPDATE';
       const tags = self.$store.state.timer.tagged.map(function (item) {

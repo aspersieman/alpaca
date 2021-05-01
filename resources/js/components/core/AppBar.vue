@@ -120,9 +120,10 @@ export default {
     ...mapGetters('menu', ['menu'])
   },
   created() {
-    this.getTasks().then(() => {
-      this.getNotes();
-    });
+    this.$overlay.show(true);
+    this.$store.dispatch('note/getNotes')
+      .then(() => this.$eventBus.notesLoaded());
+    this.getTasks().then(() => this.$overlay.show(false));
   },
   methods: {
     onClick (e, item) {
