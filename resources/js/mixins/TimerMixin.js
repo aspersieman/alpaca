@@ -4,14 +4,16 @@ export default {
       return new Promise((resolve, reject) => {
         this.$store.dispatch('timer/saveTimer', payload)
           .then(({data}) =>{
-            this.$store.dispatch('timer/startTimer', data.data)
+            this.$store.dispatch('task/getTask', data.task_id)
               .then(() => {
-                this.$store.dispatch('task/getTasks');
+                this.$store.dispatch('timer/startTimer', data.data)
+                  .then(() => {
+                    this.$flash.success({
+                      text: 'Timer added successfully'
+                    });
+                    this.$eventBus.timerAdded();
+                  });
               });
-            this.$flash.success({
-              text: 'Timer added successfully'
-            });
-            this.$eventBus.timerAdded();
             resolve()
           }).catch(error => {
             console.error(error);
@@ -30,7 +32,7 @@ export default {
             this.$flash.success({
               text: 'Timer updated successfully'
             });
-            this.$store.dispatch('task/getTasks');
+            this.$store.dispatch('task/getTask', payload.task_id);
             this.$eventBus.timerUpdated();
             resolve()
           })
@@ -60,7 +62,7 @@ export default {
                 this.$flash.success({
                   text: data.data.message,
                 });
-                this.$store.dispatch('task/getTasks');
+                this.$store.dispatch('task/getTask', data.task_id);
                 this.$eventBus.timerDeleted();
                 this.$store.dispatch('dialog/dialogHide');
                 resolve(data);
@@ -82,12 +84,12 @@ export default {
     },
 
     stopTimer(payload) {
-      console.log("TimerMixin: stopTimer");
       return new Promise((resolve, reject) => {
         this.$store.dispatch('timer/stopTimer', payload)
-          .then(() =>{
+          .then(({data}) =>{
             this.$store.dispatch('timer/resetTimerRunning');
-            this.$store.dispatch('task/getTasks');
+            this.$store.dispatch('task/getTask', data.task_id)
+              .then(() => this.$eventBus.timerStopped());
             resolve()
           }).catch(error => {
             console.error(error);

@@ -10,10 +10,10 @@ export const state = {
     timer: {
       id: null,
       name: null,
-      task_id: null, 
+      task_id: null,
       user_id: null,
       started_at: null,
-      stopped_at: null, 
+      stopped_at: null,
       duration: 0,
       created_at: null,
       updated_at: null,
@@ -104,7 +104,7 @@ export const actions = {
             const started = window.moment(getters['timerRunning'].timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS');
             const now = window.moment();
             commit('TIMER_RUNNING', {
-              seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()), 
+              seconds: parseInt(window.moment.duration(now.diff(started)).asSeconds()),
               title: 'Timing...',
               timer: getters['timerRunning'].timer,
             });
@@ -128,7 +128,7 @@ export const actions = {
     return new Promise((resolve, reject) => {
       if (timer != null && typeof timer != 'undefined') {
         commit('TIMER_RUNNING', {
-          seconds: 0, 
+          seconds: 0,
           title: 'Timing...',
           timer: getters['timerRunning'].timer,
         });
@@ -138,7 +138,7 @@ export const actions = {
           .then(({data}) => {
             if (typeof data?.data != 'undefined') {
               commit('TIMER_RUNNING', {
-                seconds: 0, 
+                seconds: 0,
                 title: 'Timing...',
                 timer: data.data,
               });
@@ -154,14 +154,15 @@ export const actions = {
   /**
    * Stop the timer from the API and then from the local timerRunning.
    */
-  stopTimer({commit, getters, dispatch}) {
+  stopTimer({state, commit, getters, dispatch}) {
     if (getters['isTimerRunning']) {
+      clearInterval(state.ticker);
       return new Promise((resolve, reject) => {
         const timerId = getters['timerRunning'].timer.id;
         stopTimer(timerId)
           .then(({data}) => {
             dispatch('resetTimerRunning');
-            clearInterval(getters['ticker']);
+            commit('TICKER', null);
             commit('TIMER_STOPPED', data);
             commit('TIMER_STOPPED_VALUE', TimerMixin.methods.timerDuration(data));
             resolve(data)
@@ -178,10 +179,10 @@ export const actions = {
       timer: {
         id: null,
         name: null,
-        task_id: null, 
+        task_id: null,
         user_id: null,
         started_at: null,
-        stopped_at: null, 
+        stopped_at: null,
         duration: 0,
         created_at: null,
         updated_at: null,
@@ -208,7 +209,7 @@ export const getters = {
   timerDialogAdd : state => { return state.timerDialogAdd },
   timerDialogUpdate : state => { return state.timerDialogUpdate },
   ticker : state => { return state.ticker },
-  isTimerRunning : state => { 
+  isTimerRunning : state => {
     return state.timerRunning?.timer?.id != null
       && state.timerRunning?.timer?.id != 0;
   },
