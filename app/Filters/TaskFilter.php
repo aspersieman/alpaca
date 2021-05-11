@@ -4,35 +4,71 @@ namespace App\Filters;
 
 class TaskFilter extends Filters
 {
-    protected $filters = ['n', 's', 'f', 't', 'p', 'u'];
+  protected $filters = ['name', 'status', 'dueFrom', 'dueTo', 'priority', 'userId', 'default'];
 
-    protected function n($value)
-    {
-        return $this->builder->where('name', 'like', "%{$value}%");
+  protected function default($value)
+  {
+    if (empty($value)) {
+      return $this->builder;
+    }
+    return $this->builder->whereRaw(
+      '
+        (
+            tasks.status IN ("ongoing", "overdue")
+            OR (
+              DATE(tasks.updated_at) = CURDATE()
+            )
+        )
+        AND tasks.deleted_at IS NULL
+      '
+      );
     }
 
-    protected function s($value)
+    protected function name($value)
     {
-        return $this->builder->whereIn('status', \explode(",", $value));
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->where('name', 'like', "%{$value}%");
     }
 
-    protected function f($value)
+    protected function status($value)
     {
-        return $this->builder->where('due', '>=', $value);
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->whereIn('status', \explode(",", $value));
     }
 
-    protected function t($value)
+    protected function dueFrom($value)
     {
-        return $this->builder->where('due', '<=', $value);
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->where('due', '>=', $value);
     }
 
-    protected function p($value)
+    protected function dueTo($value)
     {
-        return $this->builder->where('priority', '=', $value);
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->where('due', '<=', $value);
     }
 
-    protected function u($value)
+    protected function priority($value)
     {
-        return $this->builder->whereIn('user_id', split(",", $value));
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->where('priority', '=', $value);
+    }
+
+    protected function user($value)
+    {
+      if (empty($value)) {
+        return $this->builder;
+      }
+      return $this->builder->whereIn('user_id', split(",", $value));
     }
 }

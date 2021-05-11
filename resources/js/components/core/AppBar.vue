@@ -119,12 +119,6 @@ export default {
   computed: {
     ...mapGetters('menu', ['menu'])
   },
-  created() {
-    this.$overlay.show(true);
-    this.$store.dispatch('note/getNotes')
-      .then(() => this.$eventBus.notesLoaded());
-    this.getTasks().then(() => this.$overlay.show(false));
-  },
   methods: {
     onClick (e, item) {
       e.stopPropagation()

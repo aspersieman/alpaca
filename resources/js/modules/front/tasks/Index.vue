@@ -89,6 +89,7 @@
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
             type="text"
             prepend-icon="search"
+            @change="setTasksSettings"
           />
           <v-combobox
             v-model="status"
@@ -101,6 +102,7 @@
             label="Status"
             class="search-input"
             :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
+            @change="setTasksSettings"
           >
             <template
               #selection="data"
@@ -138,7 +140,14 @@
             label="Priority"
             outlined
             dense
+            @change="setTasksSettings"
           />
+          <base-btn-primary
+            class="action-button"
+            @click="searchTasks()"
+          >
+            Go
+          </base-btn-primary>
           <v-spacer />
           <v-combobox
             v-model="sort"
@@ -183,7 +192,7 @@
             </v-layout>
           </v-layout>
           <task
-            v-for="(task, index) in searchTasks"
+            v-for="(task, index) in tasks"
             :key="index"
             :task="task"
           />
@@ -208,6 +217,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Task from './components/Task';
 import NoteDrawer from '@/modules/front/notes/components/NoteDrawer';
 import DateRangePicker from '@/components/core/DateRangePicker';
@@ -228,18 +238,8 @@ export default {
   ],
   data() {
     return {
-      tasks: [],
-      tasksCopy: [],
       userId: '',
-      btnColor: '',
-      newName: '',
-      indexToEdit: 0,
-      drag: true,
       search: '',
-      searching: false,
-      activeTimerString: 'Timing...',
-      counter: { seconds: 0, timer: null },
-      modal: [],
       status: [],
       statuses: [
         'complete',
@@ -247,7 +247,7 @@ export default {
         'overdue'
       ],
       dates: [],
-      dateRangeLabel: "Due date range",
+      dateRangeLabel: 'Due date range',
       showFilters: false,
       sort: '',
       sortList: [
@@ -263,44 +263,19 @@ export default {
         { id: 2, name: 'Medium' },
         { id: 3, name: 'Low' },
       ],
+      query: {
+        name: '',
+        status: '',
+        dueFrom: '',
+        dueTo: '',
+        priority: '',
+        userId: '',
+        default: true
+      },
     }
   },
   computed: {
-    searchTasks() {
-      const self = this;
-      self.setTasksSettings();
-      return this.$store.getters['task/tasks'].filter(task => {
-        let searchFound = true;
-        if (self.search != '' && self.search != null) {
-          searchFound = task.name.toLowerCase().includes(self.search);
-        }
-        let statusFound = true;
-        if (self.status.length > 0) {
-          statusFound = self.status.includes(task.status);
-        }
-        let priorityFound = true;
-        if (self.priority) {
-          priorityFound = task.priority === self.priority.id;
-        }
-        let datesFound = true;
-        if (self.dates && self.dates.length > 0) {
-          let fromDate = self.$appFormatters.dateOnly(self.dates[0])
-          let toDate = fromDate;
-          if (self.dates.length > 1) {
-            toDate = self.$appFormatters.dateOnly(self.dates[1]);
-          }
-
-          fromDate = fromDate.getTime();
-          toDate = toDate.getTime();
-          // check without time, i.e. as date only
-          const dueDate = self.$appFormatters.dateOnly(task.due);
-          datesFound = (dueDate >= fromDate) && (dueDate <= toDate);
-        }
-        if (searchFound && statusFound && datesFound && priorityFound) {
-          return task;
-        }
-      });
-    },
+    ...mapGetters('task', ['tasks']),
   },
   watch: {
     search: function() {
@@ -310,43 +285,43 @@ export default {
       this.countFilters();
     },
     dates: function() {
+      this.setTasksSettings();
       this.countFilters();
     },
     priority: function() {
       this.countFilters();
     }
   },
-  created() {
-    this.getTasksSettings();
-  },
   mounted() {
-    const self = this;
-    this.$nextTick(function () {
-      self.getTasksSettings();
-      self.sortTasks();
+    this.$nextTick(() => {
+      this.getTasksSettings();
+      this.searchTasks();
+      this.sortTasks();
     });
-    self.$eventBus.$on([
+    this.$eventBus.$on([
       'task-added',
       'task-updated',
       'timer-added',
       'timer-updated',
       'timer-deleted',
       'timer-stopped',
+      'note-added',
       'note-deleted'
-    ],()=>{
-      self.getTasksSettings();
-      self.sortTasks();
+    ], (task) => {
+      const taskIndex = this.tasks.findIndex((obj => obj.id == task.id));
+      this.tasks[taskIndex] = task;
+      this.getTasksSettings();
+      this.sortTasks();
     });
-    self.$eventBus.$on(['tasks-loaded'],()=>{
-      self.getTasksSettings();
-      self.sortTasks();
+    this.$eventBus.$on(['tasks-loaded'],()=>{
+      this.sortTasks();
     });
-    self.$eventBus.$on(['task-deleted'], ()=> {
-      self.tasks = self.tasks
+    this.$eventBus.$on(['task-deleted'], (task)=> {
+      this.tasks = this.tasks
         .filter(function(element) {
-          return element.id !== self.$store.getters['task']?.id;
+          return element.id !== task?.id;
         });
-      self.sortTasks();
+      this.sortTasks();
     });
   },
   methods: {
@@ -392,17 +367,17 @@ export default {
     },
 
     sortTasks() {
-      this.tasks = this.$store.getters['task/tasks'];
+      let tasks = this.$store.getters['task/tasks'];
       switch (this.sort) {
         case 'Due date':
-          this.tasks.sort((a, b) => {
+          tasks.sort((a, b) => {
             let dateA = new Date(a.due);
             let dateB = new Date(b.due);
             return dateA - dateB;
           });
           break;
         case 'Priority':
-          this.tasks.sort((a, b) => {
+          tasks.sort((a, b) => {
             let priorityA = a.priority == 0 ? 4 : a.priority;
             let priorityB = b.priority == 0 ? 4 : b.priority;
             if (priorityA > priorityB) return 1;
@@ -411,13 +386,13 @@ export default {
           });
           break;
         case 'Status':
-          this.tasks.sort((a, b) => a.status.localeCompare(b.status));
+          tasks.sort((a, b) => a.status.localeCompare(b.status));
           break;
         case 'id':
-          this.tasks.sort((a, b) => a.id.localeCompare(b.id));
+          tasks.sort((a, b) => a.id.localeCompare(b.id));
           break;
         default:
-          this.tasks.sort((a, b) => {
+          tasks.sort((a, b) => {
             let idA = a.id == 0 ? 4 : a.id;
             let idB = b.id == 0 ? 4 : b.id;
             if (idA > idB) return 1;
@@ -426,9 +401,54 @@ export default {
           });
           break;
       }
-      this.$store.commit('task/TASKS', this.tasks);
+      this.$store.commit('task/TASKS', tasks);
       this.setSetting('tasks-sort', this.sort);
-    }
+    },
+
+    searchTasks() {
+      this.prepareQuery();
+      this.getTasks(this.query);
+    },
+
+    prepareQuery() {
+      this.resetQuery();
+      this.setQueryValue('name', this.name || null);
+      const status = this.status.join(',');
+      this.setQueryValue('status', status || null);
+      if (this.dates) {
+        this.setQueryValue('dueFrom', this.dates[0] || null);
+        this.setQueryValue('dueTo', this.dates[1] || null);
+      } else {
+        this.setQueryValue('dueFrom', null);
+        this.setQueryValue('dueTo', null);
+      }
+      this.setQueryValue('priority', this.priority?.id || null);
+      this.setQueryValue('userId', this.$auth?.user?.id);
+      this.setQueryValue('default', null);
+      if (Object.keys(this.query).length === 0) {
+        this.setQueryValue('default', true);
+      }
+    },
+
+    setQueryValue(key, value) {
+      if (value === null) {
+        delete(this.query[key]);
+      } else {
+        this.query[key] = value;
+      }
+    },
+
+    resetQuery(){
+      this.query = {
+        name: null,
+        status: null,
+        dueFrom: null,
+        dueTo: null,
+        priority: null,
+        userId: null,
+        default: true
+      }
+    },
   }
 }
 </script>
