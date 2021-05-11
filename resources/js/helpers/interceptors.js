@@ -1,31 +1,34 @@
 import axios from 'axios';
-import store from '@/store/';
-import flash from '@/plugins/flash';
-import router from '@/router';
 
-export default function setup() {
-    axios.interceptors.request.use(function(config) {
-        const token = store.getters['auth/getToken'];
-        if(token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-    }, function(err) {
-        return Promise.reject(err);
-    });
+export default function intercept(Vue) {
+  console.log("intercepting");
+  axios.interceptors.request.use(function(config) {
+    const token = Vue.$store.getters['auth/getToken'];
+    if(token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  }, function(err) {
+    return Promise.reject(err);
+  });
 
-    axios.interceptors.response.use(undefined, function (err) {
-      const responseStatus = err.response.status || null;
-      if (responseStatus === 401 
-        && err.response.config 
-        && !err.response.config.__isRetryRequest
-        && router.name != 'index') {
-        flash.warn({
-          title: 'Log in',
-          text: 'Please log in to continue'
-        });
-        store.dispatch('auth/logout');
-        router.replace('/'); 
-      }
-    });
+  axios.interceptors.response.use(undefined, function (err) {
+    const responseStatus = err?.response?.status || null;
+    if (
+      responseStatus === 401
+      && (
+        err.response.config
+        && (
+          !err.response.config.__isRetryRequest
+          || typeof err.response.config.__isRetryRequest == "undefined"
+        )
+      )
+      && Vue.$router.currentRoute.name != 'index'
+    ) {
+      console.log("401 intercepted");
+      console.log(Vue.$router);
+      Vue.$store.dispatch('auth/logout');
+      Vue.$router.replace({ path: '/', query: { loginprompt: 'true' }});
+    }
+  });
 }

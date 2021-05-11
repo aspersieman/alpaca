@@ -1,9 +1,5 @@
 import axios from 'axios'
 
-import setup from '@/helpers/interceptors';
-
-setup();
-
 export function saveNote(payload) {
   return axios.post('/api/v1/notes', payload);
 }

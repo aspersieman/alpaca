@@ -1,9 +1,5 @@
 import axios from 'axios'
 
-import setup from '@/helpers/interceptors';
-
-setup();
-
 export function saveTask(payload) {
   return axios.post('/api/v1/tasks', payload);
 }
@@ -13,17 +9,17 @@ Laravel does not support formData PUT request
 So _method: PUT has to be added to the form data
 and send your PUT request as POST request
 */
-export function updateTask(task) {
-  task._method = "PUT"
-  return axios.post(`/api/v1/tasks/${task.id}`, task);
+export function updateTask(payload) {
+  payload._method = "PUT"
+  return axios.post(`/api/v1/tasks/${payload.id}`, payload);
 }
 
-export function getTask(taskId) {
-  return axios.get(`/api/v1/tasks/${taskId}`);
+export function getTask(payload) {
+  return axios.get(`/api/v1/tasks/${payload.id}`);
 }
 
-export function deleteTask(taskId) {
-  return axios.delete(`/api/v1/tasks/${taskId}`);
+export function deleteTask(payload) {
+  return axios.delete(`/api/v1/tasks/${payload.id}`);
 }
 
 export function getTasks(payload) {

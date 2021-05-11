@@ -11,6 +11,7 @@ import eventBus from '@/plugins/event-bus';
 import AxiosAjaxDetct from '@/common/AxiosAjaxDetect';
 import Chartkick from 'vue-chartkick';
 import Chart from 'chart.js';
+import intercept from '@/helpers/interceptors';
 
 import '@/plugins/base';
 import analytics from '@/plugins/analytics';
@@ -42,6 +43,9 @@ new Vue({
   el: '#app',
   router,
   store,
+  created() {
+    intercept(this);
+  },
   mounted() {
     const self = this;
     // progress bar top

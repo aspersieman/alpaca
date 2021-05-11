@@ -1,11 +1,7 @@
 import axios from 'axios'
 
-import setup from '@/helpers/interceptors';
-
-setup();
-
-export function saveTimer(taskId, timer) {
-  return axios.post(`/api/v1/tasks/${taskId}/timers`, timer);
+export function saveTimer(payload) {
+  return axios.post(`/api/v1/tasks/${payload.task_id}/timers`, payload);
 }
 
 /*
@@ -13,22 +9,22 @@ Laravel does not support formData PUT request
 So _method: PUT has to be added to the form data
 and send your PUT request as POST request
 */
-export function updateTimer({taskId, timer}) {
+export function updateTimer(payload) {
   task._method = "PUT"
-  return axios.put(`/api/v1/tasks/${taskId}/timers/${timer.id}`, timer);
+  return axios.put(`/api/v1/tasks/${payload.task_id}/timers/${payload.id}`, payload);
 }
 
-export function stopTimer(id) {
+export function stopTimer(payload) {
   const tz = {
     tz: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
-  return axios.post(`/api/v1/tasks/${id}/timers/stop`, tz);
+  return axios.post(`/api/v1/tasks/${payload.id}/timers/stop`, tz);
 }
 
 export function getTimerRunning() {
   return axios.get('/api/v1/tasks/timers/running');
 }
 
-export function deleteTimer({taskId, timerId}) {
-  return axios.delete(`/api/v1/tasks/${taskId}/timers/${timerId}`);
+export function deleteTimer(payload) {
+  return axios.delete(`/api/v1/tasks/${payload.task_id}/timers/${payload.id}`);
 }

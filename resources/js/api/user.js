@@ -1,7 +1,4 @@
 import axios from 'axios'
-import setup from '@/helpers/interceptors';
-
-setup();
 
 /*
 Laravel does not support formData PUT request

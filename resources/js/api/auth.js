@@ -1,7 +1,4 @@
 import axios from 'axios'
-import setup from '@/helpers/interceptors';
-
-setup();
 
 export function register(payload) {
     return axios.post('/api/v1/register', payload)
