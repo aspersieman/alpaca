@@ -8,11 +8,30 @@ import {
 
 export const state = {
   note: [],
+  noteTemplate: {
+    id: null,
+    name: null,
+    content: null
+  },
   notes: []
 }
 
 export const mutations = {
-  NOTE: (state, payload) => state.note = payload,
+  NOTE: (state, payload) => {
+    state.note = payload?.note || payload;
+    let notes = state.notes;
+    var index = notes.map((element) => {
+      return element.id;
+    }).indexOf(state.note.id);
+    const remove = payload?.remove || false;
+    if (remove === true) {
+      notes.splice(index, 1);
+      state.note = state.noteTemplate;
+    } else {
+      notes[index] = state.note;
+    }
+    state.notes = notes;
+  },
   NOTES: (state, payload) => state.notes = payload,
 }
 
@@ -43,14 +62,15 @@ export const actions = {
 
   deleteNote({commit}, payload) {
     return new Promise((resolve, reject) => {
-      deleteNote(payload)
+      deleteNote(payload.id)
         .then(({data}) => {
-          commit('NOTE', null);
+          commit('NOTE', { note: payload, remove: true });
           resolve(data)
         })
         .catch(error => reject(error))
     })
   },
+
   getNotes({commit}, payload) {
     return new Promise((resolve, reject) => {
       getNotes(payload)
@@ -64,7 +84,7 @@ export const actions = {
 
   getNote({commit}, payload) {
     return new Promise((resolve, reject) => {
-      getNote(payload)
+      getNote(payload.id)
         .then(({data}) => {
           commit('NOTE', data)
           resolve(data)

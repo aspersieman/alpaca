@@ -37,10 +37,10 @@ export const mutations = {
 }
 
 export const actions = {
-  saveTimer({commit}, timer) {
+  saveTimer({commit}, payload) {
     return new Promise((resolve, reject) => {
-      saveTimer(timer.task_id, timer)
-        .then(({data}) => {
+      saveTimer(payload)
+        .then((data) => {
           commit('TIMER', data);
           resolve(data);
         }).catch(error => {
@@ -49,18 +49,11 @@ export const actions = {
     });
   },
 
-  updateTimer({}, payload) {
-    const started_at = window.moment(payload.startDate + ' ' + payload.startTime, 'YYYY-MM-DD HH:mm:ss');
-    const timer = {
-      name: payload.name,
-      started_at: started_at.format('YYYY-MM-DD HH:mm:ss'),
-      stopped_at: started_at.add(payload.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-      tags: payload.tags
-    };
-
+  updateTimer({commit}, payload) {
     return new Promise((resolve, reject) => {
-      updateTimer(taskId, timer)
-        .then(() => {
+      updateTimer(payload)
+        .then((data) => {
+          commit('TIMER', data);
           resolve(data);
         }).catch(error => {
           reject(error);
@@ -68,8 +61,8 @@ export const actions = {
     });
   },
 
-  deleteTimer({commit}, taskId, timerId) {
-    deleteTimer(taskId, timerId)
+  deleteTimer({commit}, payload) {
+    deleteTimer(payload)
       .then(({data}) => {
         commit('TIMER', null);
         resolve(data)

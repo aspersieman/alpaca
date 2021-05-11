@@ -3,15 +3,15 @@ export default {
     saveTimer(payload) {
       return new Promise((resolve, reject) => {
         this.$store.dispatch('timer/saveTimer', payload)
-          .then(({data}) =>{
+          .then((data) =>{
             this.$store.dispatch('task/getTask', data.task_id)
               .then(() => {
-                this.$store.dispatch('timer/startTimer', data.data)
+                this.$store.dispatch('timer/startTimer', data)
                   .then(() => {
                     this.$flash.success({
                       text: 'Timer added successfully'
                     });
-                    this.$eventBus.timerAdded();
+                    this.$eventBus.timerAdded(data);
                   });
               });
             resolve()
@@ -26,24 +26,28 @@ export default {
     },
 
     updateTimer(payload) {
-      return new Promise((resolve, reject) => {
-        this.$store.dispatch('timer/updateTimer', payload)
-          .then(() =>{
-            this.$flash.success({
-              text: 'Timer updated successfully'
-            });
-            this.$store.dispatch('task/getTask', payload.task_id);
-            this.$eventBus.timerUpdated();
-            resolve()
-          })
-          .catch((error) => {
-            console.error(message);
-            this.$flash.error({
-              text: 'Error updating timer'
-            });
-            reject(error);
+      const started_at = window.moment(payload.startDate + ' ' + payload.startTime, 'YYYY-MM-DD HH:mm:ss');
+      const timer = {
+        name: payload.name,
+        started_at: started_at.format('YYYY-MM-DD HH:mm:ss'),
+        stopped_at: started_at.add(payload.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+        tags: payload.tags,
+        task_id: payload.task_id
+      };
+      this.$store.dispatch('timer/updateTimer', timer)
+        .then((data) =>{
+          this.$flash.success({
+            text: 'Timer updated successfully'
           });
-      })
+          this.$store.dispatch('task/getTask', payload.task_id);
+          this.$eventBus.timerUpdated(data);
+        })
+        .catch((error) => {
+          console.error(error);
+          this.$flash.error({
+            text: 'Error updating timer'
+          });
+        });
     },
 
     deleteTimer(payload) {
@@ -53,28 +57,24 @@ export default {
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this timer?',
         okCb: ()=>{
-          new Promise((resolve, reject) => {
-            this.$store.dispatch('timer/deleteTimer', payload)
-              .then(({data}) => {
-                task.timers = task.timers.filter(function(element) {
-                  return element.id !== timer.id;
-                });
-                this.$flash.success({
-                  text: data.data.message,
-                });
-                this.$store.dispatch('task/getTask', data.task_id);
-                this.$eventBus.timerDeleted();
-                this.$store.dispatch('dialog/dialogHide');
-                resolve(data);
-              }).catch((error) => {
-                console.error(error)
-                this.$flash.error({
-                  text: 'Error occurred deleting timer'
-                });
-                this.$store.dispatch('dialog/dialogHide');
-                reject(error);
-              })
-          });
+          this.$store.dispatch('timer/deleteTimer', payload)
+            .then(({data}) => {
+              task.timers = task.timers.filter(function(element) {
+                return element.id !== timer.id;
+              });
+              this.$flash.success({
+                text: data.data.message,
+              });
+              this.$store.dispatch('task/getTask', data.task_id);
+              this.$eventBus.timerDeleted(payload);
+              this.$store.dispatch('dialog/dialogHide');
+            }).catch((error) => {
+              console.error(error)
+              this.$flash.error({
+                text: 'Error occurred deleting timer'
+              });
+              this.$store.dispatch('dialog/dialogHide');
+            })
         },
         cancelCb: ()=>{
           this.$store.dispatch('dialog/dialogHide');
@@ -84,21 +84,17 @@ export default {
     },
 
     stopTimer(payload) {
-      return new Promise((resolve, reject) => {
-        this.$store.dispatch('timer/stopTimer', payload)
-          .then(({data}) =>{
-            this.$store.dispatch('timer/resetTimerRunning');
-            this.$store.dispatch('task/getTask', data.task_id)
-              .then(() => this.$eventBus.timerStopped());
-            resolve()
-          }).catch(error => {
-            console.error(error);
-            this.$flash.error({
-              text: 'Error stopping timer'
-            });
-            reject(error);
+      return this.$store.dispatch('timer/stopTimer', payload)
+        .then((data) =>{
+          this.$store.dispatch('timer/resetTimerRunning');
+          this.$store.dispatch('task/getTask', data.task_id)
+            .then(() => this.$eventBus.timerStopped(data));
+        }).catch(error => {
+          console.error(error);
+          this.$flash.error({
+            text: 'Error stopping timer'
           });
-      });
+        });
     },
 
     /**

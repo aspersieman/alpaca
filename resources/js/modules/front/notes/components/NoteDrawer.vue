@@ -165,10 +165,10 @@ export default {
   created() {
     const self = this;
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
-    self.$eventBus.$on('note-drawer-toggle', (value) => {
+    self.$eventBus.$on('note-drawer-toggle', (value, notes, task) => {
       if (value == true) {
-        self.notes = self.$store.getters['note/notes'];
-        self.task = self.$store.getters['task/task'];
+        self.task = task;
+        self.notes = notes;
       } else {
         value = false;
         self.notes = [];
@@ -183,16 +183,17 @@ export default {
       self.$store.commit('drawer/NOTE_DRAWER', value);
     });
     self.$eventBus.$on('note-deleted', (note) => {
-      self.notes = self.$store.getters['note/notes']
+      self.notes = self.task.notes
         .filter(function(element) {
           return element.id !== note.id;
         });
     });
+    self.$eventBus.$on('note-added', (note) => {
+      self.notes.push(note);
+    });
     self.$eventBus.$on('note-updated', (note) => {
-      self.notes = self.$store.getters['note/notes'];
       const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
-      self.notes[noteIndex].name = note.name;
-      self.notes[noteIndex].content = note.content;
+      self.notes[noteIndex] = note;
     });
   },
   mounted() {

@@ -82,7 +82,7 @@
                       <v-btn
                         v-if="showTimerForTask(task, timer)"
                         icon
-                        @click="stopTimer()"
+                        @click="stopTimer(timer)"
                       >
                         <v-tooltip bottom>
                           <template #activator="{ on }">
@@ -117,7 +117,7 @@
                     <v-flex class="horizontal-center">
                       <v-btn
                         icon
-                        @click="deleteTimer(task, timer)"
+                        @click="deleteTimer(timer)"
                       >
                         <v-tooltip bottom>
                           <template #activator="{ on }">
@@ -130,7 +130,7 @@
                       </v-btn>
                       <v-btn
                         icon
-                        @click="openTimerUpdateDialog(task, timer)"
+                        @click="$store.dispatch('timer/openTimerDialog', timer)"
                       >
                         <v-tooltip bottom>
                           <template

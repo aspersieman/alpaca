@@ -120,7 +120,7 @@
               icon
               class="pa-0 ma-0"
               :class="`${task.status}`"
-              @click="taskDialogUpdate(task);"
+              @click="$eventBus.taskDialogUpdate(true, task)"
             >
               <v-tooltip bottom>
                 <template
@@ -155,7 +155,7 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="timerDialogAdd(task);"
+              @click="$eventBus.timerDialogAdd(true, task)"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
@@ -215,7 +215,7 @@
               <v-list>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="taskDialogUpdate(task);"
+                  @click="$eventBus.taskDialogUpdate(true, task)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>edit</v-icon>
@@ -234,7 +234,7 @@
                 <v-list-item
                   v-if="$store.getters['timer/timerRunning'].seconds == 0"
                   :class="`${task.status}`"
-                  @click="timerDialogAdd(task);"
+                  @click="$eventBus.timerDialogAdd(true, task)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>more_time</v-icon>
@@ -330,13 +330,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('timer', ['isTimerRunning']),
+    ...mapGetters('timer', [
+      'isTimerRunning',
+      'timerRunning'
+    ]),
   },
   methods: {
     openNoteDrawer() {
-      this.$store.commit('note/NOTES', this.task.notes);
       this.$store.commit('task/TASK', this.task);
-      this.$eventBus.noteDrawerToggle(true);
+      this.$eventBus.noteDrawerToggle(true, this.task.notes, this.task);
     },
     countNotes(task) {
       return task?.notes?.length > 0 ? task?.notes?.length : '';
@@ -344,14 +346,6 @@ export default {
     countTimers(task) {
       return task?.timers?.length > 0 ? task?.timers?.length : '';
     },
-    taskDialogUpdate(task) {
-      this.$store.commit('task/TASK', task);
-      this.$eventBus.taskDialogUpdate(true);
-    },
-    timerDialogAdd(task) {
-      this.$store.commit('task/TASK', task);
-      this.$eventBus.timerDialogAdd(true);
-    }
   },
 }
 </script>

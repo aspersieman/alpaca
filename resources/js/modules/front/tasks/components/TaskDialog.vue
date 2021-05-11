@@ -276,14 +276,15 @@ export default {
       self.dialog = value;
       self.mode = 'ADD';
     });
-    self.$eventBus.$on('task-dialog-update', (value) => {
+    self.$eventBus.$on('task-dialog-update', (value, task) => {
       self.formReset();
-      self.task = self.$store.getters['task/task'];
+      self.task = task;
       self.name = self.task.name;
       self.due = self.task.due;
       self.timers = self.task.timers || [];
       self.status = self.task.status;
-      self.priority = self.$store.dispatch('task/getTaskPriorityById', self.task.priority);
+      self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
+        .then((value) => self.priority = value);
       self.dialog = value;
       self.mode = 'UPDATE';
     });
@@ -297,11 +298,11 @@ export default {
           priority: this.priority.id,
           status: this.status,
         };
-        this.$overlay.show({ show: true });
+        this.$overlay.show(true);
         this.saveTask(task)
           .then(() => {
             this.close();
-            this.$overlay.show({ show: false });
+            this.$overlay.show(false);
           });
       }
     },

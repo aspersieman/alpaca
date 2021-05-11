@@ -6,10 +6,10 @@
     <v-container class="my-2">
       <v-row>
         <v-col
-          class="mb-3" 
+          class="mb-3"
         >
-          <v-layout 
-            row 
+          <v-layout
+            row
             wrap
           >
             <v-avatar>
@@ -21,9 +21,9 @@
               Dashboard
             </h1>
           </v-layout>
-          <v-layout 
+          <v-layout
             v-if="$vuetify.breakpoint.mdAndUp"
-            row 
+            row
             wrap
           >
             <h4 class="subheading grey--text ml-4">
@@ -32,16 +32,16 @@
           </v-layout>
         </v-col>
       </v-row>
-      <v-layout 
-        row 
-        class="mb-1 mt-1 " 
+      <v-layout
+        row
+        class="mb-1 mt-1 "
         wrap
         transition="scroll-y-transition"
       >
         <span
           class="date-picker-container"
         >
-          <date-range-picker 
+          <date-range-picker
             v-model="dates"
           />
         </span>
@@ -53,7 +53,7 @@
         </base-btn-primary>
       </v-layout>
     </v-container>
-    <v-container 
+    <v-container
       fluid
       class="charts-container"
     >
@@ -105,16 +105,14 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
+@import "../../../../sass/index";
 .row {
   margin-left: unset;
   border-radius: unset !important;
 }
 .date-picker-container {
   max-width: 215px;
-}
-.action-button {
-  margin-left: 10px;
 }
 .charts-container {
   margin-top: -50px;

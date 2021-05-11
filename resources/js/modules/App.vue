@@ -51,12 +51,6 @@ export default {
         this.$store.dispatch('timer/startTimer');
       });
     this.reset();
-
-    this.$eventBus.$on('user-logged-in', () => {
-      this.getTasks();
-      this.$store.dispatch('note/getNotes')
-        .then(() => this.$eventBus.notesLoaded());
-    });
   },
   methods: {
     reset() {

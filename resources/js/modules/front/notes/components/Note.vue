@@ -51,7 +51,7 @@
         class="text-sm-caption"
         icon
         x-small
-        @click="deleteNote(note.id)"
+        @click="deleteNote(note)"
       >
         <v-icon>
           delete

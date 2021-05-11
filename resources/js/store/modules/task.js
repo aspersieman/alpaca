@@ -84,11 +84,11 @@ export const actions = {
     });
   },
 
-  deleteTask({commit}, task) {
+  deleteTask({commit}, payload) {
     return new Promise((resolve, reject) => {
-      deleteTask(task.id)
+      deleteTask(payload.id)
         .then(({data}) => {
-          commit('TASK', { task: task, remove: true });
+          commit('TASK', { task: payload, remove: true });
           resolve(data)
         })
         .catch(error => {

@@ -1,21 +1,20 @@
 export default {
   methods: {
-    getTasks() {
-      return this.$store.dispatch('task/getTasks')
+    getTasks(payload) {
+      return this.$store.dispatch('task/getTasks', payload)
         .then(() => this.$eventBus.tasksLoaded());
     },
 
-    saveTask(task) {
-      return this.$store.dispatch('task/saveTask', task)
-        .then((data) =>{
+    saveTask(payload) {
+      return this.$store.dispatch('task/saveTask', payload)
+        .then(({data}) =>{
           this.$eventBus.taskAdded(data.task);
           this.$flash.success({
             text: 'Task added successfully'
           });
         })
         .catch(error => {
-          const message = error?.response?.data?.message || 'ERROR';
-          console.error(message);
+          console.error(error);
           this.$flash.error({
             text: 'Error adding task'
           });
@@ -24,35 +23,34 @@ export default {
 
     updateTask(payload) {
       return this.$store.dispatch('task/updateTask', payload)
-        .then(() =>{
-          this.text.success({
-            content: 'Task updated successfully'
+        .then(({data}) =>{
+          this.$flash.success({
+            text: 'Task updated successfully'
           });
-          this.$eventBus.taskUpdated();
+          this.$eventBus.taskUpdated(data);
         })
         .catch(error => {
-          const message = error.response.data.message || 'ERROR';
-          console.error(message);
+          console.error(error);
           this.$flash.error({
             text: 'Error updating task'
           });
         });
     },
 
-    deleteTask(task) {
+    deleteTask(payload) {
       this.$store.dispatch('dialog/dialogShow',{
         type: 'confirm',
         icon: 'warning',
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this task?',
-        okCb: ()=>{
+        okCb: () => {
           this.$store.dispatch('dialog/dialogHide');
-          this.$store.dispatch('task/deleteTask', task)
-            .then(() => {
+          this.$store.dispatch('task/deleteTask', payload)
+            .then(({data}) => {
               this.$flash.success({
                 text: 'Task deleted successfully'
               });
-              this.$eventBus.taskDeleted();
+              this.$eventBus.taskDeleted(data);
               this.$store.dispatch('dialog/dialogHide');
             }).catch((error) => {
               console.error(error)

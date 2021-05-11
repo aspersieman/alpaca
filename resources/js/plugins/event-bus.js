@@ -71,51 +71,51 @@ const eventBus = {
         taskDialogAdd(show) {
           this.$emit('task-dialog-add', show);
         },
-        taskDialogUpdate(show) {
-          this.$emit('task-dialog-update', show);
+        taskDialogUpdate(show, task) {
+          this.$emit('task-dialog-update', show, task);
         },
 
         /* Timers */
-        timerAdded() {
-          this.$emit('timer-added');
+        timerAdded(timer) {
+          this.$emit('timer-added', timer);
         },
-        timerUpdated() {
-          this.$emit('timer-updated');
+        timerUpdated(timer) {
+          this.$emit('timer-updated', timer);
         },
-        timerDeleted() {
-          this.$emit('timer-deleted');
+        timerDeleted(timer) {
+          this.$emit('timer-deleted', timer);
         },
-        timerStopped() {
-          this.$emit('timer-stopped');
+        timerStopped(timer) {
+          this.$emit('timer-stopped', timer);
         },
-        timerDialogAdd(show) {
-          this.$emit('timer-dialog-add', show);
+        timerDialogAdd(show, task) {
+          this.$emit('timer-dialog-add', show, task);
         },
-        timerDialogUpdate(show) {
-          this.$emit('timer-dialog-update', show);
+        timerDialogUpdate(show, timer) {
+          this.$emit('timer-dialog-update', show, timer);
         },
 
         /* Notes */
         notesLoaded() {
           this.$emit('notes-loaded');
         },
-        noteAdded() {
-          this.$emit('note-added');
+        noteAdded(note) {
+          this.$emit('note-added', note);
         },
-        noteUpdated() {
-          this.$emit('note-updated');
+        noteUpdated(note) {
+          this.$emit('note-updated', note);
         },
-        noteDeleted() {
-          this.$emit('note-deleted');
+        noteDeleted(note) {
+          this.$emit('note-deleted', note);
         },
-        noteDrawerToggle(state) {
-          this.$emit('note-drawer-toggle', state);
+        noteDrawerToggle(state, notes = null, task = null) {
+          this.$emit('note-drawer-toggle', state, notes, task);
         },
-        noteDialogAdd(show) {
-          this.$emit('note-dialog-add', show);
+        noteDialogAdd(show, task = null) {
+          this.$emit('note-dialog-add', show, task);
         },
-        noteDialogUpdate(show) {
-          this.$emit('note-dialog-update', show);
+        noteDialogUpdate(show, note) {
+          this.$emit('note-dialog-update', show, note);
         },
       }
     })

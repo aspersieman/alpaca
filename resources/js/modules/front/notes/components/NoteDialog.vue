@@ -133,13 +133,13 @@ export default {
       self.mode = 'ADD';
       self.subtitle = self.$store.getters['task/task']?.name || '';
     });
-    self.$eventBus.$on('note-dialog-update', (value) => {
+    self.$eventBus.$on('note-dialog-update', (value, note) => {
       self.formReset();
       self.dialog = value;
-      self.note = self.$store.getters['note/note'];
+      self.note = note;
       self.name = self.note.name;
       self.content = self.note.content;
-      self.subtitle = self.$store.getters['task/task']?.name || '';
+      self.subtitle = self.note.task?.name || '';
       self.mode = 'UPDATE';
     });
     self.$eventBus.$on([ 'note-added', 'note-updated' ], (value) => {
@@ -178,10 +178,10 @@ export default {
           name,
           content,
         };
-        this.$overlay.show({ show: true });
+        this.$overlay.show(true);
         this.saveNote(note)
           .then(() => {
-            this.$overlay.show({ show: false });
+            this.$overlay.show(false);
             this.close();
           });
       }
@@ -194,10 +194,10 @@ export default {
           name: this.name,
           content: this.content,
         };
-        this.$overlay.show({ show: true });
+        this.$overlay.show(true);
         this.updateNote(noteUpdate)
           .then(() => {
-            this.$overlay.show({ show: false });
+            this.$overlay.show(false);
             this.close();
           });
       }

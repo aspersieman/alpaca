@@ -4,7 +4,6 @@
     max-width="600px"
     scrollable
     :fullscreen="$vuetify.breakpoint.xs"
-    :loading="loading"
   >
     <v-card>
       <v-card-title class="grey--text">
@@ -146,7 +145,7 @@
           v-if="mode == 'ADD'"
           text
           class="success mx-0 mt-3"
-          :disabled="!valid || loading"
+          :disabled="!valid"
           @click="save()"
         >
           Start
@@ -155,7 +154,7 @@
           v-if="mode == 'UPDATE'"
           text
           class="success mx-0 mt-3"
-          :disabled="!valid || loading"
+          :disabled="!valid"
           @click="update()"
         >
           Update timer
@@ -212,8 +211,7 @@ export default {
   },
   created() {
     const self = this;
-    self.$eventBus.$on('timer-dialog-add', (value) => {
-      const task = self.$store.getters['task/task'];
+    self.$eventBus.$on('timer-dialog-add', (value, task) => {
       self.formReset();
       self.dialog = value;
       self.mode = 'ADD';
@@ -221,9 +219,9 @@ export default {
       self.name = task.name || '';
       self.task_id = task.id;
     });
-    self.$eventBus.$on('timer-dialog-update', (value) => {
+    self.$eventBus.$on('timer-dialog-update', (value, timer) => {
       self.formReset();
-      self.timer = self.$store.getters['timer/timer'];
+      self.timer = timer;
       self.name = self.timer.name;
       self.task_id = task.id;
       self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
