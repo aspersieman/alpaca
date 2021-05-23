@@ -8,7 +8,3 @@ and send your PUT request as POST request
 export function update({id, formData}) {
     return axios.post(`/v1/users/${id}`, formData)
 }
-
-export function getUserMain() {
-    return axios.get(`/v1/users/main`)
-}

@@ -1,32 +1,116 @@
 <template>
-  <div class="llama-background">
+  <div>
     <v-dialog
       v-model="dialog"
       max-width="600px"
       min-width="360px"
     >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          text
-          link
-          v-bind="attrs"
-          v-on="on"
-          class="d-none d-sm-flex"
+      <template #activator="vdialog">
+        <v-container
+          v-if="$vuetify.breakpoint.mdAndUp"
         >
-          Log In
-        </v-btn>
+          <v-row>
+            <v-col
+              class="col-6"
+            >
+              <v-btn
+                text
+                link
+                class="d-none d-sm-flex"
+                v-bind="vdialog.attrs"
+                v-on="vdialog.on"
+                @click="goToTab(0)"
+              >
+                Log In
+              </v-btn>
+            </v-col>
+            <v-col
+              class="col-6"
+            >
+              <base-btn-primary
+                v-bind="vdialog.attrs"
+                v-on="vdialog.on"
+                @click="goToTab(1)"
+              >
+                Sign Up
+              </base-btn-primary>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container
+          v-else
+        >
+          <v-menu
+            close-on-click
+            bottom
+            offset-y
+          >
+            <template #activator="vmenu">
+              <v-btn
+                icon
+                x-large
+                v-bind="vmenu.attrs"
+                v-on="vmenu.on"
+              >
+                <v-icon
+                  color="primary"
+                >
+                  account_circle
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title
+                  v-bind="vdialog.attrs"
+                  v-on="vdialog.on"
+                  @click="goToTab(0)"
+                >
+                  Log In
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title
+                  v-bind="vdialog.attrs"
+                  v-on="vdialog.on"
+                  @click="goToTab(1)"
+                >
+                  Sign Up
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-container>
       </template>
       <div>
-        <v-tabs v-model="tab" show-arrows background-color="light" color="primary accent-4" icons-and-text grow>
-          <v-tabs-slider></v-tabs-slider>
-          <v-tab v-for="i in tabs" :key="i.name">
-            <v-icon large>{{ i.icon }}</v-icon>
-            <div class="caption py-1">{{ i.name }}</div>
+        <v-tabs
+          v-model="tab"
+          show-arrows
+          background-color="light"
+          color="primary accent-4"
+          icons-and-text
+          grow
+        >
+          <v-tabs-slider />
+          <v-tab
+            v-for="i in tabs"
+            :key="i.name"
+          >
+            <v-icon large>
+              {{ i.icon }}
+            </v-icon>
+            <div class="caption py-1">
+              {{ i.name }}
+            </div>
           </v-tab>
           <v-tab-item>
             <v-card class="px-4">
               <v-card-text>
-                <v-form ref="loginForm" v-model="valid" lazy-validation>
+                <v-form
+                  ref="loginForm"
+                  v-model="valid"
+                  lazy-validation
+                >
                   <v-row>
                     <v-col cols="12">
                       <v-text-field
@@ -49,10 +133,20 @@
                         @click:append="show1 = !show1"
                       />
                     </v-col>
-                    <v-col class="d-flex" cols="12" sm="6" xsm="12">
-                    </v-col>
+                    <v-col
+                      class="d-flex"
+                      cols="12"
+                      sm="6"
+                      xsm="12"
+                    />
                     <v-spacer />
-                    <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
+                    <v-col
+                      class="d-flex"
+                      cols="12"
+                      sm="3"
+                      xsm="12"
+                      align-end
+                    >
                       <v-btn
                         block
                         :disabled="!valid"
@@ -70,9 +164,17 @@
           <v-tab-item>
             <v-card class="px-4">
               <v-card-text>
-                <v-form ref="registerForm" v-model="valid" lazy-validation>
+                <v-form
+                  ref="registerForm"
+                  v-model="valid"
+                  lazy-validation
+                >
                   <v-row>
-                    <v-col cols="12" sm="6" md="6">
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="6"
+                    >
                       <v-text-field
                         v-model="firstName"
                         :rules="[rules.required]"
@@ -81,7 +183,11 @@
                         required
                       />
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="6"
+                    >
                       <v-text-field
                         v-model="lastName"
                         :rules="[rules.required]"
@@ -95,7 +201,8 @@
                         v-model="email"
                         :rules="emailRules"
                         label="E-mail"
-                        required></v-text-field>
+                        required
+                      />
                     </v-col>
                     <v-col cols="12">
                       <v-text-field
@@ -112,8 +219,8 @@
                     </v-col>
                     <v-col cols="12">
                       <v-text-field
-                        block
                         v-model="verify"
+                        block
                         :append-icon="show1 ? 'visibility' : 'visibility_off'"
                         :rules="[rules.required, passwordMatch]"
                         :type="show1 ? 'text' : 'password'"
@@ -124,7 +231,12 @@
                       />
                     </v-col>
                     <v-spacer />
-                    <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
+                    <v-col
+                      class="d-flex ml-auto"
+                      cols="12"
+                      sm="3"
+                      xsm="12"
+                    >
                       <v-btn
                         block
                         :disabled="!valid"
@@ -204,11 +316,23 @@ export default {
           })
       }
     },
+
     reset() {
       this.$refs.form.reset();
     },
+
     resetValidation() {
       this.$refs.form.resetValidation();
+    },
+
+    goToTab(number) {
+      if (number > 1) {
+        number = 1;
+      }
+      if (number < 0) {
+        number = 0;
+      }
+      this.tab = number;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { update, getUserMain } from '@/api/user'
+import { update } from '@/api/user'
 
 export const state = {
   userMain: {
@@ -29,23 +29,9 @@ export const actions = {
         .catch(error => reject(error))
     })
   },
-
-  getUserMain({commit}, payload) {
-    return new Promise((resolve, reject) => {
-      getUserMain(payload)
-        .then(({data}) => {
-          commit('USER_MAIN', data.user)
-          resolve(data)
-        })
-        .catch(error => reject(error))
-    })
-  }
 }
 
 export const getters = {
-  userMain : state => {
-    return state.userMain
-  }
 }
 
 export default {

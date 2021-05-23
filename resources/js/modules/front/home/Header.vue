@@ -41,15 +41,7 @@
           id="container-id-4-"
           data-element-type="container"
         >
-          <div
-            id="container-id-5-"
-            data-element-type="container"
-          >
-            <core-login-sign-up-dialog />
-          </div>
-          <base-btn-primary>
-            Sign up
-          </base-btn-primary>
+          <core-login-sign-up-dialog />
         </div>
       </div>
     </div>
