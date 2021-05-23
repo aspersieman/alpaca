@@ -6,10 +6,10 @@ export const state= {
 
 export const mutations = {
   showMessage (state, payload) {
-    state.title = payload.title
-    state.text = payload.text
-    state.color = payload.color
-  }
+    state.title = payload.title;
+    state.text = payload.text;
+    state.color = payload.color;
+  },
 }
 
 export const getters = {

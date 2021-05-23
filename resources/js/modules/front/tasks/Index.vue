@@ -67,7 +67,7 @@
         <v-layout
           v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
           row
-          class="mb-1 mt-1 "
+          class="mb-1 mt-1"
           wrap
           transition="scroll-y-transition"
         >
@@ -185,7 +185,7 @@
                 text
                 color="primary"
                 class="display-1"
-                @click="openTaskDialog()"
+                @click="$eventBus.taskDialogAdd(true)"
               >
                 Add new Task
               </v-btn>
@@ -206,7 +206,7 @@
             right
             color="primary"
             class="task-add-button-mobile hidden-lg-and-up mr-12"
-            @click="openTaskDialog()"
+            @click="$eventBus.taskDialogAdd(true)"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -296,32 +296,22 @@ export default {
     this.$nextTick(() => {
       this.getTasksSettings();
       this.searchTasks();
-      this.sortTasks();
     });
     this.$eventBus.$on([
-      'task-added',
-      'task-updated',
       'timer-added',
       'timer-updated',
       'timer-deleted',
       'timer-stopped',
       'note-added',
       'note-deleted'
-    ], (task) => {
-      const taskIndex = this.tasks.findIndex((obj => obj.id == task.id));
-      this.tasks[taskIndex] = task;
-      this.getTasksSettings();
-      this.sortTasks();
+    ], () => {
+      console.log("eventBus tasks/Index");
     });
-    this.$eventBus.$on(['tasks-loaded'],()=>{
-      this.sortTasks();
-    });
-    this.$eventBus.$on(['task-deleted'], (task)=> {
-      this.tasks = this.tasks
-        .filter(function(element) {
-          return element.id !== task?.id;
-        });
-      this.sortTasks();
+    this.$store.subscribe((mutation) => {
+      if (['tasks/ADDED', 'task/UPDATED', 'task/DELETED'].includes(mutation.type)) {
+        this.getTasksSettings();
+        this.searchTasks();
+      }
     });
   },
   methods: {
@@ -407,7 +397,8 @@ export default {
 
     searchTasks() {
       this.prepareQuery();
-      this.getTasks(this.query);
+      this.$store.dispatch('task/getTasks', this.query)
+        .then(() => this.sortTasks());
     },
 
     prepareQuery() {

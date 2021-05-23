@@ -8,11 +8,6 @@ const eventBus = {
         'user-logged-in',
         'user-logged-out',
         'dashboard-parameters-changed',
-        'tasks-loaded',
-        'task-loaded',
-        'task-added',
-        'task-updated',
-        'task-deleted',
         'task-dialog-add',
         'task-dialog-update',
         'timer-added',
@@ -53,21 +48,6 @@ const eventBus = {
         },
 
         /* Tasks */
-        tasksLoaded() {
-          this.$emit('tasks-loaded');
-        },
-        taskLoaded(task) {
-          this.$emit('task-loaded', task);
-        },
-        taskAdded(task) {
-          this.$emit('task-added', task);
-        },
-        taskUpdated(task) {
-          this.$emit('task-updated', task);
-        },
-        taskDeleted(task) {
-          this.$emit('task-deleted', task);
-        },
         taskDialogAdd(show) {
           this.$emit('task-dialog-add', show);
         },

@@ -102,7 +102,7 @@
               small
               rounded
               :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
-              @click="changeTaskStatus(task)"
+              @click="$store.dispatch('task/changeTaskStatus', task)"
             >
               {{ task.status }}
             </v-btn>
@@ -137,7 +137,7 @@
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="deleteTask(task)"
+              @click="$store.dispatch('task/deleteTask', task)"
             >
               <v-tooltip bottom>
                 <template
@@ -224,7 +224,7 @@
                 </v-list-item>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="deleteTask(task)"
+                  @click="$store.dispatch('task/deleteTask', task)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>delete</v-icon>

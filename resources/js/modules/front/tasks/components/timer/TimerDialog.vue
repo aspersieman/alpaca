@@ -55,7 +55,6 @@
             label="Categories"
             multiple
             prepend-icon="category"
-            solo
           >
             <template
               #selection="{ attrs, item, select, selected }"

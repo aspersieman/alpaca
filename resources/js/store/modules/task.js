@@ -10,6 +10,9 @@ export const state = {
     order: null,
     timers: []
   },
+  added: null,
+  updated: null,
+  deleted: null,
   taskTemplate: {
     id: null,
     name: null,
@@ -52,57 +55,21 @@ export const mutations = {
     }
     state.tasks = tasks;
   },
+  ADDED: (state, payload) => state.added = payload,
+  UPDATED: (state, payload) => state.updated = payload,
+  DELETED: (state, payload) => state.deleted = payload,
   TASKS: (state, payload) => state.tasks = payload,
   DIALOG_ADD: (state, payload) => state.dialogAdd = payload,
   DIALOG_UPDATE: (state, payload) => state.dialogUpdate = payload,
 }
 
 export const actions = {
-  saveTask({commit}, payload) {
-    return new Promise((resolve, reject) => {
-      saveTask(payload)
-        .then(({data}) => {
-          commit('TASK', data);
-          resolve(data)
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  },
-
-  updateTask({commit}, payload) {
-    return new Promise((resolve, reject) => {
-      updateTask(payload)
-        .then(({data}) => {
-          commit('TASK', data);
-          resolve(data)
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  },
-
-  deleteTask({commit}, payload) {
-    return new Promise((resolve, reject) => {
-      deleteTask(payload.id)
-        .then(({data}) => {
-          commit('TASK', { task: payload, remove: true });
-          resolve(data)
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  },
-
   getTasks({commit}, payload) {
     return new Promise((resolve, reject) => {
       getTasks(payload)
         .then(({data}) => {
           commit('TASKS', data.data);
-          resolve(data)
+          resolve(data);
         })
         .catch(error => reject(error));
     });
@@ -117,6 +84,95 @@ export const actions = {
         })
         .catch(error => reject(error))
     })
+  },
+
+  saveTask({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      saveTask(payload)
+        .then(({data}) => {
+          commit('TASK', data);
+          commit('ADDED', data);
+          commit(
+            'flash/showMessage',
+            {text: 'Task added successfully', color: 'green'},
+            {root: true}
+          );
+          resolve(data)
+        })
+        .catch((error) => {
+          console.error(error);
+          commit(
+            'flash/showMessage',
+            {text: 'Error adding task', color: 'red'},
+            {root: true}
+          );
+          reject(error);
+        });
+    });
+  },
+
+  updateTask({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      updateTask(payload)
+        .then(({data}) => {
+          commit('TASK', data);
+          commit('UPDATED', data);
+          commit(
+            'flash/showMessage',
+            {text: 'Task updated successfully', color: 'green'},
+            {root: true}
+          );
+          resolve(data)
+        })
+        .catch((error) => {
+          console.error(error);
+          commit(
+            'flash/showMessage',
+            {text: 'Error updating task', color: 'red'},
+            {root: true}
+          );
+          reject(error);
+        });
+    });
+  },
+
+  deleteTask({commit, dispatch}, payload) {
+    return new Promise((resolve, reject) => {
+      dispatch('dialog/dialogShow',{
+        type: 'confirm',
+        icon: 'warning',
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete this task?',
+        okCb: () => {
+          dispatch('dialog/dialogHide', null, {root: true});
+          deleteTask(payload)
+            .then(({data}) => {
+              commit('TASK', { task: payload, remove: true });
+              commit('DELETED', data);
+              commit(
+                'flash/showMessage',
+                {text: 'Task deleted successfully', color: 'green'},
+                {root: true}
+              );
+              dispatch('dialog/dialogHide', null, {root: true});
+              resolve(data)
+            })
+            .catch(error => {
+              console.error(error)
+              commit(
+                'flash/showMessage',
+                {text: 'Error occurred deleting task', color: 'red'},
+                {root: true}
+              );
+              reject(error);
+            });
+        },
+        cancelCb: ()=>{
+          dispatch('dialog/dialogHide', null, {root: true});
+        }
+      },
+      {root: true});
+    });
   },
 
   getTaskPriorityById({getters}, priorityId) {
@@ -142,6 +198,27 @@ export const actions = {
     commit('TASK', getters['taskTemplate']);
     commit('DIALOG_ADD', false);
     commit('DIALOG_UPDATE', false);
+  },
+
+  changeTaskStatus({dispatch}, task) {
+    var newStatus = null;
+    switch (task.status) {
+      case 'ongoing':
+        newStatus = 'complete';
+        break;
+      case 'complete':
+        newStatus = 'overdue';
+        break;
+      case 'overdue':
+        newStatus = 'ongoing';
+        break;
+      default:
+        break;
+    }
+    if (newStatus) {
+      task.status = newStatus
+      dispatch('updateTask', task);
+    }
   },
 }
 

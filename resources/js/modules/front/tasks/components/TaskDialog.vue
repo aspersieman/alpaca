@@ -299,7 +299,7 @@ export default {
           status: this.status,
         };
         this.$overlay.show(true);
-        this.saveTask(task)
+        this.$store.dispatch('task/saveTask', task)
           .then(() => {
             this.close();
             this.$overlay.show(false);
@@ -315,7 +315,7 @@ export default {
           priority: this.priority.id,
           status: this.status,
         };
-        this.updateTask(task)
+        this.$store.dispatch('task/updateTask', task)
           .then(this.close());
       }
     },

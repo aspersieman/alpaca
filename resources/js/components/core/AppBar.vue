@@ -63,8 +63,8 @@
             dark
             title="Add new Task"
             icon="add"
-            @shortkey="taskDialogAdd()"
-            @click="taskDialogAdd()"
+            @shortkey="$eventBus.taskDialogAdd(true)"
+            @click="$eventBus.taskDialogAdd(true)"
           >
             New task
           </base-btn-primary>
@@ -124,9 +124,6 @@ export default {
       e.stopPropagation()
       if (item.to || !item.href) return
       this.$vuetify.goTo(item.href.endsWith('!') ? 0 : item.href)
-    },
-    taskDialogAdd() {
-      this.$eventBus.taskDialogAdd(true);
     },
   },
 }

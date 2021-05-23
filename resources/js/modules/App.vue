@@ -3,10 +3,6 @@
     <core-app-bar />
     <core-content />
     <core-footer />
-    <div
-      v-if="showLoader"
-      class="llama-loader bg-half-transparent"
-    />
     <vue-progress-bar />
     <confirm-dialog />
     <note-dialog />
@@ -40,11 +36,6 @@ export default {
     TaskMixin,
     NoteMixin
   ],
-  computed: {
-    showLoader() {
-      return this.$store.getters['loader/loaderShow'];
-    },
-  },
   created() {
     this.$store.dispatch('timer/resetTimerRunning')
       .then(() => {
@@ -55,6 +46,8 @@ export default {
   methods: {
     reset() {
       this.$store.commit('drawer/NOTE_DRAWER', false);
+      this.$store.dispatch('dialog/dialogHide');
+      this.$overlay.show(false);
     },
   }
 }
