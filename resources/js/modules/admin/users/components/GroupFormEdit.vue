@@ -170,7 +170,7 @@ export default {
               permissions: self.permissions
           };
 
-          self.$store.commit('showLoader');
+          self.$store.commit('loaderShow');
 
           window.axios.put('/api/admin/groups/' + self.propGroupId,payload).then(function(response) {
 
@@ -179,12 +179,12 @@ export default {
                   color: 'success',
                   duration: 3000
               });
-              self.$store.commit('hideLoader');
+              self.$store.commit('loaderHide');
               self.$eventBus.$emit(EventNames.GROUP_UPDATED);
 
           }).catch(function (error) {
 
-              self.$store.commit('hideLoader');
+              self.$store.commit('loaderHide');
 
               if (error.response) {
                   self.$store.commit('showSnackbar',{

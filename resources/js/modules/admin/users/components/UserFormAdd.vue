@@ -274,13 +274,13 @@ export default {
         permissions: self.permissions,
         groups: self.groups,
       };
-      self.$store.commit('showLoader');
+      self.$store.commit('loaderShow');
       window.axios.post('/api/admin/users',payload).then(function(response) {
         self.$flash.success({
           text: 'User added successfully'
         });
         self.$eventBus.$emit(EventNames.USER_ADDED);
-        self.$store.commit('hideLoader');
+        self.$store.commit('loaderHide');
         // reset
         self.$refs.userFormAdd.reset();
         self.permissions = [];

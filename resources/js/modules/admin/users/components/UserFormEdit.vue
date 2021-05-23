@@ -264,7 +264,7 @@ export default {
         permissions: self.permissions,
         groups: self.groups,
       };
-      self.$store.commit('showLoader');
+      self.$store.commit('loaderShow');
 
       window.axios.put('/api/admin/users/'+self.propUserId,payload).then(function() {
         self.$flash.success({

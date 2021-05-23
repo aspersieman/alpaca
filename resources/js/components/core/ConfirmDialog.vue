@@ -4,6 +4,7 @@
       v-show="showDialog"
       v-model="showDialog"
       absolute
+      persistent
       max-width="450px"
     >
       <v-card>
@@ -21,14 +22,14 @@
           <v-btn
             color="orange darken-1"
             text
-            @click.native="dialogCancel"
+            @click="dialogCancel"
           >
             Cancel
           </v-btn>
           <v-btn
             color="green darken-1"
             text
-            @click.native="dialogOk"
+            @click="dialogOk"
           >
             Ok
           </v-btn>
@@ -38,7 +39,7 @@
           <v-btn
             color="green darken-1"
             text
-            @click.native="dialogOk"
+            @click="dialogOk"
           >
             Ok
           </v-btn>
@@ -50,10 +51,12 @@
 <script>
 export default {
   name: 'CoreConfirmDialog',
-  components: {},
   props: {
     value: Boolean
   },
+  emits: [
+    'close'
+  ],
   computed: {
     showDialog: {
       get() {
@@ -94,9 +97,9 @@ export default {
       this.$store.getters['dialog/dialogOkCb']();
     },
     dialogCancel() {
+      this.$store.getters['dialog/dialogCancelCb']();
       this.$store.dispatch('dialog/dialogHide');
     }
   },
 }
 </script>
-
