@@ -284,6 +284,22 @@
                   <a
                     id="button-id-48-"
                     data-element-type="button"
+                    href="https://instagram.com/aspersieman"
+                    target="_blank"
+                  >
+                    <span id="element-id-47-">Instagram</span>
+                  </a>
+                  <a
+                    id="button-id-48-"
+                    data-element-type="button"
+                    href="https://github.com/aspersieman"
+                    target="_blank"
+                  >
+                    <span id="element-id-47-">Github</span>
+                  </a>
+                  <a
+                    id="button-id-48-"
+                    data-element-type="button"
                     href="https://twitter.com/aspersieman"
                     target="_blank"
                   >
@@ -301,6 +317,7 @@
           </div>
         </div>
       </div>
+      <core-to-top-bottom />
       <home-header />
       <core-snackbar />
     </div>
@@ -309,11 +326,13 @@
 <script>
 import HomeHeader from "@/modules/front/home/Header.vue";
 import CoreSnackbar from '@/components/core/Snackbar.vue';
+import CoreToTopBottom from '@/components/core/ToTopBottom';
 
 export default {
   components: {
     HomeHeader,
-    CoreSnackbar
+    CoreSnackbar,
+    CoreToTopBottom
   },
   data: () => ({
     year: window.moment().format("YYYY"),
