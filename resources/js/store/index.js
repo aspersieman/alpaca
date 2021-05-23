@@ -7,7 +7,6 @@ import chart from './modules/chart';
 import dialog from './modules/dialog';
 import drawer from './modules/drawer';
 import flash from './modules/flash';
-import loader from './modules/loader';
 import menu from './modules/menu';
 import note from './modules/note';
 import overlay from './modules/overlay';
@@ -24,7 +23,6 @@ export default new Vuex.Store({
     dialog,
     drawer,
     flash,
-    loader,
     menu,
     note,
     overlay,

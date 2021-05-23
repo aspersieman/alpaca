@@ -39,14 +39,14 @@ export default {
           color: this.$store.getters['flash/color'],
           transition: 'fade-transition'
         });
-        setTimeout(this.removeMessage, 5000, (this.messages.length - 1));
+        setTimeout(this.removeMessage, 2000);
       }
-    })
+    });
   },
   methods: {
-    removeMessage(id) {
-      this.messages.splice(id, 1);
-    }
+    removeMessage() {
+      this.messages.splice(0, 1);
+    },
   }
 }
 </script>
