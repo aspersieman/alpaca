@@ -24,8 +24,8 @@ export const state = {
   },
   tasks: [],
   loading: false,
-  dialogAdd: false,
-  dialogUpdate: false,
+  taskDialogAdd: false,
+  taskDialogUpdate: false,
   statuses: [
     'complete',
     'ongoing',
@@ -55,12 +55,12 @@ export const mutations = {
     }
     state.tasks = tasks;
   },
-  ADDED: (state, payload) => state.added = payload,
-  UPDATED: (state, payload) => state.updated = payload,
-  DELETED: (state, payload) => state.deleted = payload,
-  TASKS: (state, payload) => state.tasks = payload,
-  DIALOG_ADD: (state, payload) => state.dialogAdd = payload,
-  DIALOG_UPDATE: (state, payload) => state.dialogUpdate = payload,
+  ADDED: (state, payload) => { state.added = payload },
+  UPDATED: (state, payload) => { state.updated = payload },
+  DELETED: (state, payload) => { state.deleted = payload },
+  TASKS: (state, payload) => { state.tasks = payload },
+  TASK_DIALOG_ADD: (state, payload) => { state.taskDialogAdd = payload },
+  TASK_DIALOG_UPDATE: (state, payload) => { state.taskDialogUpdate = payload },
 }
 
 export const actions = {
@@ -88,6 +88,7 @@ export const actions = {
 
   saveTask({commit}, payload) {
     return new Promise((resolve, reject) => {
+      payload.status = payload.status.toLowerCase();
       saveTask(payload)
         .then(({data}) => {
           commit('TASK', data);
@@ -113,6 +114,7 @@ export const actions = {
 
   updateTask({commit}, payload) {
     return new Promise((resolve, reject) => {
+      payload.status = payload.status.toLowerCase();
       updateTask(payload)
         .then(({data}) => {
           commit('TASK', data);
@@ -138,7 +140,7 @@ export const actions = {
 
   deleteTask({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
-      dispatch('dialog/dialogShow',{
+      const settings = {
         type: 'confirm',
         icon: 'warning',
         title: 'Confirm deletion',
@@ -154,7 +156,6 @@ export const actions = {
                 {text: 'Task deleted successfully', color: 'green'},
                 {root: true}
               );
-              dispatch('dialog/dialogHide', null, {root: true});
               resolve(data)
             })
             .catch(error => {
@@ -170,8 +171,8 @@ export const actions = {
         cancelCb: ()=>{
           dispatch('dialog/dialogHide', null, {root: true});
         }
-      },
-      {root: true});
+      };
+      dispatch('dialog/dialogShow', settings, {root: true});
     });
   },
 
@@ -187,22 +188,22 @@ export const actions = {
   openTaskDialog({commit, getters}, task) {
     if (task) {
       commit('TASK', task);
-      commit('DIALOG_UPDATE', true);
+      commit('TASK_DIALOG_UPDATE', true);
     } else {
       commit('TASK', getters['taskTemplate']);
-      commit('DIALOG_ADD', true);
+      commit('TASK_DIALOG_ADD', true);
     }
   },
 
   closeTaskDialog({commit, getters}) {
     commit('TASK', getters['taskTemplate']);
-    commit('DIALOG_ADD', false);
-    commit('DIALOG_UPDATE', false);
+    commit('TASK_DIALOG_ADD', false);
+    commit('TASK_DIALOG_UPDATE', false);
   },
 
   changeTaskStatus({dispatch}, task) {
     var newStatus = null;
-    switch (task.status) {
+    switch (task.status.toLowerCase()) {
       case 'ongoing':
         newStatus = 'complete';
         break;
@@ -226,8 +227,8 @@ export const getters = {
   task: state => state.task,
   taskTemplate: state => state.taskTemplate,
   tasks : state => state.tasks,
-  dialogAdd: state => state.dialogAdd,
-  dialogUpdate: state => state.dialogUpdate,
+  taskDialogAdd: state => state.taskDialogAdd,
+  taskDialogUpdate: state => state.taskDialogUpdate,
   statuses: state => state.statuses,
   priorities: state => state.priorities,
   loading: state => state.loading,

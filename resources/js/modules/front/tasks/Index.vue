@@ -206,7 +206,7 @@
             right
             color="primary"
             class="task-add-button-mobile hidden-lg-and-up mr-12"
-            @click="$eventBus.taskDialogAdd(true)"
+            @click="$store.dispatch('task/openTaskDialog')"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -241,11 +241,6 @@ export default {
       userId: '',
       search: '',
       status: [],
-      statuses: [
-        'complete',
-        'ongoing',
-        'overdue'
-      ],
       dates: [],
       dateRangeLabel: 'Due date range',
       showFilters: false,
@@ -275,7 +270,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('task', ['tasks']),
+    ...mapGetters('task', [
+      'tasks',
+      'statuses'
+    ]),
   },
   watch: {
     search: function() {
@@ -297,18 +295,18 @@ export default {
       this.getTasksSettings();
       this.searchTasks();
     });
-    this.$eventBus.$on([
-      'timer-added',
-      'timer-updated',
-      'timer-deleted',
-      'timer-stopped',
-      'note-added',
-      'note-deleted'
-    ], () => {
-      console.log("eventBus tasks/Index");
-    });
     this.$store.subscribe((mutation) => {
-      if (['tasks/ADDED', 'task/UPDATED', 'task/DELETED'].includes(mutation.type)) {
+      if (
+        [
+          'tasks/ADDED',
+          'task/UPDATED',
+          'task/DELETED',
+          'timer/ADDED',
+          'timer/UPDATED',
+          'timer/DELETED',
+          'timer/TIMER_STOPPED'
+        ].includes(mutation.type)
+      ) {
         this.getTasksSettings();
         this.searchTasks();
       }
@@ -328,11 +326,11 @@ export default {
     },
 
     getTasksSettings() {
-      this.search = this.getSetting('tasks-search');
-      this.status = this.getSetting('tasks-status');
-      this.dates = this.getSetting('tasks-date-range');
-      this.priority = this.getSetting('tasks-priority');
-      this.sort = this.getSetting('tasks-sort');
+      this.search = this.getSetting('tasks-search') ?? this.search;
+      this.status = this.getSetting('tasks-status') ?? this.status;
+      this.dates = this.getSetting('tasks-date-range') ?? this.dates;
+      this.priority = this.getSetting('tasks-priority') ?? this.priority;
+      this.sort = this.getSetting('tasks-sort') ?? this.priority;
     },
 
     toggleFilters() {

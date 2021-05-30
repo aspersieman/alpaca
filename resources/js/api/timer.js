@@ -10,7 +10,7 @@ So _method: PUT has to be added to the form data
 and send your PUT request as POST request
 */
 export function updateTimer(payload) {
-  task._method = "PUT"
+  payload._method = "PUT"
   return axios.put(`/api/v1/tasks/${payload.task_id}/timers/${payload.id}`, payload);
 }
 

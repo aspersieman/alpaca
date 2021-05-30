@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import TimerMixin from '@/mixins/TimerMixin';
 import TaskMixin from '@/mixins/TaskMixin';
 
@@ -199,6 +200,10 @@ export default {
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
       ],
+      dateRules: [
+        (v) => (v.length >= 4) || 'Invalid date format',
+        (v) => !!v || 'Date is required',
+      ],
       tags: [],
       tagItems: [],
     }
@@ -206,34 +211,47 @@ export default {
   computed: {
     formattedDate() {
       return this.startDate ? window.moment(this.startDate).format('YYYY-MM-DD') : ''
-    }
+    },
+    ...mapGetters('timer', [
+      'timer',
+      'timerDialogUpdate',
+      'timerDialogAdd'
+    ]),
+    ...mapGetters('task', [
+      'task'
+    ]),
   },
   created() {
     const self = this;
-    self.$eventBus.$on('timer-dialog-add', (value, task) => {
-      self.formReset();
-      self.dialog = value;
-      self.mode = 'ADD';
-      self.subtitle = task.name || '';
-      self.name = task.name || '';
-      self.task_id = task.id;
-    });
-    self.$eventBus.$on('timer-dialog-update', (value, timer) => {
-      self.formReset();
-      self.timer = timer;
-      self.name = self.timer.name;
-      self.task_id = task.id;
-      self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
-      self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-      self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-      self.subtitle = self.$store.getters['task/task']?.name || '';
-      self.dialog = value;
-      self.mode = 'UPDATE';
-      const tags = self.$store.state.timer.tagged.map(function (item) {
-        return item.tag_name;
-      });
-      self.tags = tags;
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'timer/TIMER_DIALOG_ADD') {
+        self.formReset();
+        self.dialog = self.timerDialogAdd;
+        if (self.timerDialogAdd === true) {
+          self.mode = 'ADD';
+          self.subtitle = self.task.name || '';
+          self.name = self.task.name || '';
+          self.task_id = self.task.id;
+        }
+      }
+      if (mutation.type === 'timer/TIMER_DIALOG_UPDATE') {
+        self.formReset();
+        self.dialog = self.timerDialogUpdate;
+        if (self.timerDialogUpdate === true) {
+          self.name = self.timer.name;
+          self.task_id = self.timer.task_id;
+          self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+          self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+          self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
+          self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+          self.subtitle = self.task.name || '';
+          self.mode = 'UPDATE';
+          const tags = self.timer.tagged.map(function (item) {
+            return item.tag_name;
+          });
+          self.tags = tags;
+        }
+      }
     });
   },
   methods: {
@@ -245,25 +263,30 @@ export default {
           tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
           tags: this.tags
         };
-        this.saveTimer(timer)
+        this.$store.dispatch('timer/saveTimer', timer)
           .then(this.close());
       }
     },
     update() {
       if (this.valid) {
+        const started_at = window.moment(this.startDate + ' ' + this.startTime, 'YYYY-MM-DD HH:mm:ss');
         const timer = {
           id: this.timer.id,
           name: this.name,
           task_id: this.task_id,
+          started_at: started_at.format('YYYY-MM-DD HH:mm:ss'),
+          stopped_at: started_at.add(this.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
           tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
           tags: this.tags
         };
-        this.updateTimer(timer)
+        this.$store.dispatch('timer/updateTimer', timer)
           .then(this.close());
       }
     },
     close() {
       this.dialog = false;
+      this.$store.commit('timer/TIMER_DIALOG_UPDATE', false);
+      this.$store.commit('timer/TIMER_DIALOG_ADD', false);
     },
     formReset() {
       this.name = '';
@@ -271,7 +294,6 @@ export default {
       this.startTime = '';
       this.endTime = '';
       this.duration = '';
-      this.timer = null;
       this.tags = [];
       this.subtitle = '';
     },

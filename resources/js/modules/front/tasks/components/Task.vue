@@ -120,7 +120,7 @@
               icon
               class="pa-0 ma-0"
               :class="`${task.status}`"
-              @click="$eventBus.taskDialogUpdate(true, task)"
+              @click="$store.dispatch('task/openTaskDialog', task)"
             >
               <v-tooltip bottom>
                 <template
@@ -151,11 +151,19 @@
               </v-tooltip>
             </v-btn>
             <v-btn
+              v-if="getTaskTimers(task, onlyActive).length > 0"
+              icon
+            >
+              <timer-running
+                :small="small"
+              />
+            </v-btn>
+            <v-btn
               v-if="isTimerRunning !== true"
               icon
               :class="`${task.status}`"
               class="pa-0 ma-0"
-              @click="$eventBus.timerDialogAdd(true, task)"
+              @click="$store.dispatch('timer/openTimerDialog', {task: task, timer: null })"
             >
               <v-tooltip bottom>
                 <template #activator="{ on }">
@@ -215,7 +223,7 @@
               <v-list>
                 <v-list-item
                   :class="`${task.status}`"
-                  @click="$eventBus.taskDialogUpdate(true, task)"
+                  @click="$store.dispatch('task/openTaskDialog', task)"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>edit</v-icon>
@@ -232,9 +240,24 @@
                   <v-list-item-title>Delete</v-list-item-title>
                 </v-list-item>
                 <v-list-item
+                  v-if="getTaskTimers(task, onlyActive).length > 0"
+                  :class="`${task.status}`"
+                >
+                  <v-list-item-icon class="horizontal-center">
+                    <v-btn
+                      icon
+                    >
+                      <timer-running
+                        :small="small"
+                      />
+                    </v-btn>
+                  </v-list-item-icon>
+                  <v-list-item-title>Timer</v-list-item-title>
+                </v-list-item>
+                <v-list-item
                   v-if="$store.getters['timer/timerRunning'].seconds == 0"
                   :class="`${task.status}`"
-                  @click="$eventBus.timerDialogAdd(true, task)"
+                  @click="$store.dispatch('timer/openTimerDialog', {task: task, timer: null })"
                 >
                   <v-list-item-icon class="horizontal-center">
                     <v-icon>more_time</v-icon>
@@ -263,43 +286,19 @@
           </div>
         </v-flex>
       </v-layout>
-      <v-layout
-        v-if="getTaskTimers(task, onlyActive).length > 0"
-        row
-        wrap
-        :class="`pa-2 task ${task.status}`"
-      >
-        <v-flex
-          xs12
-          sm12
-          md12
-          lg12
-          class="ml-3"
-        >
-          <div class="caption grey--text">
-            Timers
-          </div>
-          <div>
-            <timer-list
-              :only-active="onlyActive"
-              :task="task"
-            />
-          </div>
-        </v-flex>
-      </v-layout>
     </v-card>
   </div>
 </template>
 <script>
 
 import { mapGetters } from 'vuex';
-import TimerList from '@/modules/front/tasks/components/timer/TimerList';
+import TimerRunning from '@/modules/front/tasks/components/timer/TimerRunning';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: {
-    TimerList
+    TimerRunning
   },
   mixins: [
     TaskMixin,
@@ -326,7 +325,8 @@ export default {
       newValues: [],
       timers: [],
       editMode: false,
-      onlyActive: true
+      onlyActive: true,
+      small: true
     }
   },
   computed: {

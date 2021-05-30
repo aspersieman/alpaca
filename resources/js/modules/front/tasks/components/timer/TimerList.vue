@@ -44,12 +44,6 @@ export default {
       default: false
     }
   },
-  created() {
-    const self = this;
-    self.$eventBus.$on('timer-start', (timer) => {
-      self.startTimer(timer);
-    });
-  },
 }
 </script>
 

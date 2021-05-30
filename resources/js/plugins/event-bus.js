@@ -8,14 +8,6 @@ const eventBus = {
         'user-logged-in',
         'user-logged-out',
         'dashboard-parameters-changed',
-        'task-dialog-add',
-        'task-dialog-update',
-        'timer-added',
-        'timer-updated',
-        'timer-deleted',
-        'timer-stopped',
-        'timer-dialog-add',
-        'timer-dialog-update',
         'notes-loaded',
         'note-added',
         'note-updated',
@@ -45,34 +37,6 @@ const eventBus = {
         /* Dashboard/charts */
         dashboardParametersChanged(parameters) {
           this.$emit('dashboard-parameters-changed', parameters);
-        },
-
-        /* Tasks */
-        taskDialogAdd(show) {
-          this.$emit('task-dialog-add', show);
-        },
-        taskDialogUpdate(show, task) {
-          this.$emit('task-dialog-update', show, task);
-        },
-
-        /* Timers */
-        timerAdded(timer) {
-          this.$emit('timer-added', timer);
-        },
-        timerUpdated(timer) {
-          this.$emit('timer-updated', timer);
-        },
-        timerDeleted(timer) {
-          this.$emit('timer-deleted', timer);
-        },
-        timerStopped(timer) {
-          this.$emit('timer-stopped', timer);
-        },
-        timerDialogAdd(show, task) {
-          this.$emit('timer-dialog-add', show, task);
-        },
-        timerDialogUpdate(show, timer) {
-          this.$emit('timer-dialog-update', show, timer);
         },
 
         /* Notes */

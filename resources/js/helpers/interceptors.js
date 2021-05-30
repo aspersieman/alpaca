@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 export default function intercept(Vue) {
-  console.log("intercepting");
   axios.interceptors.request.use(function(config) {
     const token = Vue.$store.getters['auth/getToken'];
     if(token) {
@@ -25,8 +24,6 @@ export default function intercept(Vue) {
       )
       && Vue.$router.currentRoute.name != 'index'
     ) {
-      console.log("401 intercepted");
-      console.log(Vue.$router);
       Vue.$store.dispatch('auth/logout');
       Vue.$router.replace({ path: '/', query: { loginprompt: 'true' }});
     }

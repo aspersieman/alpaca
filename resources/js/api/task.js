@@ -15,7 +15,7 @@ export function updateTask(payload) {
 }
 
 export function getTask(payload) {
-  return axios.get(`/api/v1/tasks/${payload.id}`);
+  return axios.get(`/api/v1/tasks/${payload}`);
 }
 
 export function deleteTask(payload) {

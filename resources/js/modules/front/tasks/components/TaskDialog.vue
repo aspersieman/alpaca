@@ -75,11 +75,16 @@
           <div v-if="mode == 'UPDATE'">
             <v-combobox
               v-model="status"
-              class="cmb-statuses"
+              class="cmb-statuses uppercase"
               :items="statuses"
               label="Status"
               chips
             >
+              <template
+                #item="data"
+              >
+                {{ data.item.toUpperCase() }}
+              </template>
               <template
                 #selection="data"
                 class="cmb-statuses"
@@ -97,7 +102,7 @@
               </template>
             </v-combobox>
             <div
-              v-if="task.timers.length > 0"
+              v-if="task.timers && task.timers.length > 0"
             >
               <div class="caption grey--text">
                 Timers
@@ -194,7 +199,7 @@
           text
           class="success ml-1 mx-0 mt-3"
           :disabled="!valid || loading"
-          @click="openTimerDialog(task);"
+          @click="$store.dispatch('timer/openTimerDialog', {task: task, timer: null })"
         >
           Add timer
         </v-btn>
@@ -232,15 +237,6 @@ export default {
       dialog: false,
       valid: false,
       loading: false,
-      task: {
-        id: null,
-        name: null,
-        due: null,
-        status: null,
-        priority: null,
-        order: null,
-        timers: []
-      },
       mode: '',
       name: '',
       status: '',
@@ -265,28 +261,36 @@ export default {
   },
   computed: {
     ...mapGetters('task', [
+      'task',
       'statuses',
       'priorities',
+      'taskDialogAdd',
+      'taskDialogUpdate'
     ]),
   },
   created() {
     const self = this;
-    self.$eventBus.$on('task-dialog-add', (value) => {
-      self.formReset();
-      self.dialog = value;
-      self.mode = 'ADD';
-    });
-    self.$eventBus.$on('task-dialog-update', (value, task) => {
-      self.formReset();
-      self.task = task;
-      self.name = self.task.name;
-      self.due = self.task.due;
-      self.timers = self.task.timers || [];
-      self.status = self.task.status;
-      self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
-        .then((value) => self.priority = value);
-      self.dialog = value;
-      self.mode = 'UPDATE';
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'task/TASK_DIALOG_ADD') {
+        self.formReset();
+        self.dialog = self.taskDialogAdd;
+        if (self.taskDialogAdd === true) {
+          self.mode = 'ADD';
+        }
+      }
+      if (mutation.type === 'task/TASK_DIALOG_UPDATE') {
+        self.formReset();
+        self.dialog = self.taskDialogUpdate;
+        if (self.taskDialogUpdate === true) {
+          self.name = self.task.name;
+          self.due = self.task.due;
+          self.timers = self.task.timers || [];
+          self.status = self.task.status;
+          self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
+            .then((value) => self.priority = value);
+          self.mode = 'UPDATE';
+        }
+      }
     });
   },
   methods: {
@@ -322,24 +326,11 @@ export default {
     close() {
       this.dialog = false;
     },
-    openTimerDialog() {
-      this.$store.commit('task/task', this.task);
-      this.$eventBus.timerAddDialog(true);
-    },
     formReset() {
       this.due = moment().format('YYYY-MM-DD');
-      this.task = {
-        id: null,
-        name: null,
-        due: null,
-        status: null,
-        priority: null,
-        order: null,
-        timers: []
-      };
       this.name = '';
       this.timers = [];
-      this.status = 'ongoing';
+      this.status = '';
       this.priority = { id: 0, name: '' };
     },
 

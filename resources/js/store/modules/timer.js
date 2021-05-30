@@ -4,6 +4,9 @@ import { duration } from '@/plugins/formatters';
 
 export const state = {
   timer: null,
+  added: null,
+  updated: null,
+  deleted: null,
   timerRunning: {
     seconds: 0,
     title: 'Timing...',
@@ -17,6 +20,7 @@ export const state = {
       duration: 0,
       created_at: null,
       updated_at: null,
+      tagged: []
     },
   },
   timerStopped: null,
@@ -28,6 +32,9 @@ export const state = {
 
 export const mutations = {
   TIMER: (state, payload) => { state.timer = payload; },
+  ADDED: (state, payload) => { state.added = payload },
+  UPDATED: (state, payload) => { state.updated = payload },
+  DELETED: (state, payload) => { state.deleted = payload },
   TIMER_RUNNING: (state, payload) => { state.timerRunning = payload; },
   TIMER_STOPPED: (state, payload) => { state.timerStopped = payload; },
   TIMER_STOPPED_VALUE: (state, payload) => { state.timerStoppedValue = payload; },
@@ -37,49 +44,106 @@ export const mutations = {
 }
 
 export const actions = {
-  saveTimer({commit}, payload) {
+  saveTimer({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
       saveTimer(payload)
         .then((data) => {
-          commit('TIMER', data);
+          dispatch('task/getTask', data.data.data.task_id, {root: true})
+            .then(({data}) => {
+              dispatch('timer/startTimer', data.data, {root: true})
+                .then(() => {
+                  commit(
+                    'flash/showMessage',
+                    {text: 'Timer added successfully', color: 'green'},
+                    {root: true}
+                  );
+                  commit('TIMER', data);
+                  commit('ADDED', data);
+                });
+            });
           resolve(data);
         }).catch(error => {
+          commit(
+            'flash/showMessage',
+            {text: 'Error adding timer', color: 'red'},
+            {root: true}
+          );
           reject(error);
         })
     });
   },
 
-  updateTimer({commit}, payload) {
+  updateTimer({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
       updateTimer(payload)
-        .then((data) => {
+        .then(({data}) => {
+          dispatch('task/getTask', data.data.task_id, {root: true});
           commit('TIMER', data);
+          commit('UPDATED', data);
+          commit(
+            'flash/showMessage',
+            {text: 'Timer updated successfully', color: 'green'},
+            {root: true}
+          );
           resolve(data);
         }).catch(error => {
+          commit(
+            'flash/showMessage',
+            {text: 'Error updating timer', color: 'red'},
+            {root: true}
+          );
           reject(error);
         });
     });
   },
 
-  deleteTimer({commit}, payload) {
-    deleteTimer(payload)
-      .then(({data}) => {
-        commit('TIMER', null);
-        resolve(data)
-      })
-      .catch(error => {
-        reject(error);
-      });
+  deleteTimer({commit, dispatch}, payload) {
+    return new Promise((resolve, reject) => {
+      const settings = {
+        type: 'confirm',
+        icon: 'warning',
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete this timer?',
+        okCb: ()=>{
+          dispatch('dialog/dialogHide', null, {root: true});
+          deleteTimer(payload)
+            .then(({data}) => {
+              commit('TIMER', null);
+              commit('DELETED', data);
+              dispatch('task/getTask', payload.task_id, {root: true});
+              commit(
+                'flash/showMessage',
+                {text: 'Timer deleted successfully', color: 'green'},
+                {root: true}
+              );
+              resolve(data)
+            }).catch((error) => {
+              console.error(error)
+              commit(
+                'flash/showMessage',
+                {text: 'Error occurred deleting timer', color: 'red'},
+                {root: true}
+              );
+              reject(error);
+            })
+        },
+        cancelCb: ()=>{
+          dispatch('dialog/dialogHide', null, {root: true});
+        }
+      };
+      dispatch('dialog/dialogShow', settings, {root: true});
+    });
   },
 
   /**
    * Sets active timer and opens the timer add or update dialog
    */
-  openTimerDialog({commit}, timer) {
-    commit('TIMER', timer);
+  openTimerDialog({commit}, {task, timer}) {
     if (timer) {
+      commit('TIMER', timer);
       commit('TIMER_DIALOG_UPDATE', true);
     } else {
+      commit('task/TASK', task, {root: true});
       commit('TIMER_DIALOG_ADD', true);
     }
   },
@@ -154,12 +218,18 @@ export const actions = {
         const timerId = getters['timerRunning'].timer.id;
         stopTimer(timerId)
           .then(({data}) => {
+            dispatch('task/getTask', data.data.task_id, {root: true});
             dispatch('resetTimerRunning');
             commit('TICKER', null);
-            commit('TIMER_STOPPED', data);
-            commit('TIMER_STOPPED_VALUE', TimerMixin.methods.timerDuration(data));
+            commit('TIMER_STOPPED', data.data);
+            commit('TIMER_STOPPED_VALUE', TimerMixin.methods.timerDuration(data.data));
             resolve(data)
           }).catch(error => {
+            commit(
+              'flash/showMessage',
+              {text: 'Error stopping timer', color: 'red'},
+              {root: true}
+            );
             reject(error)
           })
       });
@@ -179,6 +249,7 @@ export const actions = {
         duration: 0,
         created_at: null,
         updated_at: null,
+        tagged: []
       },
       title: 'Timing...',
       task: {
@@ -191,7 +262,13 @@ export const actions = {
     };
     commit('TIMER_RUNNING', timerRunning);
     commit('TICKER', null);
-  }
+  },
+
+  showTimerForTask({getters}, { task, timer }) {
+    return getters['timerRunning'].timer &&
+      getters['timerRunning'].timer.id === timer.id &&
+      getters['timerRunning'].timer.task_id === task.id
+  },
 }
 
 export const getters = {

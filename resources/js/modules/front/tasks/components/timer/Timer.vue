@@ -8,7 +8,7 @@
             flat
           >
             <div
-              :class="showTimerForTask(task, timer) ? 'active-timer' : ''"
+              :class="$store.dispatch('timer/showTimerForTask', {task, timer}) ? 'active-timer' : ''"
             >
               <v-layout
                 row
@@ -66,7 +66,7 @@
                   class="fs-90"
                 >
                   <v-layout
-                    v-if="showTimerForTask(task, timer)"
+                    v-if="$store.getters['timer/timerRunning'].timer.id == timer.id"
                     row
                   >
                     <v-flex
@@ -80,9 +80,9 @@
                         icon
                       />
                       <v-btn
-                        v-if="showTimerForTask(task, timer)"
+                        v-if="$store.dispatch('timer/showTimerForTask', {task, timer})"
                         icon
-                        @click="stopTimer(timer)"
+                        @click="$store.dispatch('timer/stopTimer', timer)"
                       >
                         <v-tooltip bottom>
                           <template #activator="{ on }">
@@ -117,7 +117,7 @@
                     <v-flex class="horizontal-center">
                       <v-btn
                         icon
-                        @click="deleteTimer(timer)"
+                        @click="$store.dispatch('timer/deleteTimer', timer)"
                       >
                         <v-tooltip bottom>
                           <template #activator="{ on }">
@@ -130,7 +130,7 @@
                       </v-btn>
                       <v-btn
                         icon
-                        @click="$store.dispatch('timer/openTimerDialog', timer)"
+                        @click="$store.dispatch('timer/openTimerDialog', { task: task, timer: timer })"
                       >
                         <v-tooltip bottom>
                           <template
@@ -192,12 +192,6 @@ export default {
         }
       }
     },
-  },
-  mounted() {
-    const self = this;
-    this.$eventBus.$on('timer-start', (timer) => {
-      self.startTimer(timer);
-    });
   },
 }
 </script>

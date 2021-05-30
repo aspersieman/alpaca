@@ -101,7 +101,8 @@
 </template>
 
 <script>
-import TaskMixin from '../../../mixins/TaskMixin';
+import { mapGetters } from 'vuex';
+import TaskMixin from '@/mixins/TaskMixin';
 
 export default {
   components: {
@@ -117,14 +118,13 @@ export default {
       btnColor: '',
       search: "",
       status: [],
-      statuses: [
-        'complete',
-        'ongoing',
-        'overdue'
-      ],
     }
   },
   computed: {
+    ...mapGetters('task', [
+      'tasks',
+      'statuses'
+    ]),
     searchTasks() {
       return this.tasks.filter(task => {
         return task.name.toLowerCase().includes(this.search);

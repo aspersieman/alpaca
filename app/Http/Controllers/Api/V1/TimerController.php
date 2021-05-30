@@ -51,23 +51,23 @@ class TimerController extends Controller
     $this->authorize('update', $timer);
     $timer->name = $request['name'];
     $timer->user_id = $request['user_id'];
-    $timer->started_at = $request['started_at'];
-    $timer->stopped_at = $request['stopped_at'];
     $tz = $request->tz ?? config('app.timezone');
-    $startedAt = new Carbon(new \DateTime($request['started_at']), new \DateTimeZone($tz));
-    $stoppedAt = new Carbon(new \DateTime($request['stopped_at']), new \DateTimeZone($tz));
+    $startedAt = new Carbon(new \DateTime($request['started_at']));
+    $stoppedAt = new Carbon(new \DateTime($request['stopped_at']));
+    $timer->started_at = $startedAt->format("Y-m-d H:i:s");
+    $timer->stopped_at = $stoppedAt->format("Y-m-d H:i:s");
     $duration = $stoppedAt->diffInSeconds($startedAt);
     $timer->duration = $duration;
     if (!empty($tags)) {
       $timer->tag($tags);
     }
     $timer->save();
-    return $this->sendResponseOk($timer, "Timer updated ok");
+    return $this->sendResponseOk($timer, "Timer updated ok.".$timer->started_at." ".$timer->stopped_at. " " . $timer->duration);
   }
 
   public function running()
   {
-    $runningTimer = Timer::with(['tagged'])->mine()->running()->first() ?? [];
+    $runningTimer = Timer::with(['tagged', 'task'])->mine()->running()->first() ?? [];
     return $this->sendResponseOk($runningTimer, "Running timer found ok");
   }
 
@@ -89,7 +89,7 @@ class TimerController extends Controller
 
   public function delete(Request $request, int $id, int $timer_id)
   {
-    $this->authorize('delete', $timer);
+    //$this->authorize('delete', $timer);
     Timer::destroy($timer_id);
     return $this->sendResponseOk([], "Timer deleted");
   }

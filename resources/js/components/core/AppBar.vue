@@ -63,8 +63,8 @@
             dark
             title="Add new Task"
             icon="add"
-            @shortkey="$eventBus.taskDialogAdd(true)"
-            @click="$eventBus.taskDialogAdd(true)"
+            @shortkey="$store.dispatch('task/openTaskDialog')"
+            @click="$store.dispatch('task/openTaskDialog')"
           >
             New task
           </base-btn-primary>
