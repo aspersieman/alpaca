@@ -401,7 +401,7 @@ export default {
 
     prepareQuery() {
       this.resetQuery();
-      this.setQueryValue('name', this.name || null);
+      this.setQueryValue('name', this.search || null);
       const status = this.status.join(',');
       this.setQueryValue('status', status || null);
       if (this.dates) {

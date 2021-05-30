@@ -62,7 +62,7 @@ class TimerController extends Controller
       $timer->tag($tags);
     }
     $timer->save();
-    return $this->sendResponseOk($timer, "Timer updated ok.".$timer->started_at." ".$timer->stopped_at. " " . $timer->duration);
+    return $this->sendResponseOk($timer, "Timer updated ok.");
   }
 
   public function running()
