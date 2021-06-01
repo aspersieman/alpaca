@@ -338,7 +338,7 @@ export default {
   methods: {
     openNoteDrawer() {
       this.$store.commit('task/TASK', this.task);
-      this.$eventBus.noteDrawerToggle(true, this.task.notes, this.task);
+      this.$store.commit('drawer/NOTE_DRAWER', true);
     },
     countNotes(task) {
       return task?.notes?.length > 0 ? task?.notes?.length : '';

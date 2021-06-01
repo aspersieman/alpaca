@@ -6,7 +6,7 @@
       app
       right
       hide-overlay
-      :value="drawerState"
+      :value="noteDrawer"
       :width="navigation.width"
       :touchless="true"
     >
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import NoteList from './NoteList';
 import NoteCreate from './NoteCreate';
 import NoteMixin from '@/mixins/NoteMixin';
@@ -117,14 +118,6 @@ export default {
   data() {
     return {
       notes: [],
-      task: {
-        id: null,
-        name: null,
-        due: null,
-        status: null,
-        order: null,
-        timers: []
-      },
       defaultWidth: 450,
       navigation: {
         width: 450,
@@ -136,16 +129,12 @@ export default {
     };
   },
   computed: {
-    drawerState: {
-      get() {
-        return this.$store.getters['drawer/noteDrawer'];
-      },
-      set(state) {
-        if (state) {
-          this.close();
-        }
-      },
-    },
+    ...mapGetters('drawer', [
+      'noteDrawer',
+    ]),
+    ...mapGetters('task', [
+      'task'
+    ]),
     searchNotes() {
       const self = this;
       return this.notes.filter(note => {
@@ -165,35 +154,21 @@ export default {
   created() {
     const self = this;
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
-    self.$eventBus.$on('note-drawer-toggle', (value, notes, task) => {
-      if (value == true) {
-        self.task = task;
-        self.notes = notes;
-      } else {
-        value = false;
-        self.notes = [];
-        self.task = {
-          name: null,
-          due: null,
-          status: null,
-          order: null,
-          timers: []
-        };
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'drawer/NOTE_DRAWER') {
+        if (this.noteDrawer) {
+          self.notes = this.task?.notes ?? [];
+        } else {
+          self.notes = [];
+          self.task = {
+            name: null,
+            due: null,
+            status: null,
+            order: null,
+            timers: []
+          };
+        }
       }
-      self.$store.commit('drawer/NOTE_DRAWER', value);
-    });
-    self.$eventBus.$on('note-deleted', (note) => {
-      self.notes = self.task.notes
-        .filter(function(element) {
-          return element.id !== note.id;
-        });
-    });
-    self.$eventBus.$on('note-added', (note) => {
-      self.notes.push(note);
-    });
-    self.$eventBus.$on('note-updated', (note) => {
-      const noteIndex = self.notes.findIndex((obj => obj.id == note.id));
-      self.notes[noteIndex] = note;
     });
   },
   mounted() {
@@ -298,7 +273,7 @@ export default {
     },
 
     close() {
-      this.$eventBus.noteDrawerToggle(false);
+      this.$store.commit('drawer/NOTE_DRAWER', false);
     },
 
     searchShow(value) {

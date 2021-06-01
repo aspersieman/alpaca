@@ -36,10 +36,16 @@ export const mutations = {
 }
 
 export const actions = {
-  saveNote({commit}, payload) {
+  saveNote({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
       saveNote(payload)
         .then(({data}) => {
+          dispatch('task/getTask', data.data.task_id, {root: true})
+            .then(({data}) => {
+              if (data.task_id) {
+                dispatch('task/getTask', data.data.task_id, {root: true})
+              }
+            });
           commit('NOTE', data);
           resolve(data)
         })

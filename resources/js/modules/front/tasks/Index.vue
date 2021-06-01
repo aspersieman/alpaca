@@ -298,7 +298,7 @@ export default {
     this.$store.subscribe((mutation) => {
       if (
         [
-          'tasks/ADDED',
+          'task/ADDED',
           'task/UPDATED',
           'task/DELETED',
           'timer/ADDED',

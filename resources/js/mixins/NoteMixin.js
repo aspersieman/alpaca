@@ -17,8 +17,7 @@ export default {
           }
         })
         .catch(error => {
-          const message = error?.response?.data?.message || 'ERROR';
-          console.error(message);
+          console.error(error);
           this.$flash.error({
             text: 'Error adding note'
           });
