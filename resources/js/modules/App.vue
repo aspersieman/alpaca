@@ -20,7 +20,6 @@ import CoreOverlay from '@/components/core/Overlay.vue';
 import ConfirmDialog from '@/components/core/ConfirmDialog.vue';
 import NoteDialog from '@/modules/front/notes/components/NoteDialog.vue';
 import TaskMixin from '@/mixins/TaskMixin';
-import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   components: {
@@ -34,7 +33,6 @@ export default {
   },
   mixins: [
     TaskMixin,
-    NoteMixin
   ],
   created() {
     this.$store.dispatch('timer/resetTimerRunning')

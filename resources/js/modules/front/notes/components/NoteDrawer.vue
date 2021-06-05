@@ -95,7 +95,7 @@
       <template
         #append
       >
-        <note-create @create-note="saveNote" />
+        <note-create />
       </template>
     </v-navigation-drawer>
   </div>
@@ -105,16 +105,12 @@
 import { mapGetters } from 'vuex';
 import NoteList from './NoteList';
 import NoteCreate from './NoteCreate';
-import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   components: {
     NoteList,
     NoteCreate,
   },
-  mixins: [
-    NoteMixin
-  ],
   data() {
     return {
       notes: [],
@@ -168,6 +164,16 @@ export default {
             timers: []
           };
         }
+      }
+      if (
+        [
+          'task/ADDED',
+          'task/UPDATED',
+          'note/ADDED',
+          'note/UPDATED',
+        ].includes(mutation.type)
+      ) {
+        self.notes = this.task?.notes ?? [];
       }
     });
   },

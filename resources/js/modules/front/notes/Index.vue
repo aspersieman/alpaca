@@ -81,15 +81,11 @@
 
 <script>
 import NoteList from './components/NoteList';
-import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   components: {
     NoteList,
   },
-  mixins: [
-    NoteMixin,
-  ],
   data() {
     return {
       search: '',

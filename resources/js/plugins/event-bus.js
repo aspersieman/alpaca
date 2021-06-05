@@ -8,10 +8,6 @@ const eventBus = {
         'user-logged-in',
         'user-logged-out',
         'dashboard-parameters-changed',
-        'notes-loaded',
-        'note-added',
-        'note-updated',
-        'note-deleted',
         'note-drawer-toggle',
         'note-dialog-add',
         'note-dialog-update',
@@ -40,18 +36,6 @@ const eventBus = {
         },
 
         /* Notes */
-        notesLoaded() {
-          this.$emit('notes-loaded');
-        },
-        noteAdded(note) {
-          this.$emit('note-added', note);
-        },
-        noteUpdated(note) {
-          this.$emit('note-updated', note);
-        },
-        noteDeleted(note) {
-          this.$emit('note-deleted', note);
-        },
         noteDrawerToggle(state, notes = null, task = null) {
           this.$emit('note-drawer-toggle', state, notes, task);
         },

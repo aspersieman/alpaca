@@ -82,7 +82,6 @@ class TaskController extends Controller
   public function update(UpdateTaskRequest $request, $id)
   {
     //$this->authorize('update', $task);
-    $request->merge(['user_id' => auth()->user()->id]);
     $task = Task::put($id, $request->all())->toArray();
     return $this->sendResponseOk($task, "Update task ok");
   }

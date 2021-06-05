@@ -51,7 +51,7 @@
         class="text-sm-caption"
         icon
         x-small
-        @click="deleteNote(note)"
+        @click="$store.dispatch('note/deleteNote', note)"
       >
         <v-icon>
           delete
@@ -63,12 +63,10 @@
 
 <script type="text/javascript">
 import TaskMixin from '@/mixins/TaskMixin';
-import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   mixins: [
     TaskMixin,
-    NoteMixin
   ],
   props: {
     note: {

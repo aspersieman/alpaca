@@ -2,7 +2,7 @@
   <div class="drawer-buttons">
     <v-btn
       class="drawer-button"
-      @click="openNoteDialog()"
+      @click="$store.dispatch('note/openNoteDialog')"
     >
       New Note
     </v-btn>
@@ -10,10 +10,7 @@
 </template>
 
 <script>
-import NoteMixin from '@/mixins/NoteMixin';
-
 export default {
-  mixins: [ NoteMixin ],
   data() {
     return { };
   },

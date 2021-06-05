@@ -98,7 +98,6 @@ import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
 import TimerDialog from '@/modules/front/tasks/components/timer/TimerDialog';
 import Avatar from '@/components/core/Avatar';
 import TaskMixin from '@/mixins/TaskMixin';
-import NoteMixin from '@/mixins/NoteMixin';
 
 export default {
   name: 'CoreAppBar',
@@ -111,7 +110,6 @@ export default {
   },
   mixins: [
     TaskMixin,
-    NoteMixin
   ],
   data: () => ({
     drawer: false,
