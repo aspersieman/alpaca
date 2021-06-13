@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import NoteList from './components/NoteList';
 
 export default {
@@ -89,15 +90,17 @@ export default {
   data() {
     return {
       search: '',
-      notes: [],
       showTask: true
     }
   },
   computed: {
+    ...mapGetters('note', [
+      'notes',
+    ]),
     searchNotes() {
       const self = this;
       self.setNotesSettings();
-      return this.$store.getters['note/notes'].filter(note => {
+      return this.notes.filter(note => {
         if (self.search != '' && self.search != null) {
           let value = self.search.toLowerCase();
           if (note.name.toLowerCase().includes(value)) {
@@ -115,6 +118,12 @@ export default {
   mounted() {
     this.$nextTick(function () {
       this.getNotesSettings();
+      // TODO Introduce paging here
+      this.$overlay.show(true);
+      this.$store.dispatch('note/getNotes')
+        .then(() => {
+          this.$overlay.show(false);
+        });
     });
   },
   methods: {

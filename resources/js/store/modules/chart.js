@@ -77,7 +77,6 @@ export const actions = {
               timer.dateStarted = dateStarted;
             }
             totalDuration += timer.duration || 0;
-            timers.push(timer);
           });
           totalTime = duration(totalDuration);
           commit('CHART_BY_TIMER_TIMERS', timers);
@@ -88,6 +87,7 @@ export const actions = {
         .catch(error => reject(error))
     })
   },
+
   getChartByDayData({commit}, payload) {
     return new Promise((resolve, reject) => {
       commit('CHART_BY_DAY_LOADING', true);
@@ -110,6 +110,7 @@ export const actions = {
         .catch(error => reject(error))
     })
   },
+
   getChartByTagData({commit}, payload) {
     return new Promise((resolve, reject) => {
       commit('CHART_BY_TAG_LOADING', true);

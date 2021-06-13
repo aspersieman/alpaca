@@ -156,13 +156,6 @@ export default {
           self.notes = this.task?.notes ?? [];
         } else {
           self.notes = [];
-          self.task = {
-            name: null,
-            due: null,
-            status: null,
-            order: null,
-            timers: []
-          };
         }
       }
       if (

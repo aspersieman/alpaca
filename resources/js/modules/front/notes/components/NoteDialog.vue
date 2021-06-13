@@ -90,7 +90,7 @@
           <v-btn
             text
             class="error mx-0 mt-3"
-            @click="close();"
+            @click="close()"
           >
             Cancel
           </v-btn>

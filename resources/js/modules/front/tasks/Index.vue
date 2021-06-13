@@ -304,7 +304,8 @@ export default {
           'timer/ADDED',
           'timer/UPDATED',
           'timer/DELETED',
-          'timer/TIMER_STOPPED'
+          'timer/TIMER_STOPPED',
+          'note/ADDED',
         ].includes(mutation.type)
       ) {
         this.getTasksSettings();
@@ -394,9 +395,12 @@ export default {
     },
 
     searchTasks() {
+      this.$overlay.show(true);
       this.prepareQuery();
       this.$store.dispatch('task/getTasks', this.query)
-        .then(() => this.sortTasks());
+        .then(() => this.sortTasks())
+        .then(() => this.$overlay.show(false));
+
     },
 
     prepareQuery() {
@@ -483,6 +487,10 @@ export default {
 
 .tasks-container {
   margin-top: -10px;
+  @media (max-width: 960px) {
+    padding: 0px !important;
+    padding-right: 5px !important;
+  }
 }
 
 .sort-input {

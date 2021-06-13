@@ -68,35 +68,68 @@
         align-top
         dense
       >
-        <v-timeline-item
+        <span
           v-for="(timer, index) in chartByTimerTimers"
           :key="index"
-          :color="timelineItemColour(index)"
-          small
         >
+          <v-divider
+            v-if="timer.dateStarted != null && index != 0"
+            class="timer-day-divider"
+          />
           <strong
             v-if="timer.dateStarted != null"
           >
             {{ timer.dateStarted }}
           </strong>
-          <v-row
-            v-if="$vuetify.breakpoint.mdAndUp"
-            class="pt-1"
+          <v-timeline-item
+            :color="timelineItemColour(index)"
+            small
           >
-            <v-col cols="4">
-              <span class="caption">
+            <v-row
+              v-if="$vuetify.breakpoint.mdAndUp"
+              class="pt-1"
+            >
+              <v-col cols="3">
+                <span class="caption">
+                  {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
+                  ({{ timerDuration(timer) }})
+                </span>
+              </v-col>
+              <v-col>
+                <v-icon>
+                  access_time
+                </v-icon>
+                <strong>
+                  {{ timer.timer_name }}
+                </strong>
+                <div class="caption ellipsis">
+                  <v-icon
+                    small
+                  >
+                    task_alt
+                  </v-icon>
+                  {{ timer.task_name }}
+                </div>
+              </v-col>
+            </v-row>
+            <div
+              v-if="$vuetify.breakpoint.smAndDown"
+            >
+              <div class="caption fullwidth">
                 {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
                 ({{ timerDuration(timer) }})
-              </span>
-            </v-col>
-            <v-col cols="6">
-              <v-icon>
-                access_time
-              </v-icon>
-              <strong>
-                {{ timer.timer_name }}
-              </strong>
-              <div class="caption ellipsis">
+              </div>
+              <div class="fullwidth ellipsis">
+                <v-icon>
+                  access_time
+                </v-icon>
+                <strong
+                  class="ellipsis"
+                >
+                  {{ timer.timer_name }}
+                </strong>
+              </div>
+              <div class="caption ellipsis fullwidth">
                 <v-icon
                   small
                 >
@@ -104,35 +137,9 @@
                 </v-icon>
                 {{ timer.task_name }}
               </div>
-            </v-col>
-          </v-row>
-          <div
-            v-if="$vuetify.breakpoint.smAndDown"
-          >
-            <div class="caption fullwidth">
-              {{ $appFormatters.dateTimeFormat(timer.started_at, "HH:mm") }} - {{ $appFormatters.dateTimeFormat(timer.stopped_at, "HH:mm") }}
-              ({{ timerDuration(timer) }})
             </div>
-            <div class="fullwidth ellipsis">
-              <v-icon>
-                access_time
-              </v-icon>
-              <strong
-                class="ellipsis"
-              >
-                {{ timer.timer_name }}
-              </strong>
-            </div>
-            <div class="caption ellipsis fullwidth">
-              <v-icon
-                small
-              >
-                task_alt
-              </v-icon>
-              {{ timer.task_name }}
-            </div>
-          </div>
-        </v-timeline-item>
+          </v-timeline-item>
+        </span>
       </v-timeline>
       <div
         v-else
@@ -231,5 +238,24 @@ export default {
 
 .fullwidth {
   width: 100%;
+}
+.theme--light.v-timeline:before {
+  background: rgba(0, 0, 0, 0);
+}
+.timer-day-divider {
+  padding-bottom: 10px;
+}
+</style>
+<style>
+.v-timeline-item__divider {
+  justify-content: start !important;
+  width: 30px !important;
+  min-width: 30px !important;
+}
+.v-timeline-item {
+  justify-content: flex-end;
+}
+.v-timeline--dense .v-timeline-item__body {
+  max-width: 100% !important;
 }
 </style>

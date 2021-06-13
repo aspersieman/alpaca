@@ -195,7 +195,7 @@
           Update
         </v-btn>
         <v-btn
-          v-if="mode == 'UPDATE'"
+          v-if="mode == 'UPDATE' && isTimerRunning !== true"
           text
           class="success ml-1 mx-0 mt-3"
           :disabled="!valid || loading"
@@ -266,6 +266,9 @@ export default {
       'priorities',
       'taskDialogAdd',
       'taskDialogUpdate'
+    ]),
+    ...mapGetters('timer', [
+      'isTimerRunning',
     ]),
   },
   created() {
