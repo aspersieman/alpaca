@@ -11,7 +11,7 @@ class FileGroupSeeder extends Seeder
      */
     public function run()
     {
-        \App\Components\File\Models\FileGroup::create([
+        \App\Models\FileGroup::create([
             'name' => 'General',
             'description' => 'The default file group.',
         ]);

@@ -19,7 +19,7 @@ class Timer extends Model
    * {@inheritDoc}
    */
   protected $fillable = [
-    'name', 'user_id', 'task_id', 'stopped_at', 'started_at', 'tags' 
+    'name', 'user_id', 'task_id', 'stopped_at', 'started_at', 'tags'
   ];
 
   /**
@@ -92,7 +92,7 @@ class Timer extends Model
     $userIds = $userIds ?? [auth()->user()->id];
     $times = Timer::select(
       [
-        \DB::raw("DATE(started_at) AS timer_date"), 
+        \DB::raw("DATE(started_at) AS timer_date"),
         \DB::raw("SUM(duration) AS duration")
       ]
     )
@@ -100,6 +100,7 @@ class Timer extends Model
       ->where('stopped_at', '<=', $end . " 23:59:59")
       ->whereNotNull('stopped_at')
       ->whereIn('user_id', $userIds)
+      ->orderBy(\DB::raw("DATE(started_at)"), 'asc')
       ->groupBy(\DB::raw("DATE(started_at)"))
       ->get();
     return $times;
@@ -110,7 +111,7 @@ class Timer extends Model
     $userIds = $userIds ?? [auth()->user()->id];
     $times = Timer::select(
       [
-        "tagging_tagged.tag_name", 
+        "tagging_tagged.tag_name",
         \DB::raw("SUM(duration) AS duration")
       ]
     )
@@ -132,7 +133,7 @@ class Timer extends Model
         \DB::raw("tasks.name AS task_name"),
         \DB::raw("timers.name AS timer_name"),
         "started_at",
-        "stopped_at", 
+        "stopped_at",
         "duration",
       ]
     )
@@ -141,6 +142,7 @@ class Timer extends Model
       ->where('stopped_at', '<=', $end . " 23:59:59")
       ->whereNotNull('stopped_at')
       ->whereIn('timers.user_id', $userIds)
+      ->orderBy('started_at', 'asc')
       ->get();
     return $timers;
   }

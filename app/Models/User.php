@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
 use App\Traits\UserTrait;
@@ -45,10 +46,6 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
   ];
 
-  public static function encryptPassword($password){
-    return bcrypt($password);
-  }
-
   protected static function boot()
   {
     parent::boot();
@@ -58,12 +55,6 @@ class User extends Authenticatable
         $firstname = explode(" ", $user->name)[0];
         $user->nickname = strtolower($firstname)."-".$user->id;
         $user->save();
-      }
-    });
-
-    static::creating(function(User $user) {
-      if ($user->password) {
-        $user->password = Hash::make($user->password);
       }
     });
   }

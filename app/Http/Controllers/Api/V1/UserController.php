@@ -89,7 +89,7 @@ class UserController extends Controller
   public function update(UpdateUserRequest $request, $id)
   {
     if($request->hasFile('avatar_image')){
-      $avatarImagePath = $request->file('avatar_image')->store('avatar');
+      $avatarImagePath = $request->file('avatar_image')->store('avatar', 'public');
       $request->merge(['avatar' => "/images/{$avatarImagePath}"]);
     }
 
@@ -114,7 +114,7 @@ class UserController extends Controller
         if($shouldAttach) $groupIds[] = $groupId;
       }
     }
-
+    $user = User::find($id);
     $user->groups()->sync($groupIds);
 
     return $this->sendResponseUpdated($user);
@@ -128,6 +128,7 @@ class UserController extends Controller
    */
   public function destroy($id)
   {
+    $user = User::find($id);
     // do not delete self
     if($user->id == auth()->user()->id) return $this->sendResponseForbidden();
 

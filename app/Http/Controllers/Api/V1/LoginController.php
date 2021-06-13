@@ -13,7 +13,7 @@ class LoginController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth:api')->only('logout');
+    //$this->middleware('auth:api')->only('logout');
   }
 
   public function login(Request $request)
@@ -38,14 +38,18 @@ class LoginController extends Controller
       $this->incrementLoginAttempts($request);
     }
 
-    return response(['error' =>'email or password incorrect'], 422);
+    return response(['error' =>'Email or password incorrect'], 422);
   }
 
   public function logout()
   {
-    $token = auth()->user()->token();
-    $token->revoke();
+    if (auth()->user()) {
+      $token = auth()->user()->token();
+      $token->revoke();
 
-    return null;
+      return $this->sendResponseOk("Logged out.");
+    } else {
+      return $this->sendResponseNoContent();
+    }
   }
 }
