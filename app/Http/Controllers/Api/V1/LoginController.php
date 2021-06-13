@@ -11,11 +11,6 @@ class LoginController extends Controller
 {
   use AuthenticatesUsers;
 
-  public function __construct()
-  {
-    //$this->middleware('auth:api')->only('logout');
-  }
-
   public function login(Request $request)
   {
 
