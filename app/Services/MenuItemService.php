@@ -82,6 +82,13 @@ class MenuItemService
   public $visible = true;
 
   /**
+   * if the menu item should be displayed on the app bar
+   *
+   * @var bool
+   */
+  public $appBar = true;
+
+  /**
    * MenuItem constructor.
    * @param array $menuData
    */
@@ -99,6 +106,7 @@ class MenuItemService
         $this->routeType = $menuData['route_type'];
         $this->routeName = $menuData['route_name'];
         $this->visible = $menuData['visible'] ?? true;
+        $this->appBar = $menuData['appBar'] ?? false;
       }
       else
       {

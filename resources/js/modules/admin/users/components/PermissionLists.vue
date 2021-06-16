@@ -144,7 +144,7 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this permission?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/permissions/' + permission.id).then(function(response) {
+          window.axios.delete('/api/v1/permissions/' + permission.id).then(function(response) {
             self.$store.commit('showSnackbar',{
               message: response.data.message,
               color: 'success',
@@ -178,7 +178,7 @@ export default {
         page: self.pagination.page,
         per_page: self.pagination.rowsPerPage
       };
-      window.axios.get('/api/admin/permissions',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
         self.items = response.data.data.data;
         self.totalItems = response.data.data.total;
         self.pagination.totalItems = response.data.data.total;

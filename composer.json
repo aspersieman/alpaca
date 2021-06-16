@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "deployer/deployer": "^6.8",
         "fideloper/proxy": "~4.1",
         "firebase/php-jwt": "^5.0",
@@ -23,7 +23,7 @@
         "barryvdh/laravel-ide-helper": "^2.6",
         "filp/whoops": "~2.0",
         "fzaninotto/faker": "~1.4",
-        "jrmadsen67/laravel-route-coverage-test": "^1.1",
+        "jrmadsen67/laravel-route-coverage-test": "dev-master",
         "mockery/mockery": "1.2.*",
         "nunomaduro/collision": "^4.0",
         "phpunit/phpunit": "^9.5"
@@ -65,7 +65,7 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "platform": {
-            "php": "7.3"
+            "php": "7.4"
         }
     }
 }

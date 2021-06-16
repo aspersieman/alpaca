@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+
 use App\Models\User;
 
 class UserControllerTest extends TestCase
@@ -28,7 +29,7 @@ class UserControllerTest extends TestCase
       $user = factory(User::class)->create();
       $response = $this
         ->actingAs($user, 'api')
-        ->get($this->apiBaseUrl.'users');
+        ->get(route('users.index'));
       $response->assertOk();
 
       $users = factory(User::class, 3)->create();
@@ -36,23 +37,23 @@ class UserControllerTest extends TestCase
 
       $response = $this
         ->actingAs($user, 'api')
-        ->get($this->apiBaseUrl.'users');
+        ->get(route('users.index'));
       $this->assertEquals(count($response['data']['data']), 5);
-      $this->assertEquals($response['message'], 'list users ok.');
+      $this->assertEquals($response['message'], 'List users ok.');
     }
 
     /**
-     * Unauthorised access not allowed to list users
+     * Guest user not allowed to list users
      *
      * @test
      * @return void
      */
-    public function unauthorised_access_not_allowed_to_list_users()
+    public function guest_user_not_allowed_to_list_users()
     {
       $this->withoutExceptionHandling();
       $this->expectException('Illuminate\Auth\AuthenticationException');
       $response = $this
-        ->get($this->apiBaseUrl.'users');
+        ->get(route('users.index'));
       $response->assertUnauthorized();
       $this->assertEquals($response['message'], 'Unauthenticated.');
     }
@@ -68,7 +69,7 @@ class UserControllerTest extends TestCase
       $user = factory(User::class)->create();
       $response = $this
         ->actingAs($user, 'api')
-        ->post($this->apiBaseUrl.'users', [
+        ->post(route('users.store'), [
           "name" => "Test user 1",
           "email" => "test1@test.test",
           "password" => "test1234",
@@ -89,17 +90,17 @@ class UserControllerTest extends TestCase
     }
 
     /**
-     * Unauthorised access not allowed to save a new user
+     * Guest user not allowed to save a new user
      *
      * @test
      * @return void
      */
-    public function unauthorised_access_not_allowed_to_save_new_user()
+    public function guest_user_not_allowed_to_save_new_user()
     {
       $this->withoutExceptionHandling();
       $this->expectException('Illuminate\Auth\AuthenticationException');
       $response = $this
-        ->post($this->apiBaseUrl.'users', [
+        ->post(route('users.store'), [
           "name" => "Test user 1",
           "email" => "test1@test.test",
           "password" => "test1234",
@@ -125,7 +126,7 @@ class UserControllerTest extends TestCase
       $user = factory(User::class)->create();
       $response = $this
         ->actingAs($user, 'api')
-        ->get($this->apiBaseUrl.'users/'.$user->id);
+        ->get(route('users.show', $user->id));
       $response->assertOk();
       $this->assertDatabaseHas('users', [
         'email' => $user->email,
@@ -136,17 +137,17 @@ class UserControllerTest extends TestCase
     }
 
     /**
-     * Unauthorised access not allowed to find a user
+     * GuesGuest not allowed to find a user
      *
      * @test
      * @return void
      */
-    public function unauthorised_access_not_allowed_to_find_user()
+    public function guest_user_not_allowed_to_find_user()
     {
       $this->withoutExceptionHandling();
       $this->expectException('Illuminate\Auth\AuthenticationException');
       $response = $this
-        ->get($this->apiBaseUrl.'users/1');
+        ->get(route('users.show','1'));
       $response->assertUnauthorized();
       $this->assertEquals($response['message'], 'Unauthenticated.');
     }
@@ -164,8 +165,19 @@ class UserControllerTest extends TestCase
       $file = UploadedFile::fake()->image('avatar.jpg');
       $response = $this
         ->actingAs($user, 'api')
-        ->put($this->apiBaseUrl.'users/'.$user->id, [
+        ->put(route('users.update', $user->id), [
           'name' => 'Test user 3',
+          'email' => 'test3@test.test',
+          'permissions' => [],
+          'groups' => [],
+          'avatar_image' => $file,
+          'nickname' => 'test3',
+        ]);
+      $response->assertOk();
+      $response = $this
+        ->actingAs($user, 'api')
+        ->patch(route('users.update', $user->id), [
+          'name' => 'Test user 3.a',
           'email' => 'test3@test.test',
           'permissions' => [],
           'groups' => [],
@@ -179,22 +191,22 @@ class UserControllerTest extends TestCase
       ]);
       Storage::disk('public')->assertExists('avatar/'.$file->hashName());
       $this->assertEquals($response['message'], 'Resource updated.');
-      $this->assertEquals($response['data']['name'], 'Test user 3');
+      $this->assertEquals($response['data']['name'], 'Test user 3.a');
       $this->assertEquals($response['data']['email'], 'test3@test.test');
     }
 
     /**
-     * Unauthorised user cannot update user
+     * Guest user cannot update user
      *
      * @test
      * @return void
      */
-    public function unauthorised_user_cannot_update_user()
+    public function guest_user_cannot_update_user()
     {
       $this->withoutExceptionHandling();
       $this->expectException('Illuminate\Auth\AuthenticationException');
       $response = $this
-        ->put($this->apiBaseUrl.'users/1', [
+        ->put(route('users.update', '1'), [
           'name' => 'Test user 3',
           'email' => 'test3@test.test',
           'permissions' => [],
@@ -206,7 +218,7 @@ class UserControllerTest extends TestCase
     }
 
     /**
-     * Update user
+     * Delete user
      *
      * @test
      * @return void
@@ -217,7 +229,7 @@ class UserControllerTest extends TestCase
       $userDelete = factory(User::class)->create();
       $response = $this
         ->actingAs($user, 'api')
-        ->delete($this->apiBaseUrl.'users/'.$userDelete->id);
+        ->delete(route('users.destroy', $userDelete->id));
       $response->assertOk();
       $this->assertDatabaseMissing('users', [
           "name" => "Test user 4",
@@ -228,17 +240,17 @@ class UserControllerTest extends TestCase
     }
 
     /**
-     * Unauthorised user cannot delete user
+     * Guest user cannot delete user
      *
      * @test
      * @return void
      */
-    public function unauthorised_user_cannot_delete_user()
+    public function guest_user_cannot_delete_user()
     {
       $this->withoutExceptionHandling();
       $this->expectException('Illuminate\Auth\AuthenticationException');
       $response = $this
-        ->delete($this->apiBaseUrl.'users/1');
+        ->delete(route('users.destroy', '1'));
       $response->assertUnauthorized();
       $this->assertEquals($response['message'], 'Unauthenticated.');
     }
@@ -254,7 +266,7 @@ class UserControllerTest extends TestCase
       $user = factory(User::class)->create();
       $response = $this
         ->actingAs($user, 'api')
-        ->delete($this->apiBaseUrl.'users/'.$user->id);
+        ->delete(route('users.destroy', $user->id));
       $response->assertForbidden();
       $this->assertEquals($response['message'], 'Action forbidden.');
     }

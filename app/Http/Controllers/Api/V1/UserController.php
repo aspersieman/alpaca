@@ -36,7 +36,7 @@ class UserController extends Controller
   {
     $data = $this->userRepository->listUsers(request()->all());
 
-    return $this->sendResponseOk($data,"list users ok.");
+    return $this->sendResponseOk($data,"List users ok.");
   }
 
   /**

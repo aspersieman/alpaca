@@ -266,7 +266,7 @@ export default {
       };
       self.$store.commit('loaderShow');
 
-      window.axios.put('/api/admin/users/'+self.propUserId,payload).then(function() {
+      window.axios.put('/api/v1/users/'+self.propUserId,payload).then(function() {
         self.$flash.success({
           text: 'User added successfully'
         });
@@ -311,7 +311,7 @@ export default {
         // reset first
         self.groups = [];
 
-        window.axios.get('/api/admin/users/' + self.propUserId).then(function(response) {
+        window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
             let User = response.data.data;
 
             self.name = User.name;
@@ -341,7 +341,7 @@ export default {
             paginate: 'no'
         };
 
-        window.axios.get('/api/admin/permissions',{params: params}).then(function(response) {
+        window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
             self.options.permissions = response.data.data;
             cb();
         });
@@ -354,7 +354,7 @@ export default {
             paginate: 'no'
         };
 
-        window.axios.get('/api/admin/groups',{params: params}).then(function(response) {
+        window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
             self.options.groups = response.data.data;
 
             window._.each(self.options.groups,g=>{

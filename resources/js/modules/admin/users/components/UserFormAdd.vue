@@ -275,7 +275,7 @@ export default {
         groups: self.groups,
       };
       self.$store.commit('loaderShow');
-      window.axios.post('/api/admin/users',payload).then(function(response) {
+      window.axios.post('/api/v1/users',payload).then(function(response) {
         self.$flash.success({
           text: 'User added successfully'
         });
@@ -317,7 +317,7 @@ export default {
       let params = {
         paginate: 'no'
       };
-      window.axios.get('/api/admin/permissions',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
         self.options.permissions = response.data.data;
         cb();
       });
@@ -327,7 +327,7 @@ export default {
       let params = {
         paginate: 'no'
       };
-      window.axios.get('/api/admin/groups',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
         self.options.groups = response.data.data;
         window._.each(self.options.groups,g=>{
           g.selected = false;

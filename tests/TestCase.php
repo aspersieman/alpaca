@@ -9,8 +9,6 @@ abstract class TestCase extends BaseTestCase
 {
   use CreatesApplication, RefreshDatabase;
 
-  public $apiBaseUrl = '/api/v1/';
-
   protected function setUp(): void
   {
     parent::setUp();
@@ -18,5 +16,6 @@ abstract class TestCase extends BaseTestCase
     $this->artisan('migrate');
     $this->artisan('passport:install');
     $this->artisan('db:seed');
+    app('debugbar')->disable();
   }
 }

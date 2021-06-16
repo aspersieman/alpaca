@@ -172,7 +172,7 @@ export default {
 
           self.$store.commit('loaderShow');
 
-          window.axios.put('/api/admin/groups/' + self.propGroupId,payload).then(function(response) {
+          window.axios.put('/api/v1/groups/' + self.propGroupId,payload).then(function(response) {
 
               self.$store.commit('showSnackbar',{
                   message: response.data.message,
@@ -224,14 +224,14 @@ export default {
               page: self.page
           };
 
-          window.axios.get('/api/admin/permissions',{params: params}).then(function(response) {
+          window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
               self.options.permissions = response.data.data;
               cb();
           });
       },
     loadGroup(cb) {
       const self = this;
-      window.axios.get('/api/admin/groups/' + self.propGroupId).then(function(response) {
+      window.axios.get('/api/v1/groups/' + self.propGroupId).then(function(response) {
         let Group = response.data.data;
         self.name = Group.name;
         self.permissions = Group.permissions;

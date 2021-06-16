@@ -91,7 +91,7 @@ export default {
 
       self.isLoading = true;
 
-      window.axios.put('/api/admin/file-groups/' + self.propFileGroupId,payload).then(function() {
+      window.axios.put('/api/v1/file-groups/' + self.propFileGroupId,payload).then(function() {
         self.$flash.success({
           message: 'File added successfully'
         });
@@ -110,7 +110,7 @@ export default {
     },
     loadFileGroup(cb) {
       const self = this;
-      window.axios.get('/api/admin/file-groups/' + self.propFileGroupId).then(function(response) {
+      window.axios.get('/api/v1/file-groups/' + self.propFileGroupId).then(function(response) {
         let Group = response.data.data;
         self.name = Group.name;
         self.description = Group.description;

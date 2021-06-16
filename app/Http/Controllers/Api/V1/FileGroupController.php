@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Repositories\FileGroupRepository;
 use Illuminate\Http\Request;
+use App\Models\FileGroup;
 
 class FileGroupController extends Controller
 {
@@ -19,6 +20,7 @@ class FileGroupController extends Controller
    */
   public function __construct(FileGroupRepository $fileGroupRepository)
   {
+    $this->middleware('auth:api')->except(['index', 'show']);;
     $this->fileGroupRepository = $fileGroupRepository;
   }
 
@@ -32,7 +34,7 @@ class FileGroupController extends Controller
   {
     $data = $this->fileGroupRepository->index($request->all());
 
-    return $this->sendResponseOk($data);
+    return $this->sendResponseOk($data,"Get file groups ok.");
   }
 
   /**
@@ -95,7 +97,7 @@ class FileGroupController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed to update");
 
-    return $this->sendResponseOk([],"Updated.");
+    return $this->sendResponseUpdated(FileGroup::find($id));
   }
 
   /**
@@ -108,6 +110,6 @@ class FileGroupController extends Controller
   {
     $this->fileGroupRepository->delete($id);
 
-    return $this->sendResponseOk([],"Deleted.");
+    return $this->sendResponseDeleted();
   }
 }

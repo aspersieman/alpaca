@@ -234,7 +234,7 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this file?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/files/' + file.id).then(function() {
+          window.axios.delete('/api/v1/files/' + file.id).then(function() {
             self.$flash.success({
               text: 'File deleted successfully'
             });
@@ -261,7 +261,7 @@ export default {
       let params = {
         paginate: 'no'
       };
-      window.axios.get('/api/admin/file-groups',{ params: params }).then(function(response) {
+      window.axios.get('/api/v1/file-groups',{ params: params }).then(function(response) {
         self.filters.fileGroupsHolder = response.data.data;
         cb();
       });
@@ -275,7 +275,7 @@ export default {
         per_page: self.pagination.rowsPerPage
       };
 
-      window.axios.get('/api/admin/files',{ params: params }).then(function(response) {
+      window.axios.get('/api/v1/files',{ params: params }).then(function(response) {
         self.items = response.data.data.data;
         self.totalItems = response.data.data.total;
         self.pagination.totalItems = response.data.data.total;

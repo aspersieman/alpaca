@@ -106,7 +106,7 @@ export default {
         key: self.permissionKey
       };
       self.isLoading = true;
-      window.axios.post('/api/admin/permissions',payload).then(function(response) {
+      window.axios.post('/api/v1/permissions',payload).then(function(response) {
         self.$store.commit('showSnackbar',{
             message: response.data.message,
             color: 'success',

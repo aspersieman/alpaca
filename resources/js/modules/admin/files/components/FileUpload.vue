@@ -88,7 +88,7 @@ export default {
       const self = this;
       window.Dropzone.autoDiscover = false;
       self.dropzone = new window.Dropzone("#fileupload", {
-        url:'/api/admin/files',
+        url:'/api/v1/files',
         paramName: "file", // The name that will be used to transfer the file
         maxFilesize: 50, // 50MB
         uploadMultiple: true,
@@ -128,7 +128,7 @@ export default {
       let params = {
           paginate: 'no'
       };
-      window.axios.get('/api/admin/file-groups',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/file-groups',{params: params}).then(function(response) {
         self.fileGroups = response.data.data;
         cb();
       });

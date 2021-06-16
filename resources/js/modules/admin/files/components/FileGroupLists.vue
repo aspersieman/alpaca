@@ -11,7 +11,7 @@
         </div>
         <div class="flex-grow-1 text-right">
           <v-btn
-            dark 
+            dark
             class="primary lighten-1"
             @click="showDialog('file_group_add')"
           >
@@ -99,7 +99,7 @@
     <v-dialog
       v-model="dialogs.edit.show"
       fullscreen
-      :laze="false" 
+      :laze="false"
       transition="dialog-bottom-transition"
       :overlay="false"
     >
@@ -195,7 +195,7 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this file group?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/file-groups/' + group.id).then(function(response) {
+          window.axios.delete('/api/v1/file-groups/' + group.id).then(function(response) {
             self.$store.commit('showSnackbar',{
               message: response.data.message,
               color: 'success',
@@ -244,7 +244,7 @@ export default {
         page: self.pagination.page,
         per_page: self.pagination.rowsPerPage
       };
-      window.axios.get('/api/admin/file-groups',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/file-groups',{params: params}).then(function(response) {
           self.items = response.data.data.data;
           self.totalItems = response.data.data.total;
           self.pagination.totalItems = response.data.data.total;

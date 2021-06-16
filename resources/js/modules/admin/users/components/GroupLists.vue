@@ -5,7 +5,7 @@
         <div class="flex-grow-1 pa-2">
           <v-text-field
             v-model="filters.name"
-            prepend-icon="search" 
+            prepend-icon="search"
             label="Filter by name"
           />
         </div>
@@ -184,7 +184,7 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this group?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/groups/' + group.id).then(function(response) {
+          window.axios.delete('/api/v1/groups/' + group.id).then(function(response) {
             self.$store.commit('showSnackbar',{
               message: response.data.message,
               color: 'success',
@@ -229,7 +229,7 @@ export default {
         page: self.pagination.page,
         per_page: self.pagination.rowsPerPage
       };
-      window.axios.get('/api/admin/groups',{ params: params }).then(function(response) {
+      window.axios.get('/api/v1/groups',{ params: params }).then(function(response) {
         self.items = response.data.data.data;
         self.totalItems = response.data.data.total;
         self.pagination.totalItems = response.data.data.total;

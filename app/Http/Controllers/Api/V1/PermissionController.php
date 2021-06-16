@@ -33,7 +33,7 @@ class PermissionController extends Controller
   {
     $data = $this->permissionRepository->index(request()->all());
 
-    return $this->sendResponseOk($data,"get permissions ok.");
+    return $this->sendResponseOk($data,"Get permissions ok.");
   }
 
   /**
@@ -95,7 +95,7 @@ class PermissionController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed update.");
 
-    return $this->sendResponseUpdated();
+    return $this->sendResponseUpdated(Permission::find($id));
   }
 
   /**

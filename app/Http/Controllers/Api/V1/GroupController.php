@@ -54,7 +54,7 @@ class GroupController extends Controller
 
     $group = $this->groupRepository->create($request->all());
 
-    return $this->sendResponseOk($group, "Created.");
+    return $this->sendResponseCreated($group);
   }
 
   /**
@@ -92,7 +92,7 @@ class GroupController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed update.");
 
-    return $this->sendResponseUpdated($group);
+    return $this->sendResponseUpdated(Group::find($id));
   }
 
   /**

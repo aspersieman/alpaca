@@ -29,6 +29,7 @@ class FileController extends Controller
    */
   public function __construct(FileRepository $fileRepository, FileService $fileService)
   {
+    $this->middleware('auth:api')->except(['index', 'show', 'fileDownload', 'filePreview']);
     $this->fileRepository = $fileRepository;
     $this->fileService = $fileService;
   }
@@ -129,7 +130,7 @@ class FileController extends Controller
    */
   public function update(Request $request, $id)
   {
-    //
+    return $this->sendResponseNoContent();
   }
 
   /**
@@ -158,6 +159,13 @@ class FileController extends Controller
    */
   public function filePreview(Request $request,$id)
   {
+    $validate = validator($request->all(),[
+      'w' => 'required',
+      'h' => 'required',
+    ]);
+
+    if($validate->fails()) return $this->sendResponseBadRequest($validate->errors()->first());
+
     $file = $this->fileService->previewFile([
       'id' => $id,
       'w' => $request->get('w',null),
@@ -185,6 +193,6 @@ class FileController extends Controller
 
     if($res) return $res;
 
-    return view('errors.403');
+    return $this->sendResponseForbidden();
   }
 }

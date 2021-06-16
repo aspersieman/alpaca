@@ -163,7 +163,7 @@ export default {
         name: self.name,
         permissions: self.permissions
       };
-      window.axios.post('/api/admin/groups',payload).then(function() {
+      window.axios.post('/api/v1/groups',payload).then(function() {
         self.$flash.success({
           text: 'Group added successfully'
         });
@@ -197,7 +197,7 @@ export default {
         paginate: 'no',
         page: self.page
       };
-      window.axios.get('/api/admin/permissions',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
         self.options.permissions = response.data.data;
         cb();
       });

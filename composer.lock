@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22ac6c6920be43db7adf937ac5e98801",
+    "content-hash": "59b56de1b877e14ac699ec7d1cf314a2",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -2326,16 +2326,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.31",
+            "version": "2.0.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "233a920cb38636a43b18d428f9a8db1f0a1a08f4"
+                "reference": "f5c4c19880d45d0be3e7d24ae8ac434844a898cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/233a920cb38636a43b18d428f9a8db1f0a1a08f4",
-                "reference": "233a920cb38636a43b18d428f9a8db1f0a1a08f4",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/f5c4c19880d45d0be3e7d24ae8ac434844a898cd",
+                "reference": "f5c4c19880d45d0be3e7d24ae8ac434844a898cd",
                 "shasum": ""
             },
             "require": {
@@ -2415,7 +2415,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/2.0.31"
+                "source": "https://github.com/phpseclib/phpseclib/tree/2.0.32"
             },
             "funding": [
                 {
@@ -2431,7 +2431,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-04-06T13:56:45+00:00"
+            "time": "2021-06-12T12:12:59+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -7221,18 +7221,30 @@
         },
         {
             "name": "jrmadsen67/laravel-route-coverage-test",
-            "version": "1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jrmadsen67/laravel-route-coverage-test.git",
-                "reference": "ac164e8a977cfdca4cc3ed705f71cb984958843b"
+                "reference": "501826ba4d0b65ee9a6dfb3f554e97d83103fd2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jrmadsen67/laravel-route-coverage-test/zipball/ac164e8a977cfdca4cc3ed705f71cb984958843b",
-                "reference": "ac164e8a977cfdca4cc3ed705f71cb984958843b",
+                "url": "https://api.github.com/repos/jrmadsen67/laravel-route-coverage-test/zipball/501826ba4d0b65ee9a6dfb3f554e97d83103fd2d",
+                "reference": "501826ba4d0b65ee9a6dfb3f554e97d83103fd2d",
                 "shasum": ""
             },
+            "require": {
+                "illuminate/support": "^7.0|^8.0",
+                "php": "^7.4|^8.0",
+                "spatie/macroable": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.18",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.5",
+                "spatie/ray": "^1.22"
+            },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -7244,7 +7256,10 @@
             "autoload": {
                 "psr-4": {
                     "jrmadsen67\\LaravelRouteCoverageTest\\": "src/"
-                }
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -7265,14 +7280,19 @@
                     "name": "Johnny Mast",
                     "email": "mastjohnny@gmail.com",
                     "homepage": "https://johnnymast.io"
+                },
+                {
+                    "name": "Ben T",
+                    "email": "git@othyn.com",
+                    "homepage": "https://othyn.com"
                 }
             ],
             "description": "Route coverage test for Laravel.",
             "support": {
                 "issues": "https://github.com/jrmadsen67/laravel-route-coverage-test/issues",
-                "source": "https://github.com/jrmadsen67/laravel-route-coverage-test/tree/v1.1"
+                "source": "https://github.com/jrmadsen67/laravel-route-coverage-test/tree/master"
             },
-            "time": "2020-05-27T03:22:09+00:00"
+            "time": "2021-04-30T02:18:41+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -9507,6 +9527,56 @@
             "time": "2020-07-07T18:42:57+00:00"
         },
         {
+            "name": "spatie/macroable",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/macroable.git",
+                "reference": "7a99549fc001c925714b329220dea680c04bfa48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/macroable/zipball/7a99549fc001c925714b329220dea680c04bfa48",
+                "reference": "7a99549fc001c925714b329220dea680c04bfa48",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Macroable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A trait to dynamically add methods to a class",
+            "homepage": "https://github.com/spatie/macroable",
+            "keywords": [
+                "macroable",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/macroable/issues",
+                "source": "https://github.com/spatie/macroable/tree/1.0.1"
+            },
+            "time": "2020-11-03T10:15:05+00:00"
+        },
+        {
             "name": "symfony/debug",
             "version": "v4.4.25",
             "source": {
@@ -9748,15 +9818,17 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "jrmadsen67/laravel-route-coverage-test": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.3"
+        "php": ">=7.4"
     },
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.3"
+        "php": "7.4"
     },
     "plugin-api-version": "2.1.0"
 }

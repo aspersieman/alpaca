@@ -76,7 +76,7 @@ export default {
 
       self.isLoading = true;
 
-      window.axios.post('/api/admin/file-groups',payload).then(function() {
+      window.axios.post('/api/v1/file-groups',payload).then(function() {
         self.$flash.success({
           message: 'File roup added successfully'
         });

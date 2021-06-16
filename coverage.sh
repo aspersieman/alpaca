@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+export XDEBUG_MODE=coverage; ./vendor/bin/phpunit --coverage-html ./app/

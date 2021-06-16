@@ -351,7 +351,7 @@ export default {
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this user?",
         okCb: ()=>{
-          window.axios.delete('/api/admin/users/' + user.id).then(function() {
+          window.axios.delete('/api/v1/users/' + user.id).then(function() {
             self.$flash.success({
               text: 'User deleted successfully'
             });
@@ -392,7 +392,7 @@ export default {
         per_page: self.pagination.itemsPerPage
       };
 
-      window.axios.get('/api/admin/users',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/users',{params: params}).then(function(response) {
         self.items = response.data.data.data;
         self.totalItems = response.data.data.total;
         self.pagination.totalItems = response.data.data.total;
@@ -407,7 +407,7 @@ export default {
         paginate: 'no'
       };
 
-      window.axios.get('/api/admin/groups',{params: params}).then(function(response) {
+      window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
         self.filters.groupOptions = response.data.data;
         cb();
       });

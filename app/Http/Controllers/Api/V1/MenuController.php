@@ -36,33 +36,36 @@ class MenuController extends Controller
       $menuManager->addMenus([
         new MenuItem([
           'group_requirements' => [],
-          'permission_requirements' => ['superuser'],
+          'permission_requirements' => [],
           'label'=>'Dashboard',
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'dashboard',
           'route_type'=>'vue',
           'route_name'=>'dashboard',
           'visible'=>true,
+          'appBar'=>true,
         ]),
         new MenuItem([
           'group_requirements' => [],
-          'permission_requirements' => ['superuser'],
+          'permission_requirements' => [],
           'label'=>'Tasks',
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'check_circle',
           'route_type'=>'vue',
           'route_name'=>'tasks',
           'visible'=>true,
+          'appBar'=>true,
         ]),
         new MenuItem([
           'group_requirements' => [],
-          'permission_requirements' => ['superuser'],
+          'permission_requirements' => [],
           'label'=>'Notes',
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'note',
           'route_type'=>'vue',
           'route_name'=>'notes',
           'visible'=>true,
+          'appBar'=>true,
         ]),
         new MenuItem([
           'group_requirements' => [],
@@ -73,6 +76,7 @@ class MenuController extends Controller
           'route_type'=>'vue',
           'route_name'=>'reports',
           'visible'=>true,
+          'appBar'=>true,
         ]),
         new MenuItem([
           'label' => 'divider1',
@@ -87,6 +91,7 @@ class MenuController extends Controller
           'route_type'=>'vue',
           'route_name'=>'admin.dashboard',
           'visible'=>true,
+          'appBar'=>false,
         ]),
         new MenuItem([
           'group_requirements' => [],
@@ -97,6 +102,7 @@ class MenuController extends Controller
           'route_type'=>'vue',
           'route_name'=>'admin.users.list',
           'visible'=>true,
+          'appBar'=>false,
         ]),
         new MenuItem([
           'group_requirements' => [],
@@ -107,6 +113,7 @@ class MenuController extends Controller
           'route_type'=>'vue',
           'route_name'=>'admin.files',
           'visible'=>true,
+          'appBar'=>false,
         ]),
         new MenuItem([
           'group_requirements' => [],
@@ -117,6 +124,7 @@ class MenuController extends Controller
           'route_type'=>'vue',
           'route_name'=>'admin.settings',
           'visible'=>true,
+          'appBar'=>false,
         ])
       ]);
       $menus = $menuManager->getFiltered();
