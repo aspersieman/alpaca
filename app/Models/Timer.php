@@ -6,12 +6,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Conner\Tagging\Taggable;
+use App\Traits\FilterTrait;
 
 use Illuminate\Support\Facades\Log;
 
 class Timer extends Model
 {
   use \Conner\Tagging\Taggable;
+  use FilterTrait;
 
   protected $table = 'timers';
 

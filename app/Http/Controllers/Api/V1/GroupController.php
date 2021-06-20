@@ -34,7 +34,7 @@ class GroupController extends Controller
   {
     $data = $this->groupRepository->index(request()->all());
 
-    return $this->sendResponseOk($data,"Get groups ok.");
+    return $this->sendResponseOk($data, "List resource ok.");
   }
 
   /**
@@ -54,7 +54,7 @@ class GroupController extends Controller
 
     $group = $this->groupRepository->create($request->all());
 
-    return $this->sendResponseCreated($group);
+    return $this->sendResponseCreated($group, "Resource created.");
   }
 
   /**
@@ -69,7 +69,7 @@ class GroupController extends Controller
 
     if(!$group) return $this->sendResponseNotFound();
 
-    return $this->sendResponseOk($group);
+    return $this->sendResponseOk($group, "Resource found.");
   }
 
   /**
@@ -92,7 +92,10 @@ class GroupController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed update.");
 
-    return $this->sendResponseUpdated(Group::find($id));
+    return $this->sendResponseUpdated(
+      Group::find($id),
+      "Resource updated."
+    );
   }
 
   /**
@@ -121,6 +124,6 @@ class GroupController extends Controller
       return $this->sendResponseBadRequest("Failed to delete");
     }
 
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

@@ -38,7 +38,7 @@ class FileGroupControllerTest extends TestCase
         ->get(route('file-groups.index'));
       $response->assertOk();
       $this->assertEquals(count($response['data']['data']), 2);
-      $this->assertEquals($response['message'], 'Get file groups ok.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**
@@ -53,7 +53,7 @@ class FileGroupControllerTest extends TestCase
         ->get(route('file-groups.index'));
       $response->assertOk();
       $this->assertEquals(count($response['data']['data']), 1);
-      $this->assertEquals($response['message'], 'Get file groups ok.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**

@@ -36,7 +36,7 @@ class UserController extends Controller
   {
     $data = $this->userRepository->listUsers(request()->all());
 
-    return $this->sendResponseOk($data,"List users ok.");
+    return $this->sendResponseOk($data,"List resource ok.");
   }
 
   /**
@@ -61,7 +61,10 @@ class UserController extends Controller
       }
     }
 
-    return $this->sendResponseCreated($user);
+    return $this->sendResponseCreated(
+      $user,
+      "Resource created."
+    );
   }
 
   /**
@@ -76,7 +79,10 @@ class UserController extends Controller
 
     if(!$user) return $this->sendResponseNotFound();
 
-    return $this->sendResponseOk($user);
+    return $this->sendResponseOk(
+      $user,
+      "Resource found."
+    );
   }
 
   /**
@@ -104,7 +110,6 @@ class UserController extends Controller
     if(!$updated) return $this->sendResponseBadRequest("Failed update");
 
     // re-sync groups
-
     $groupIds = [];
 
     if($groups = $request->get('groups',[]))
@@ -117,7 +122,10 @@ class UserController extends Controller
     $user = User::find($id);
     $user->groups()->sync($groupIds);
 
-    return $this->sendResponseUpdated($user);
+    return $this->sendResponseUpdated(
+      $user,
+      "Resource updated."
+    );
   }
 
   /**
@@ -139,6 +147,6 @@ class UserController extends Controller
       return $this->sendResponseBadRequest("Failed to delete");
     }
 
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

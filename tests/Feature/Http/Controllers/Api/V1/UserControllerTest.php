@@ -39,7 +39,7 @@ class UserControllerTest extends TestCase
         ->actingAs($user, 'api')
         ->get(route('users.index'));
       $this->assertEquals(count($response['data']['data']), 5);
-      $this->assertEquals($response['message'], 'List users ok.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**

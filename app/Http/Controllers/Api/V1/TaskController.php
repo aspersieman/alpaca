@@ -32,7 +32,7 @@ class TaskController extends Controller
       ->get();
     return $this->sendResponseOk(
       new TaskCollection($tasks),
-      "Get tasks (".count($tasks).") ok"
+      "List resource ok."
     );
   }
 
@@ -47,9 +47,9 @@ class TaskController extends Controller
     $request->merge(['user_id' => auth()->user()->id]);
     $task = Task::create($request->all());
     $response = $task ? array_merge($task->toArray(), ['timers' => []]) : false;
-    return $this->sendResponseOk(
+    return $this->sendResponseCreated(
       $response,
-      "Task created"
+      "Resource created."
     );
   }
 
@@ -68,7 +68,7 @@ class TaskController extends Controller
 
     return $this->sendResponseOk(
       $task,
-      "Get task ok"
+      "Resource found."
     );
   }
 
@@ -81,9 +81,8 @@ class TaskController extends Controller
    */
   public function update(UpdateTaskRequest $request, $id)
   {
-    //$this->authorize('update', $task);
     $task = Task::put($id, $request->all())->toArray();
-    return $this->sendResponseOk($task, "Update task ok");
+    return $this->sendResponseOk($task, "Resource updated.");
   }
 
   /**
@@ -94,8 +93,7 @@ class TaskController extends Controller
    */
   public function destroy($id)
   {
-    //$this->authorize('delete', $task);
     Task::destroy($id);
-    return $this->sendResponseOk([], "Task deleted");
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

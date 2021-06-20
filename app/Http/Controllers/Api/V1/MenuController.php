@@ -129,7 +129,7 @@ class MenuController extends Controller
       ]);
       $menus = $menuManager->getFiltered();
     }
-    return $this->sendResponseOk($menus,"Get menu ok.");
+    return $this->sendResponseOk($menus,"List resource ok.");
   }
 
   /**
@@ -140,7 +140,7 @@ class MenuController extends Controller
    */
   public function store(Request $request)
   {
-    return $this->sendResponseOk([],"Created.");
+    return $this->sendResponseCreated([], "Resource created.");
   }
 
   /**
@@ -151,7 +151,7 @@ class MenuController extends Controller
    */
   public function show($id)
   {
-    return $this->sendResponseOk([]);
+    return $this->sendResponseOk([], "Resource found.");
   }
 
   /**
@@ -163,7 +163,10 @@ class MenuController extends Controller
    */
   public function update(Request $request, $id)
   {
-    return $this->sendResponseUpdated();
+    return $this->sendResponseUpdated(
+      [],
+      "Resource updated."
+    );
   }
 
   /**
@@ -174,6 +177,6 @@ class MenuController extends Controller
    */
   public function destroy($id)
   {
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted([], "Resource deleted.");
   }
 }

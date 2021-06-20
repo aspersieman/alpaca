@@ -44,7 +44,7 @@ class FileController extends Controller
   {
     $results = $this->fileRepository->index($request->all());
 
-    return $this->sendResponseOk($results);
+    return $this->sendResponseOk($results, "List resource ok.");
   }
 
   /**
@@ -103,7 +103,7 @@ class FileController extends Controller
       return $this->sendResponseBadRequest($errorMessage);
     }
 
-    return $this->sendResponseCreated($fileRecord);
+    return $this->sendResponseCreated($fileRecord, "Resource created.");
   }
 
   /**
@@ -118,7 +118,7 @@ class FileController extends Controller
 
     if(!$file) return $this->sendResponseNotFound();
 
-    return $this->sendResponseOk($file);
+    return $this->sendResponseOk($file, "Resource found.");
   }
 
   /**
@@ -130,7 +130,10 @@ class FileController extends Controller
    */
   public function update(Request $request, $id)
   {
-    return $this->sendResponseNoContent();
+    return $this->sendResponseUpdated(
+      [],
+      "Resource updated."
+    );
   }
 
   /**
@@ -147,7 +150,7 @@ class FileController extends Controller
       return $this->sendResponseBadRequest("Failed to delete file.");
     }
 
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 
   /**

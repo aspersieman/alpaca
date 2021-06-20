@@ -36,7 +36,7 @@ class ChartController extends Controller
     foreach ($timeByDay as $day) {
       $times[] = [$day['timer_date'], $day['duration']];
     }
-    return $times;
+    return $this->sendResponseOk($times);
   }
 
   /**
@@ -54,7 +54,7 @@ class ChartController extends Controller
     foreach ($timeByTag as $tag) {
       $times[] = [$tag['tag_name'], $tag['duration']];
     }
-    return $times;
+    return $this->sendResponseOk($times);
   }
 
   /**
@@ -68,6 +68,6 @@ class ChartController extends Controller
     $end = $request['end'] ?? (new \DateTime('NOW'))->format("Y-m-d");
     $userIds = $request['userIds'] ?? [auth()->user()->id];
     $timers = Timer::byTimer($start, $end, $userIds);
-    return $timers;
+    return $this->sendResponseOk($timers);
   }
 }

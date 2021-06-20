@@ -14,8 +14,12 @@ class TaskPriority extends Migration
     public function up()
     {
       Schema::table('tasks', function (Blueprint $table) {
-        $table->integer('priority')->unsigned()->default(0)->after('due_time');
-        $table->dropColumn(['order']);
+        if (DB::connection() instanceof Illuminate\Database\SQLiteConnection) {
+          $table->string('priority')->default(0);
+        } else {
+          $table->integer('priority')->unsigned()->default(0)->after('due_time');
+          $table->dropColumn(['order']);
+        }
       });
     }
 

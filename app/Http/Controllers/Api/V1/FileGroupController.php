@@ -34,7 +34,7 @@ class FileGroupController extends Controller
   {
     $data = $this->fileGroupRepository->index($request->all());
 
-    return $this->sendResponseOk($data,"Get file groups ok.");
+    return $this->sendResponseOk($data, "List resource ok.");
   }
 
   /**
@@ -59,7 +59,7 @@ class FileGroupController extends Controller
 
     if(!$file)  return $this->sendResponseBadRequest("Failed to create.");
 
-    return $this->sendResponseCreated($file);
+    return $this->sendResponseCreated($file, "Resource created.");
   }
 
   /**
@@ -74,7 +74,7 @@ class FileGroupController extends Controller
 
     if(!$file) return $this->sendResponseNotFound();
 
-    return $this->sendResponseOk($file);
+    return $this->sendResponseOk($file, "Resource found.");
   }
 
   /**
@@ -97,7 +97,10 @@ class FileGroupController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed to update");
 
-    return $this->sendResponseUpdated(FileGroup::find($id));
+    return $this->sendResponseUpdated(
+      FileGroup::find($id),
+      "Resource updated."
+    );
   }
 
   /**
@@ -110,6 +113,6 @@ class FileGroupController extends Controller
   {
     $this->fileGroupRepository->delete($id);
 
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

@@ -101,7 +101,6 @@ class Task extends Model
   public static function put($id, $data)
   {
     $task = Task::withTrashed()
-      ->with(['user', 'project', 'notes', 'timers.tagged'])
       ->find($id);
     $task->name = $data['name'];
     $task->due = $data['due'];

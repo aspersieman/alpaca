@@ -41,7 +41,7 @@ class GroupControllerTest extends TestCase
         ->get(route('groups.index'));
       $response->assertOk();
       $this->assertEquals(count($response['data']['data']), 3);
-      $this->assertEquals($response['message'], 'Get groups ok.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**

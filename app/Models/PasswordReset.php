@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PasswordReset extends Model
 {
@@ -19,7 +20,7 @@ class PasswordReset extends Model
         return self::updateOrCreate(['email' => $email],
             [
                 'email' => $email,
-                'token' => str_random(60)
+                'token' => Str::random(60)
             ]
         );
     }

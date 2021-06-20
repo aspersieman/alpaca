@@ -22,6 +22,8 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
 
   Route::apiResource('tasks', 'TaskController');
 
+  Route::get('timers', 'TimerController@index')->name('timers.index');
+  Route::get('tasks/{id}/timers/{timer_id}', 'TimerController@show')->name('timers.show');
   Route::post('tasks/{id}/timers', 'TimerController@store')->name('timers.store');
   Route::put('tasks/{id}/timers/{timer_id}', 'TimerController@update')->name('timers.update');
   Route::delete('tasks/{id}/timers/{timer_id}', 'TimerController@delete')->name('timers.destroy');

@@ -34,7 +34,7 @@ class NoteController extends Controller
       ->get();
     return $this->sendResponseOk(
       new NoteCollection($notes),
-      "Get notes (".count($notes).") ok"
+      "List resource ok."
     );
   }
 
@@ -44,15 +44,34 @@ class NoteController extends Controller
     $note = Note::create($request->all());
     $response = $note ? $note->toArray() : false;
 
-    return $this->sendResponseOk(
+    return $this->sendResponseCreated(
       $response,
-      "Note created"
+      "Resource created."
+    );
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int $id
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    $note = Note::with(['user'])
+      ->find($id);
+
+    if(!$note) return $this->sendResponseNotFound();
+
+    return $this->sendResponseOk(
+      $note,
+      "Resource found."
     );
   }
 
   public function update(UpdateNoteRequest $request, int $id)
   {
-    return $this->sendResponseOk(Note::put($id, $request), "Note updated ok");
+    return $this->sendResponseOk(Note::put($id, $request), "Resource updated.");
   }
 
   /**
@@ -63,8 +82,7 @@ class NoteController extends Controller
    */
   public function destroy($id)
   {
-    //$this->authorize('delete', $task);
     Note::destroy($id);
-    return $this->sendResponseOk([], "Note deleted");
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

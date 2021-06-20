@@ -33,7 +33,7 @@ class PermissionController extends Controller
   {
     $data = $this->permissionRepository->index(request()->all());
 
-    return $this->sendResponseOk($data,"Get permissions ok.");
+    return $this->sendResponseOk($data,"List resource ok.");
   }
 
   /**
@@ -56,7 +56,10 @@ class PermissionController extends Controller
 
     if(!$permission) return $this->sendResponseBadRequest("Failed to create");
 
-    return $this->sendResponseCreated($permission);
+    return $this->sendResponseCreated(
+      $permission,
+      "Resource created."
+    );
   }
 
   /**
@@ -71,7 +74,10 @@ class PermissionController extends Controller
 
     if(!$permission) return $this->sendResponseNotFound();
 
-    return $this->sendResponseOk($permission);
+    return $this->sendResponseOk(
+      $permission,
+      "Resource found."
+    );
   }
 
   /**
@@ -95,7 +101,10 @@ class PermissionController extends Controller
 
     if(!$updated) return $this->sendResponseBadRequest("Failed update.");
 
-    return $this->sendResponseUpdated(Permission::find($id));
+    return $this->sendResponseUpdated(
+      Permission::find($id),
+      "Resource updated."
+    );
   }
 
   /**
@@ -119,6 +128,6 @@ class PermissionController extends Controller
 
     $this->permissionRepository->delete($id);
 
-    return $this->sendResponseDeleted();
+    return $this->sendResponseDeleted("Resource deleted.");
   }
 }

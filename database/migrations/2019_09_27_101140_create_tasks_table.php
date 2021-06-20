@@ -18,7 +18,11 @@ class CreateTasksTable extends Migration
       $table->string('name');
       $table->string('status');
       $table->date('due');
-      $table->time('dueTime')->nullable();
+      if (DB::connection() instanceof Illuminate\Database\SQLiteConnection) {
+        $table->time('due_time')->nullable();
+      } else {
+        $table->time('dueTime')->nullable();
+      }
       $table->unsignedInteger('order')->nullable();
       $table->unsignedInteger('user_id');
       $table->foreign('user_id')->references('id')->on('users');

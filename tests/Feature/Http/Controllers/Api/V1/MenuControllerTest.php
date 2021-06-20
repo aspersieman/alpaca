@@ -25,7 +25,7 @@ class MenuControllerTest extends TestCase
       ->actingAs($user, 'api')
       ->get(route('menu.index'));
     $response->assertOk();
-    $this->assertEquals($response['message'], 'Get menu ok.');
+    $this->assertEquals($response['message'], 'List resource ok.');
     $this->assertCount(9, $response['data']);
   }
 
@@ -41,7 +41,7 @@ class MenuControllerTest extends TestCase
       ->actingAs($user, 'api')
       ->get(route('menu.index'));
     $response->assertOk();
-    $this->assertEquals($response['message'], 'Get menu ok.');
+    $this->assertEquals($response['message'], 'List resource ok.');
     $this->assertCount(4, $response['data']);
   }
 

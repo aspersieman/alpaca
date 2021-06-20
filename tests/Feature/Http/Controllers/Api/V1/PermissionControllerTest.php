@@ -55,7 +55,7 @@ class PermissionControllerTest extends TestCase
         ->get(route('permissions.index'));
       $response->assertOk();
       $this->assertEquals(count($response['data']['data']), 5);
-      $this->assertEquals($response['message'], 'Get permissions ok.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**

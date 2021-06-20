@@ -22,9 +22,13 @@ class CreateProjectsTable extends Migration
       $table->softDeletes();
     });
     Schema::table('tasks', function (Blueprint $table) {
-      $table->unsignedBigInteger('project_id')->nullable();
-      $table->foreign('project_id')->references('id')->on('projects');
-      $table->renameColumn('dueTime', 'due_time');
+      if (DB::connection() instanceof Illuminate\Database\SQLiteConnection) {
+        $table->unsignedInteger('project_id')->nullable();
+      } else {
+        $table->unsignedBigInteger('project_id')->nullable();
+        $table->foreign('project_id')->references('id')->on('projects');
+        $table->renameColumn('dueTime', 'due_time');
+      }
     });
   }
 

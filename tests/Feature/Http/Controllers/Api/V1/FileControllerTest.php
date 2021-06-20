@@ -31,7 +31,7 @@ class FileControllerTest extends TestCase
       $response->assertOk();
 
       $this->assertEquals(count($response['data']['data']), 1);
-      $this->assertEquals($response['message'], 'Resource found.');
+      $this->assertEquals($response['message'], 'List resource ok.');
     }
 
     /**
@@ -51,7 +51,7 @@ class FileControllerTest extends TestCase
       $response->assertOk();
 
       $this->assertEquals(count($response['data']['data']), 1);
-      $this->assertEquals($response['message'], 'Resource found.');
+      $this->assertEquals($response['message'], 'List resource ok.');
       $response->assertJsonStructure([
         'data' => [
           'data' => [
@@ -94,6 +94,7 @@ class FileControllerTest extends TestCase
           'file_group_id' => $fileGroup->id
         ]);
       $response->assertCreated();
+      $this->assertEquals($response['message'], 'Resource created.');
       $this->assertDatabaseCount('files', 1);
       $this->assertDatabaseHas('files', [
         'name' => $file->name,
@@ -205,10 +206,13 @@ class FileControllerTest extends TestCase
       $response = $this
         ->actingAs($user, 'api')
         ->put(route('files.update', $file->id), []);
+      $response->assertOk();
+      $this->assertEquals($response['message'], 'Resource updated.');
       $response = $this
         ->actingAs($user, 'api')
         ->patch(route('files.update', $file->id), []);
-      $response->assertNoContent();
+      $response->assertOk();
+      $this->assertEquals($response['message'], 'Resource updated.');
     }
 
     /**
