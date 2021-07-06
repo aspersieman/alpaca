@@ -183,13 +183,12 @@
 </template>
 
 <script>
-import EventNames from '../../../../common/EventNames';
 
 export default {
   props: {
     propUserId: {
       required: true,
-      type: Number,
+      type: String,
     }
   },
   data() {
@@ -244,9 +243,9 @@ export default {
     self.loadPermissions(()=>{
       self.loadGroups(()=>{});
     });
-    self.$eventBus.$on([EventName.GROUP_ADDED],()=>{
-      self.loadGroups(()=>{});
-    });
+    /*self.$eventBus.$on([EventName.GROUP_ADDED],()=>{*/
+    /*  self.loadGroups(()=>{});*/
+    /*});*/
     this.loadUser(()=>{});
   },
   methods: {
@@ -264,15 +263,17 @@ export default {
         permissions: self.permissions,
         groups: self.groups,
       };
-      self.$store.commit('loaderShow');
+      this.$overlay.show(true);
 
       window.axios.put('/api/v1/users/'+self.propUserId,payload).then(function() {
         self.$flash.success({
           text: 'User added successfully'
         });
         self.$eventBus.$emit(EventNames.USER_UPDATED);
+        self.$overlay.show(false);
       }).catch(function (error) {
         console.error(error);
+        self.$overlay.show(false);
         if (error.response) {
           self.$flash.error({
             text: 'Error adding user'
@@ -293,8 +294,6 @@ export default {
                 }
             }
         });
-
-        console.log(self.permissions);
     },
     existsInPermissions(permissionKey) {
         const self = this;
@@ -323,12 +322,6 @@ export default {
             window._.each(User.groups,(g)=>{
                 self.groups[g.id] = true;
             });
-
-            self.$store.commit('setBreadcrumbs',[
-                {label:'Users',to:{name:'users.list'}},
-                {label:User.name,to:''},
-                {label:'Edit',to:''},
-            ]);
 
             cb();
         });

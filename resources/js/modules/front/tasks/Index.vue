@@ -3,9 +3,7 @@
     <note-drawer />
     <v-container class="my-2">
       <v-row>
-        <v-col
-          class="mb-3"
-        >
+        <v-col>
           <v-layout
             row
             wrap
@@ -64,104 +62,117 @@
         </v-col>
       </v-row>
       <v-fade-transition leave-absolute>
-        <v-layout
+        <v-card
           v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
-          row
-          class="mb-1 mt-1"
-          wrap
-          transition="scroll-y-transition"
+          class="pt-3 mt-5"
+          :class="{ 'filters': $vuetify.breakpoint.mdAndUp }"
         >
-          <v-btn
-            v-shortkey.once="['ctrl', 'alt', '/']"
-            style="display: none;"
-            @shortkey="searchFocus()"
+          <v-card-title
+            class="filters-title grey--text"
           >
-            Search focus
-          </v-btn>
-          <v-text-field
-            ref="searchInput"
-            v-model="search"
-            outlined
-            :clearable="clearable"
-            dense
-            label="Search"
-            class="search-input"
-            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
-            type="text"
-            prepend-icon="search"
-            @change="setTasksSettings"
-          />
-          <v-combobox
-            v-model="status"
-            outlined
-            :clearable="clearable"
-            dense
-            chips
-            :items="statuses"
-            multiple
-            label="Status"
-            class="search-input"
-            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
-            @change="setTasksSettings"
+            Filters
+          </v-card-title>
+          <v-layout
+            row
+            class="mb-1 mt-1"
+            wrap
+            transition="scroll-y-transition"
           >
-            <template
-              #selection="data"
+            <v-btn
+              v-shortkey.once="['ctrl', 'alt', '/']"
+              style="display: none;"
+              @shortkey="searchFocus()"
             >
-              <v-chip
-                :key="JSON.stringify(data.item)"
-                :small="$vuetify.breakpoint.mdAndUp"
-                :x-small="$vuetify.breakpoint.smAndDown"
-                :class="`status ${data.item}`"
-                :input-value="data.selected"
-                :disabled="data.disabled"
-                v-bind="data.attrs"
-                @click:close="data.parent.selectItem(data.item)"
+              Search focus
+            </v-btn>
+            <v-progress-circular
+              v-if="searching"
+              indeterminate
+              color="primary"
+              size="24"
+              class="searching-progress-indicator"
+            />
+            <v-icon
+              v-else
+              class="top--12"
+            >
+              search
+            </v-icon>
+            <v-text-field
+              ref="searchInput"
+              v-model="search"
+              outlined
+              :clearable="clearable"
+              dense
+              label="Search"
+              class="search-input search-input-max-width"
+              type="text"
+              @change="setTasksSettings()"
+              @input="searchTasks(true)"
+            />
+            <v-combobox
+              v-model="status"
+              outlined
+              :clearable="clearable"
+              dense
+              chips
+              :items="statuses"
+              multiple
+              label="Status"
+              class="search-input search-input-max-width"
+              @change="setTasksSettings()"
+              @input="searchTasks()"
+            >
+              <template
+                #selection="data"
               >
-                {{ data.item }}
-              </v-chip>
-            </template>
-          </v-combobox>
-          <date-range-picker
-            v-model="dates"
-            class="search-input"
-            :label="dateRangeLabel"
-            :value="dates"
-            :clearable="clearable"
-            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
-          />
-          <v-combobox
-            v-model="priority"
-            class="search-input"
-            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
-            :items="priorities"
-            :clearable="clearable"
-            item-text="name"
-            item-value="id"
-            label="Priority"
-            outlined
-            dense
-            @change="setTasksSettings"
-          />
-          <base-btn-primary
-            class="action-button"
-            @click="searchTasks()"
-          >
-            Go
-          </base-btn-primary>
-          <v-spacer />
-          <v-combobox
-            v-model="sort"
-            outlined
-            :clearable="clearable"
-            dense
-            :items="sortList"
-            label="Sort"
-            class="search-input sort-input"
-            :class="{ 'search-input-max-width': $vuetify.breakpoint.mdAndUp }"
-            prepend-icon="filter_list"
-            @change="sortTasks()"
-          />
-        </v-layout>
+                <v-chip
+                  :key="JSON.stringify(data.item)"
+                  :small="$vuetify.breakpoint.mdAndUp"
+                  :x-small="$vuetify.breakpoint.smAndDown"
+                  :class="`status ${data.item}`"
+                  :input-value="data.selected"
+                  :disabled="data.disabled"
+                  v-bind="data.attrs"
+                  @click:close="data.parent.selectItem(data.item)"
+                >
+                  {{ data.item }}
+                </v-chip>
+              </template>
+            </v-combobox>
+            <date-range-picker
+              v-model="dates"
+              :label="dateRangeLabel"
+              :value="dates"
+              :clearable="clearable"
+              class="search-input search-input-max-width"
+            />
+            <v-combobox
+              v-model="priority"
+              class="search-input search-input-max-width"
+              :items="priorities"
+              :clearable="clearable"
+              item-text="name"
+              item-value="id"
+              label="Priority"
+              outlined
+              dense
+              @change="setTasksSettings()"
+              @input="searchTasks()"
+            />
+            <v-combobox
+              v-model="sort"
+              outlined
+              :clearable="clearable"
+              dense
+              :items="sortList"
+              label="Sort"
+              class="search-input sort-input search-input-max-width"
+              prepend-icon="filter_list"
+              @change="sortTasks()"
+            />
+          </v-layout>
+        </v-card>
       </v-fade-transition>
     </v-container>
     <v-container
@@ -267,6 +278,8 @@ export default {
         userId: '',
         default: true
       },
+      debounce: null,
+      searching: false,
     }
   },
   computed: {
@@ -285,6 +298,7 @@ export default {
     dates: function() {
       this.setTasksSettings();
       this.countFilters();
+      this.searchTasks(true);
     },
     priority: function() {
       this.countFilters();
@@ -394,12 +408,23 @@ export default {
       this.setSetting('tasks-sort', this.sort);
     },
 
-    searchTasks() {
-      this.$overlay.show(true);
-      this.prepareQuery();
-      this.$store.dispatch('task/getTasks', this.query)
-        .then(() => this.sortTasks())
-        .then(() => this.$overlay.show(false));
+    searchTasks(debounce) {
+      this.searching = true;
+      if (debounce) {
+        window._.debounce(function(){
+          this.prepareQuery();
+          this.$store.dispatch('task/getTasks', this.query)
+            .then(() => this.sortTasks())
+            .then(() => this.$overlay.show(false))
+            .then(() => this.searching = false);
+        }, 700);
+      } else {
+        this.prepareQuery();
+        this.$store.dispatch('task/getTasks', this.query)
+          .then(() => this.sortTasks())
+          .then(() => this.$overlay.show(false))
+          .then(() => this.searching = false);
+      }
 
     },
 
@@ -495,5 +520,23 @@ export default {
 
 .sort-input {
   max-width: 165px;
+}
+
+.top--12 {
+  top: -12px;
+}
+.searching-progress-indicator {
+  top: 7px;
+  margin-right: 3px;
+}
+
+.filters {
+  height: 70px;
+}
+
+.filters-title {
+  font-size: 0.7em;
+  margin-top: -40px;
+  margin-bottom: -20px;
 }
 </style>

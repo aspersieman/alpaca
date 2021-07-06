@@ -69,7 +69,7 @@ class MenuController extends Controller
         ]),
         new MenuItem([
           'group_requirements' => [],
-          'permission_requirements' => ['superuser'],
+          'permission_requirements' => [],
           'label'=>'Reports',
           'nav_type' => MenuItem::$NAV_TYPE_NAV,
           'icon'=>'query_stats',

@@ -53,14 +53,20 @@
             filled
             prepend-icon="search"
             label="Filter by name"
+            outlined
+            dense
+            clearable
           />
         </div>
         <div class="flex-grow-1 pa-2">
           <v-text-field
             v-model="filters.email"
             filled
-            prepend-icon="search"
+            prepend-icon="email"
             label="Filter by email"
+            outlined
+            dense
+            clearable
           />
         </div>
         <div class="flex-grow-1 pa-2">
@@ -71,11 +77,13 @@
             chips
             deletable-chips
             clearable
-            prepend-icon="filter_list"
+            prepend-icon="groups"
             label="Filter by groups"
             :items="filters.groupOptions"
             item-text="name"
             item-value="id"
+            outlined
+            dense
           />
         </div>
       </div>
@@ -86,7 +94,7 @@
       :headers="headers"
       :options.sync="pagination"
       :items="items"
-      :server-items-length="totalItems"
+      :server-items-length="usersTotal"
       class="elevation-1"
     >
       <template #header="{props:{headers}}">
@@ -148,32 +156,32 @@
             :key="item.id"
           >
             <td>
-              <div class="ml-n1 my-1 d-flex justify-space-between align-content-space-around flex-wrap">
-                <v-btn
-                  class="ma-1"
-                  small
-                  outlined
-                  icon
-                  color="info"
-                  @click="$router.push({name:'admin.users.edit',params:{id: item.id}})"
-                >
-                  <v-icon small>
-                    mdi-pencil
-                  </v-icon>
-                </v-btn>
-                <v-btn
-                  class="ma-1"
-                  small
-                  outlined
-                  icon
-                  color="red"
-                  @click="deleteUser(item)"
-                >
-                  <v-icon small>
-                    mdi-delete
-                  </v-icon>
-                </v-btn>
-              </div>
+              <v-btn
+                class="ma-2"
+                outlined
+                fab
+                small
+                icon
+                color="info"
+                @click="$router.push({name:'admin.users.edit',params:{id: item.id}})"
+              >
+                <v-icon>
+                  mdi-pencil
+                </v-icon>
+              </v-btn>
+              <v-btn
+                class="ma-2"
+                outlined
+                fab
+                small
+                icon
+                color="red"
+                @click="$store.dispatch('user/deleteUser', item)"
+              >
+                <v-icon>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
             </td>
             <td>{{ item.name }}</td>
             <td>{{ item.email }}</td>
@@ -273,7 +281,7 @@
 </template>
 
 <script>
-import EventNames from '../../../../common/EventNames';
+import { mapGetters } from 'vuex';
 window._ = require('lodash');
 
 export default {
@@ -289,7 +297,6 @@ export default {
         { text: 'Active', value: 'active', align: 'center', sortable: false },
       ],
       items: [],
-      totalItems: 0,
       pagination: {
         itemsPerPage: 10
       },
@@ -309,6 +316,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('user', [
+      'users',
+      'usersTotal',
+    ]),
+  },
   watch: {
     pagination: {
       handler () {
@@ -326,50 +339,26 @@ export default {
     'filters.groupId': window._.debounce(function(){
       const self = this;
       self.loadUsers(()=>{});
-    },700)
+    },700),
+
   },
   mounted() {
-    const self = this;
+    this.loadGroups(()=>{});
 
-    self.loadGroups(()=>{});
-
-    self.$eventBus.$on([EventNames.USER_ADDED, EventNames.USER_UPDATED, EventNames.USER_DELETED, EventNames.GROUP_ADDED],()=>{
-      self.loadUsers(()=>{});
+    this.$store.subscribe((mutation) => {
+      if (
+        [
+          'user/ADDED',
+          'user/UPDATED',
+          'user/DELETED',
+          'group/ADDED',
+        ].includes(mutation.type)
+      ) {
+        this.loadUsers(()=>{});
+      }
     });
-
-    self.$store.commit('setBreadcrumbs',[
-      {label:'Users',to:{name:'admin.users.list'}},
-    ]);
   },
   methods: {
-    deleteUser(user) {
-      const self = this;
-
-      self.$store.commit('showDialog',{
-        type: "confirm",
-        icon: 'warning',
-        title: "Confirm Deletion",
-        message: "Are you sure you want to delete this user?",
-        okCb: ()=>{
-          window.axios.delete('/api/v1/users/' + user.id).then(function() {
-            self.$flash.success({
-              text: 'User deleted successfully'
-            });
-            self.$eventBus.$emit(EventNames.USER_DELETED);
-          }).catch(function (error) {
-            console.error(error);
-            if (error.response) {
-              self.$flash.error({
-                text: 'Error deleting user'
-              });
-            }
-          });
-        },
-        cancelCb: ()=>{
-          console.log("CANCEL");
-        }
-      });
-    },
     showDialog(dialog, data) {
       const self = this;
       switch (dialog){
@@ -381,37 +370,33 @@ export default {
           break;
       }
     },
-    loadUsers(cb) {
-      const self = this;
 
+    loadUsers(cb) {
       let params = {
-        name: self.filters.name,
-        email: self.filters.email,
-        group_id: self.filters.groupId.join(","),
-        page: self.pagination.page,
-        per_page: self.pagination.itemsPerPage
+        name: this.filters.name,
+        email: this.filters.email,
+        group_id: this.filters.groupId.join(","),
+        page: this.pagination.page,
+        per_page: this.pagination.itemsPerPage
       };
 
-      window.axios.get('/api/v1/users',{params: params}).then(function(response) {
-        self.items = response.data.data.data;
-        self.totalItems = response.data.data.total;
-        self.pagination.totalItems = response.data.data.total;
-        (cb || Function)();
-      });
+      this.$store.dispatch('user/getUsers', params)
+        .then(() => {
+          this.items = this.users;
+          this.pagination.totalItems = this.usersTotal;
+        });
     },
+
     loadGroups(cb) {
-
       const self = this;
-
       let params = {
         paginate: 'no'
       };
-
       window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
         self.filters.groupOptions = response.data.data;
         cb();
       });
-    }
+    },
   }
 }
 </script>

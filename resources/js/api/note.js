@@ -9,17 +9,17 @@ Laravel does not support formData PUT request
 So _method: PUT has to be added to the form data
 and send your PUT request as POST request
 */
-export function updateNote(note) {
-  note._method = "PUT"
-  return axios.post(`/api/v1/notes/${note.id}`, note);
+export function updateNote(payload) {
+  payload._method = "PUT"
+  return axios.post(`/api/v1/notes/${payload.id}`, payload);
 }
 
-export function getNote(noteId) {
-  return axios.get(`/api/v1/notes/${noteId}`);
+export function getNote(payload) {
+  return axios.get(`/api/v1/notes/${payload}`);
 }
 
-export function deleteNote(noteId) {
-  return axios.delete(`/api/v1/notes/${noteId}`);
+export function deleteNote(payload) {
+  return axios.delete(`/api/v1/notes/${payload.id}`);
 }
 
 export function getNotes(payload) {

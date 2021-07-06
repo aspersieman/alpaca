@@ -41,7 +41,7 @@
         class="text-sm-caption"
         icon
         x-small
-        @click="openNoteDialog(note)"
+        @click="$store.dispatch('note/openNoteDialog', note)"
       >
         <v-icon>
           edit

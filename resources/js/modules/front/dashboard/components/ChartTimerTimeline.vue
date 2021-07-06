@@ -193,7 +193,7 @@ export default {
     dateRange () {
       return this.dates.join(' ~ ')
     },
-    ...mapGetters('chart', ['chartByTimerLoading', 'chartByTimerData', 'chartByTimerTotalTime', 'chartByTimerTimers']),
+    ...mapGetters('chart', ['chartByTimerLoading', 'chartByTimerTotalTime', 'chartByTimerTimers']),
   },
   created() {
     this.getData();

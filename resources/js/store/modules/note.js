@@ -96,7 +96,7 @@ export const actions = {
     })
   },
 
-  updateNote({commit}, payload) {
+  updateNote({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
       updateNote(payload)
         .then(({data}) => {
@@ -124,7 +124,7 @@ export const actions = {
     })
   },
 
-  deleteNote({commit}, payload) {
+  deleteNote({commit, dispatch}, payload) {
     return new Promise((resolve, reject) => {
       const settings = {
         type: 'confirm',

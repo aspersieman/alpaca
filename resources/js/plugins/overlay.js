@@ -1,4 +1,4 @@
-const flash = {
+const overlay = {
   install(Vue, { store }) {
     Vue.prototype.$overlay = new Vue({
       methods: {
@@ -14,4 +14,4 @@ const flash = {
   }
 }
 
-export default flash
+export default overlay

@@ -7,6 +7,9 @@
             v-model="filters.name"
             prepend-icon="search"
             label="Filter by name"
+            outlined
+            dense
+            clearable
           />
         </div>
         <div class="flex-grow-1 pa-2 text-right">

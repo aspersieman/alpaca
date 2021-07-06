@@ -42,7 +42,7 @@ class MenuControllerTest extends TestCase
       ->get(route('menu.index'));
     $response->assertOk();
     $this->assertEquals($response['message'], 'List resource ok.');
-    $this->assertCount(4, $response['data']);
+    $this->assertCount(5, $response['data']);
   }
 
   /**

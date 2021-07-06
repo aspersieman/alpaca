@@ -60,6 +60,7 @@ export default {
   width: 33px;
   height: 33px;
   max-height: 33px;
+  max-width: 33px;
   border: 1px solid #545271;
   border-radius: 50%;
   margin: 1px auto;

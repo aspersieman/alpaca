@@ -164,6 +164,7 @@ export default {
           'task/UPDATED',
           'note/ADDED',
           'note/UPDATED',
+          'note/DELETED',
         ].includes(mutation.type)
       ) {
         self.notes = this.task?.notes ?? [];

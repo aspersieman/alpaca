@@ -15,8 +15,8 @@
         <v-flex
           xs12
           sm12
-          md3
-          lg3
+          md5
+          lg5
         >
           <div
             class="caption grey--text ml-2"
@@ -89,11 +89,14 @@
             {{ getTaskTotalTime(task) }}
           </div>
         </v-flex>
+        <v-spacer
+          v-if="$vuetify.breakpoint.mdAndUp"
+        />
         <v-flex
-          xs3
-          sm3
-          md2
-          lg2
+          xs4
+          sm4
+          md1
+          lg1
           class="pt-0"
         >
           <div class="mt-0 pt-0">
@@ -108,11 +111,10 @@
             </v-btn>
           </div>
         </v-flex>
-        <v-spacer />
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
-          md3
-          lg3
+          md2
+          lg2
           class="align-right"
         >
           <div class="mt-0 pt-0">

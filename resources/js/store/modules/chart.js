@@ -12,7 +12,6 @@ import {
 
 export const state = {
   chartByTimerLoading: false,
-  chartByTimerData: [],
   chartByTimerTimers: [],
   chartByTimerTotalTime: "00:00:00",
   chartByDayLoading: false,
@@ -26,9 +25,6 @@ export const state = {
 export const mutations = {
   CHART_BY_TIMER_LOADING: (state, payload) => {
     state.chartByTimerLoading = payload;
-  },
-  CHART_BY_TIMER_DATA: (state, payload) => {
-    state.chartByTimerData = payload.data;
   },
   CHART_BY_TIMER_TIMERS: (state, payload) => {
     state.chartByTimerTimers = payload;
@@ -64,11 +60,10 @@ export const actions = {
       commit('CHART_BY_TIMER_LOADING', true);
       getChartByTimer(payload)
         .then(({data}) => {
-          commit('CHART_BY_TIMER_DATA', data);
           let totalDuration = 0;
           let totalTime = [ "00", "00", "00" ];
           let days = [];
-          let timers = data;
+          let timers = data.data;
           timers.forEach(timer => {
             let dateStarted = dateTimeFormat(timer.started_at, "ddd, D MMM")
             timer.dateStarted = null;
@@ -95,7 +90,7 @@ export const actions = {
         .then(({data}) => {
           let totalDuration = 0;
           let chartData = [];
-          let days = data;
+          let days = data.data;
           days.forEach(day => {
             let formattedDay = dateTimeFormat(day[0], "ddd, D MMM")
             totalDuration += parseInt(day[1]);
@@ -117,7 +112,7 @@ export const actions = {
       getChartByTag(payload)
         .then(({data}) => {
           let chartData = [];
-          let tags = data;
+          let tags = data.data;
           tags.forEach(tag => {
             chartData.push([tag[0], secondsToMinutes(tag[1]) + " minutes"]);
           });
@@ -135,9 +130,6 @@ export const actions = {
 export const getters = {
   chartByTimerLoading : state => {
     return state.chartByTimerLoading
-  },
-  chartByTimerData : state => {
-    return state.chartByTimerData
   },
   chartByTimerTimers : state => {
     return state.chartByTimerTimers

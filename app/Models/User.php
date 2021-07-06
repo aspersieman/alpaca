@@ -46,6 +46,10 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
   ];
 
+  protected $with = [
+    'groups'
+  ];
+
   protected static function boot()
   {
     parent::boot();
