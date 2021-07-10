@@ -7,14 +7,13 @@
     "require": {
         "php": ">=7.4",
         "deployer/deployer": "^6.8",
-        "fideloper/proxy": "~4.1",
-        "firebase/php-jwt": "^5.0",
+        "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.4",
-        "laravel/framework": "^7.0",
-        "laravel/passport": "~9.0",
+        "laravel/framework": "^8.0",
+        "laravel/passport": "^10.1",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.0",
-        "ramsey/uuid": "^3.7",
+        "laravel/ui": "^3.0",
+        "ramsey/uuid": "^4.0",
         "rtconner/laravel-tagging": "~4.0",
         "spatie/laravel-backup": "^6.15"
     },
@@ -25,7 +24,7 @@
         "fzaninotto/faker": "~1.4",
         "jrmadsen67/laravel-route-coverage-test": "dev-master",
         "mockery/mockery": "1.2.*",
-        "nunomaduro/collision": "^4.0",
+        "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
