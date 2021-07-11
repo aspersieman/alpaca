@@ -7,9 +7,11 @@
     "require": {
         "php": ">=7.4",
         "deployer/deployer": "^6.8",
+        "fideloper/proxy": "^4.4",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.4",
         "laravel/framework": "^8.0",
+        "laravel/legacy-factories": "^1.1",
         "laravel/passport": "^10.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
@@ -20,25 +22,24 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
         "barryvdh/laravel-ide-helper": "^2.6",
+        "brianium/paratest": "^6.3",
         "filp/whoops": "~2.0",
-        "fzaninotto/faker": "~1.4",
-        "jrmadsen67/laravel-route-coverage-test": "dev-master",
+        "fzaninotto/faker": "^1.9.1",
+        "laravel/sail": "^1.8",
         "mockery/mockery": "1.2.*",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
-        "classmap": [
-            "database/seeds",
-            "database/factories"
-        ],
         "psr-4": {
             "App\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "extra": {

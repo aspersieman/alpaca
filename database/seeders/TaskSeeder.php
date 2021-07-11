@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
@@ -18,6 +19,7 @@ class TaskSeeder extends Seeder
     $start = new \DateTime(date('Y-m-d', strtotime('-20 days')));
     $end = new \DateTime('NOW');
     $defaultUserId = 1;
+    $tags = ['project', 'testing', 'break'];
 
     for ($i = 0; $i < $counter; $i++) {
       $randomTimestamp = mt_rand($start->getTimestamp(), $end->getTimestamp());
@@ -42,6 +44,8 @@ class TaskSeeder extends Seeder
         $timer->started_at = Carbon::createFromFormat('Y-m-d H:s:i', $task->due);
         $timer->stopped_at = $timer->started_at->addMinutes($k*5);
         $timer->duration = $timer->stopped_at->diffInSeconds($timer->started_at);
+        $timer->save();
+        $timer->tag([$tags[mt_rand(0, 2)]]);
         $timer->save();
       }
     }

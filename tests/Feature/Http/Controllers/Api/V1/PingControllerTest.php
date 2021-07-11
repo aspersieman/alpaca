@@ -20,7 +20,7 @@ class PingControllerTest extends TestCase
 
     $response->assertStatus(200);
 
-    $response->assertExactJson([
+    $response->assertSimilarJson([
       'message' => 'pong'
     ]);
   }
