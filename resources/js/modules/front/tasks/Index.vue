@@ -108,7 +108,6 @@
               class="search-input search-input-max-width"
               type="text"
               @change="setTasksSettings()"
-              @input="searchTasks(true)"
             />
             <v-combobox
               v-model="status"
@@ -291,6 +290,7 @@ export default {
   watch: {
     search: function() {
       this.countFilters();
+      this.searchTasks(true);
     },
     status: function() {
       this.countFilters();
@@ -320,6 +320,7 @@ export default {
           'timer/DELETED',
           'timer/TIMER_STOPPED',
           'note/ADDED',
+          'note/DELETED',
         ].includes(mutation.type)
       ) {
         this.getTasksSettings();
@@ -411,8 +412,11 @@ export default {
     searchTasks(debounce) {
       this.searching = true;
       if (debounce) {
-        window._.debounce(function(){
+        let bouncer;
+        clearTimeout(bouncer);
+        bouncer = setTimeout(() => {
           this.prepareQuery();
+          console.log(this.query);
           this.$store.dispatch('task/getTasks', this.query)
             .then(() => this.sortTasks())
             .then(() => this.$overlay.show(false))

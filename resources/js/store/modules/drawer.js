@@ -18,6 +18,10 @@ export const actions= {
   toggleNavigationDrawer({commit, getters}) {
     const navigationDrawerState = !getters['navigationDrawer'];
     commit('NAVIGATION_DRAWER', navigationDrawerState);
+  },
+  toggleNoteDrawer({commit, getters}) {
+    const noteDrawerState = !getters['noteDrawer'];
+    commit('NOTE_DRAWER', noteDrawerState);
   }
 }
 

@@ -2,7 +2,7 @@
 
 VERSION=$1;
 # Turn on maintenance mode
-./vendor/bin/sail artisan down --message="Down for maintenance. Be back soon"
+./vendor/bin/sail artisan down
 
 # Pull the latest changes from the git repository
 # git reset --hard

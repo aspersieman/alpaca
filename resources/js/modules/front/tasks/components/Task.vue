@@ -340,7 +340,7 @@ export default {
   methods: {
     openNoteDrawer() {
       this.$store.commit('task/TASK', this.task);
-      this.$store.commit('drawer/NOTE_DRAWER', true);
+      this.$store.dispatch('drawer/toggleNoteDrawer');
     },
     countNotes(task) {
       return task?.notes?.length > 0 ? task?.notes?.length : '';
