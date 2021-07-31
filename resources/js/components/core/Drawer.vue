@@ -62,7 +62,7 @@
         <v-divider horizontal />
         <v-list-item
           v-if="!$auth.check"
-          @click="login()"
+          @click="$store.dispatch('auth/login')"
         >
           <v-list-item-action>
             <v-icon>meeting_room</v-icon>
@@ -73,7 +73,7 @@
         </v-list-item>
         <v-list-item
           v-if="$auth.check"
-          @click="logout()"
+          @click="$store.dispatch('auth/logout')"
         >
           <v-list-item-action>
             <v-icon>no_meeting_room</v-icon>
@@ -90,17 +90,13 @@
 import { mapGetters } from 'vuex';
 import Avatar from '@/components/core/Avatar';
 import AvatarMixin from '@/mixins/AvatarMixin';
-import AuthenticationMixin from '@/mixins/AuthenticationMixin';
 
 export default {
   name: 'CoreDrawer',
   components: {
     Avatar
   },
-  mixins: [
-    AvatarMixin,
-    AuthenticationMixin
-  ],
+  mixins: [ AvatarMixin ],
   props: {
     value: {
       type: Boolean,

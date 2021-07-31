@@ -151,7 +151,7 @@
                         block
                         :disabled="!valid"
                         color="success"
-                        @click="validate"
+                        @click="login"
                       >
                         Login
                       </v-btn>
@@ -241,7 +241,7 @@
                         block
                         :disabled="!valid"
                         color="success"
-                        @click="validate"
+                        @click="signup"
                       >
                         Register
                       </v-btn>
@@ -257,10 +257,8 @@
   </div>
 </template>
 <script>
-import AuthenticationMixin from '@/mixins/AuthenticationMixin';
 
 export default {
-  mixins: [ AuthenticationMixin ],
   data: () => ({
     dialog: false,
     tab: 0,
@@ -297,32 +295,40 @@ export default {
     }
   },
   methods: {
-    validate() {
-      if (this.$refs.loginForm.validate()) {
+    login() {
+      const self = this;
+      if (this.$refs['loginForm'].validate()) {
         let user = {
             email: this.loginEmail,
             password: this.loginPassword
         };
-        this.login(user)
-          .then(() => {
-            this.loginEmail = '';
-            this.loginPassword = '';
-          })
+        this.$store.dispatch('auth/login', user)
+          .then(() => { })
           .catch((error) => {
             console.log(error);
             this.$flash.error({
-              message: 'Email or password incorrect'
+              text: 'Email or password incorrect'
             });
           })
       }
     },
 
-    reset() {
-      this.$refs.form.reset();
-    },
-
-    resetValidation() {
-      this.$refs.form.resetValidation();
+    signup() {
+      if (this.$refs['registerForm'].validate()) {
+        let user = {
+            email: this.loginEmail,
+            password: this.loginPassword,
+            name: this.firstName + ' ' + this.lastName,
+        };
+        this.$store.dispatch('auth/register', user)
+          .then(() => { })
+          .catch((error) => {
+            console.log(error);
+            this.$flash.error({
+              text: 'Email or password incorrect'
+            });
+          })
+      }
     },
 
     goToTab(number) {

@@ -11,31 +11,6 @@
       v-model="valid"
       lazy-validation
     >
-      <span
-        class="maximise-button text-right"
-        :class="{ 'maximise-button-normal': !fullscreen, 'maximise-button-maximised': fullscreen }"
-      >
-        <v-btn
-          v-if="!$vuetify.breakpoint.xs"
-          ref="maximiseButton"
-          class="text-sm-caption text-right"
-          fab
-          x-small
-          light
-          @click="maximise()"
-        >
-          <v-icon
-            v-if="!fullscreen"
-          >
-            fullscreen
-          </v-icon>
-          <v-icon
-            v-if="fullscreen"
-          >
-            fullscreen_exit
-          </v-icon>
-        </v-btn>
-      </span>
       <v-card>
         <v-card-title class="grey--text">
           <span v-if="mode == 'ADD'">
@@ -43,6 +18,32 @@
           </span>
           <span v-if="mode == 'UPDATE'">
             Update Note
+          </span>
+          <v-spacer />
+          <span
+            class="maximise-button text-right"
+            :class="{ 'maximise-button-normal': !fullscreen, 'maximise-button-maximised': fullscreen }"
+          >
+            <v-btn
+              v-if="!$vuetify.breakpoint.xs"
+              ref="maximiseButton"
+              class="text-sm-caption text-right"
+              fab
+              x-small
+              light
+              @click="maximise()"
+            >
+              <v-icon
+                v-if="!fullscreen"
+              >
+                fullscreen
+              </v-icon>
+              <v-icon
+                v-if="fullscreen"
+              >
+                fullscreen_exit
+              </v-icon>
+            </v-btn>
           </span>
         </v-card-title>
         <v-card-subtitle
@@ -60,11 +61,6 @@
             :rules="nameRules"
             label="Title"
           />
-          <editable
-            v-model="content"
-            label="Content"
-            only-edit.sync="onlyEdit"
-          />
         </v-card-text>
         <v-divider />
         <v-card-actions>
@@ -81,7 +77,6 @@
             v-if="mode == 'UPDATE'"
             text
             class="success mx-0 mt-3"
-            :disabled="loading"
             @click="update(note)"
           >
             Update note
@@ -102,16 +97,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import TaskMixin from '@/mixins/TaskMixin';
-import Editable from '@/components/core/Editable';
 
 export default {
-  components: { Editable },
-  mixins: [
-    TaskMixin
-  ],
   data() {
     return {
+      showEditor: true,
       mode: 'ADD',
       dialog: false,
       valid: false,
@@ -121,6 +111,8 @@ export default {
       loading: false,
       fullscreen: false,
       onlyEdit: true,
+      maxImageFileSize: 3,
+      axiosConfig: { },
       nameRules: [
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
@@ -139,20 +131,29 @@ export default {
   },
   created() {
     const self = this;
+    const token = self.$store.getters['auth/getToken'];
+    self.axiosConfig = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'note/NOTE_DIALOG_ADD') {
         self.formReset();
         self.dialog = self.noteDialogAdd;
         self.mode = 'ADD';
         self.subtitle = self.task?.name || '';
+        self.showEditor = true;
       }
       if (mutation.type === 'note/NOTE_DIALOG_UPDATE') {
         self.formReset();
         self.dialog = self.noteDialogUpdate;
         self.name = self.note.name;
         self.content = self.note.content;
-        self.subtitle = self.note.task?.name || '';
+        self.$store.dispatch('task/getTask', self.note.task_id)
+          .then(() => self.subtitle = self.task.name || '');
         self.mode = 'UPDATE';
+        self.showEditor = true;
       }
     });
   },
@@ -161,7 +162,9 @@ export default {
       this.dialog = false;
       this.fullscreen = false;
     },
+
     formReset() {
+      this.showEditor = false;
       this.name = '';
       this.content = null;
       this.subtitle = '';
@@ -170,6 +173,7 @@ export default {
       this.fullscreen = false;
       this.onlyEdit = true;
     },
+
     save() {
       if (this.valid) {
         this.loading = true;
@@ -193,6 +197,7 @@ export default {
           });
       }
     },
+
     update() {
       if (this.valid) {
         this.loading = true;
@@ -205,10 +210,10 @@ export default {
         this.$store.dispatch('note/updateNote', noteUpdate)
           .then(() => {
             this.$overlay.show(false);
-            this.close();
           });
       }
     },
+
     maximise() {
       this.fullscreen = !this.fullscreen;
     },
@@ -218,19 +223,5 @@ export default {
 <style scoped>
 .title-container {
   padding: 0;
-}
-.maximise-button {
-  position: absolute;
-  z-index: 1;
-}
-.maximise-button-normal {
-  margin-left: 15px;
-  margin-top: -15px;
-  width: 600px;
-}
-.maximise-button-maximised {
-  top: 10px;
-  right: 0px;
-  width: 100%;
 }
 </style>

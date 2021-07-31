@@ -35,7 +35,9 @@
           v-if="!showSearch"
         >
           <v-list-item-title>Notes</v-list-item-title>
-          <v-list-item-subtitle>
+          <v-list-item-subtitle
+            v-if="task"
+          >
             <v-icon small>
               task_alt
             </v-icon>

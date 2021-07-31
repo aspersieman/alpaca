@@ -33,7 +33,11 @@
     <v-card-text
       class="note-text"
     >
-      <div class="text-sm-caption note-content">{{ note.content }}</div>
+      <div
+        class="text-sm-caption note-content"
+        v-html="note.content"
+      />
+      <br>
     </v-card-text>
     <v-card-actions class="note-actions">
       <v-spacer />
@@ -62,12 +66,8 @@
 </template>
 
 <script type="text/javascript">
-import TaskMixin from '@/mixins/TaskMixin';
 
 export default {
-  mixins: [
-    TaskMixin,
-  ],
   props: {
     note: {
       required: true,

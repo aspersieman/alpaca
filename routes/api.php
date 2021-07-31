@@ -11,6 +11,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::get('logout', 'LoginController@logout')->name('login.logout');
   Route::post('password/email', 'PasswordResetController@sendResetLinkEmail')->name('password.sendResetLinkEmail');
   Route::post('password/reset', 'PasswordResetController@resetPassword')->name('password.resetPassword');
+  Route::post('register', 'RegisterController@create')->name('register.create');
 
   Route::apiResource('users','UserController');
   Route::apiResource('groups','GroupController');

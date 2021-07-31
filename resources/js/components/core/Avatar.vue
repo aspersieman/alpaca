@@ -61,7 +61,7 @@
 import AvatarMixin from '@/mixins/AvatarMixin';
 
 export default {
-  mixins: [ 
+  mixins: [
     AvatarMixin,
   ],
   data: () => ({
@@ -83,7 +83,6 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch('auth/logout')
-      this.$eventBus.userLoggedOut()
       this.$router.push("/");
     }
   }
