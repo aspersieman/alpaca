@@ -183,6 +183,7 @@ export default {
           'note/DELETED',
         ].includes(mutation.type)
       ) {
+        console.log('NoteDrawer: ' + mutation.type);
         self.notes = this.task?.notes ?? [];
       }
     });

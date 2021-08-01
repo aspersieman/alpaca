@@ -61,6 +61,10 @@
             :rules="nameRules"
             label="Title"
           />
+          <quill-editor
+            ref="myQuillEditor"
+            v-model="content"
+          />
         </v-card-text>
         <v-divider />
         <v-card-actions>
@@ -97,28 +101,34 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import Editor from '@/components/core/Editor';
+import { quillEditor } from 'vue-quill-editor'
+import Quill from 'quill'
 
 export default {
+  components: {
+    quillEditor,
+  },
+
   data() {
     return {
-      showEditor: true,
       mode: 'ADD',
       dialog: false,
       valid: false,
+      id: '',
       name: '',
-      content: '',
+      content: 'Loading...',
       subtitle: '',
       loading: false,
       fullscreen: false,
       onlyEdit: true,
-      maxImageFileSize: 3,
-      axiosConfig: { },
       nameRules: [
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
       ],
     }
   },
+
   computed: {
     ...mapGetters('task', [
       'task',
@@ -129,31 +139,25 @@ export default {
       'noteDialogUpdate'
     ]),
   },
+
   created() {
     const self = this;
-    const token = self.$store.getters['auth/getToken'];
-    self.axiosConfig = {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    };
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'note/NOTE_DIALOG_ADD') {
         self.formReset();
         self.dialog = self.noteDialogAdd;
         self.mode = 'ADD';
         self.subtitle = self.task?.name || '';
-        self.showEditor = true;
       }
       if (mutation.type === 'note/NOTE_DIALOG_UPDATE') {
         self.formReset();
         self.dialog = self.noteDialogUpdate;
+        self.id = self.note.id;
         self.name = self.note.name;
         self.content = self.note.content;
         self.$store.dispatch('task/getTask', self.note.task_id)
           .then(() => self.subtitle = self.task.name || '');
         self.mode = 'UPDATE';
-        self.showEditor = true;
       }
     });
   },
@@ -164,7 +168,7 @@ export default {
     },
 
     formReset() {
-      this.showEditor = false;
+      this.id = '';
       this.name = '';
       this.content = null;
       this.subtitle = '';
@@ -202,20 +206,23 @@ export default {
       if (this.valid) {
         this.loading = true;
         const noteUpdate = {
-          id: this.note.id,
+          id: this.id,
           name: this.name,
           content: this.content,
         };
-        this.$overlay.show(true);
-        this.$store.dispatch('note/updateNote', noteUpdate)
-          .then(() => {
-            this.$overlay.show(false);
-          });
+        this.$store.dispatch('note/updateNote', noteUpdate);
       }
     },
 
     maximise() {
       this.fullscreen = !this.fullscreen;
+    },
+
+    delta(value) {
+        if(value === '') {
+            return this.content = ''
+        }
+        this.content = value.getText()
     },
   }
 }

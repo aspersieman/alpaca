@@ -5,6 +5,8 @@ import Vue from 'vue';
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/dist/vuetify.min.css';
 
+import 'quill/dist/quill.snow.css'
+
 import router from '@/router/index';
 import store from '@/store';
 import eventBus from '@/plugins/event-bus';
