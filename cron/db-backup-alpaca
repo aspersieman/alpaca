@@ -3,4 +3,4 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-0 0 * * * nicol sh /var/www/html/alpaca/vendor/bin/sail artisan db:dump
+0 0 * * * nicol sh cd /var/www/html/alpaca/ && ./vendor/bin/sail artisan db:dump
