@@ -9,11 +9,11 @@ services:
           - php
           - node
         ports:
-          - "8080:80"
+          - "${APP_PORT:-80}:80"
         expose:
           - 80
         environment:
-          VIRTUAL_HOST: alpaca.local
+          VIRTUAL_HOST: ${VIRTUAL_HOST}
         networks:
           - reverse-proxy
           - default
@@ -51,6 +51,27 @@ services:
           restart_policy:
               condition: any
               window: 120s
+    supervisor:
+      build:
+        context: .
+        dockerfile: ./docker/supervisord.Dockerfile
+      container_name: supervisor
+      image: redditsaved/laravel-supervisord:latest
+      restart: unless-stopped
+      depends_on:
+        - composer
+        - redis
+        - db
+      environment:
+        - APP_ROOT=${APP_ROOT}
+        - QUEUE_DRIVER=${QUEUE_CONNECTION}
+        - OPTIONS=${QUEUE_OPTIONS}
+        - NUM_PROCS=${NUM_PROCS}
+      volumes:
+        - ./:${APP_ROOT}
+      networks:
+        - reverse-proxy
+        - default
 networks:
   reverse-proxy:
     external: true

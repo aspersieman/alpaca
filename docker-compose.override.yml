@@ -7,22 +7,22 @@ services:
   db:
     image: 'mariadb:10'
     ports:
-      - '3369:3306'
+      - '${FORWARD_DB_PORT:-3306}:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: T0kmptuO3h8KfC3
-      MYSQL_DATABASE: alpaca
-      MYSQL_USER: alpaca
-      MYSQL_PASSWORD: T0kmptuO3h8KfC3
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-pT0kmptuO3h8KfC3"]
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
       retries: 3
       timeout: 5s
   nginx:
     environment:
-      VIRTUAL_HOST: alpaca.local
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
     restart: "no"
     ports:
       - "8000:80"
