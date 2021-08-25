@@ -10,7 +10,7 @@ WORKDIR /app
 # ----------------------
 # Composer install step
 # ----------------------
-FROM composer:1.10 as build
+FROM composer:2.1 as build
 
 WORKDIR /app
 
