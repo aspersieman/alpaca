@@ -4,6 +4,16 @@
 FROM php:8-fpm as dev
 
 RUN docker-php-ext-install -j$(nproc) pdo_mysql
+RUN pecl install pcov && \
+    docker-php-ext-enable pcov && \
+    # disable pcov by default
+    mv /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini.di
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
 WORKDIR /app
 
@@ -52,3 +62,5 @@ COPY --from=node /app/public/fonts/ /app/public/fonts/
 COPY --from=node /app/mix-manifest.json /app/public/mix-manifest.json
 
 RUN chmod -R 777 /app/storage
+
+
