@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-    db:
+    lamoid.db:
       image: 'mariadb:10'
       ports:
         - '${FORWARD_DB_PORT:-3306}:3306'
@@ -16,11 +16,11 @@ services:
         test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
         retries: 3
         timeout: 5s
-    redis:
+    lamoid.redis:
       image: redis:6.0-alpine
       expose:
         - "6379"
-    node:
+    lamoid.node:
       image: node:12-alpine
       working_dir: /app
       env_file: .env
@@ -28,36 +28,23 @@ services:
         - ./:/app
       command: sh -c "npm install && npm run production"
       restart: "no"
-    nginx:
+    lamoid.nginx:
         build:
           context: .
           dockerfile: ./docker/nginx.Dockerfile
         restart: always
         env_file: .env
         depends_on:
-          - php
-          - node
+          - lamoid.php
+          - lamoid.node
         expose:
-          - 80
+          - "${EXPOSE_PORT}"
         environment:
-          VIRTUAL_HOST: alpaca.local
+          VIRTUAL_HOST: "${VIRTUAL_HOST}"
         networks:
           - reverse-proxy
           - default
-        #deploy:
-        #    replicas: 1
-        #    resources:
-        #        limits:
-        #            # cpus: "0.50"
-        #            memory: 50M
-        #        reservations:
-        #            # cpus: "0.25"
-        #            memory: 30M
-        #    restart_policy:
-        #        condition: any
-        #        delay: 5s
-        #        window: 120s
-    composer:
+    lamoid.composer:
       image: composer:2.1
       working_dir: /app
       environment:
@@ -68,7 +55,7 @@ services:
         - /etc/passwd:/etc/passwd:ro
         - /etc/group:/etc/group:ro
       command: composer install --ignore-platform-reqs --no-scripts
-    php:
+    lamoid.php:
       build:
         context: .
         dockerfile: ./docker/php.Dockerfile
@@ -76,26 +63,14 @@ services:
       env_file: .env
       restart: always
       depends_on:
-        - composer
-        - redis
-        - db
+        - lamoid.composer
+        - lamoid.redis
+        - lamoid.db
       environment:
-        VIRTUAL_HOST: alpaca.local
+        VIRTUAL_HOST: "${VIRTUAL_HOST}"
       expose:
           - "9000"
-      #deploy:
-      #    replicas: 1
-      #    resources:
-      #        limits:
-      #            # cpus: "0.50"
-      #            memory: 128M
-      #        reservations:
-      #            # cpus: "0.25"
-      #            memory: 64M
-      #    restart_policy:
-      #        condition: any
-      #        window: 120s
-    supervisor:
+    lamoid.supervisor:
       build:
         context: .
         dockerfile: ./docker/supervisord.Dockerfile
@@ -103,9 +78,9 @@ services:
       image: redditsaved/laravel-supervisord:latest
       restart: unless-stopped
       depends_on:
-        - composer
-        - redis
-        - db
+        - lamoid.composer
+        - lamoid.redis
+        - lamoid.db
       environment:
         - APP_ROOT=${APP_ROOT}
         - QUEUE_DRIVER=${QUEUE_CONNECTION}

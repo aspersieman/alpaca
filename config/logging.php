@@ -27,7 +27,7 @@ return [
     'channels' => [
       'stack' => [
         'driver' => 'stack',
-        'channels' => ['stdout'],
+        'channels' => ['single'],
         'ignore_exceptions' => false,
       ],
       'stdout' => [
@@ -63,6 +63,14 @@ return [
       'errorlog' => [
         'driver' => 'errorlog',
         'level' => 'debug',
+      ],
+      'stdout' => [
+        'driver' => 'monolog',
+        'handler' => \Monolog\Handler\StreamHandler::class,
+        'formatter' => env('LOG_STDOUT_FORMATTER'),
+        'with' => [
+          'stream' => 'php://stdout',
+        ],
       ],
     ],
 ];
