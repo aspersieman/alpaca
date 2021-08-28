@@ -22,7 +22,7 @@ class CreateProjectsTable extends Migration
       $table->softDeletes();
     });
     Schema::table('tasks', function (Blueprint $table) {
-      if (DB::connection() instanceof Illuminate\Database\SQLiteConnection) {
+      if (DB::connection()->getPDO()->getAttribute(PDO::ATTR_DRIVER_NAME) != 'mysql') {
         $table->unsignedInteger('project_id')->nullable();
       } else {
         $table->unsignedBigInteger('project_id')->nullable();
