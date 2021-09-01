@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
+RUN printf '[PHP]\ndate.timezone = "Africa/Johannesburg"\n' > /usr/local/etc/php/conf.d/tzone.ini
+
 WORKDIR /app
 
 # ----------------------

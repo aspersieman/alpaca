@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-      \App\Console\Commands\MySqlDump::class,
+      \App\Console\Commands\MySqlDumpCommand::class,
     ];
 
     /**
@@ -24,8 +24,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+      $DB_DUMP_TIME = env('DB_DUMP_TIME');
+      $APP_ROOT = env('APP_ROOT');
+      echo 'LAMOID SCHEDULER: ' . date('Y-m-d H:i:s') . PHP_EOL;
+      $schedule->exec("php {$APP_ROOT}/artisan db:dump")->dailyAt($DB_DUMP_TIME);
     }
 
     /**

@@ -17,7 +17,6 @@ services:
       - lamoid.db
     volumes:
       - ./:/app
-      - ./storage/logs:/app/storage/logs
       - ./docker/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
   lamoid.node:
     image: node:12-alpine

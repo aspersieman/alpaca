@@ -2,7 +2,7 @@
 
 NAME=$0;
 PURPOSE="Run commands in docker containers"
-OPTIONS="hacn"
+OPTIONS="hacns"
 SYNOPSIS="`basename $NAME` [-${OPTIONS}]"
 USAGE_EXAMPLE="`basename $NAME` -h"
 SCRIPT_VERSION="1.0.0"
@@ -10,10 +10,11 @@ REQUIREMENTS="getopts"
 PWD=`pwd`;
 
 DOCKER_NAMESPACE="lamoid"
-ARTISAN_COMMAND="docker-compose run ${DOCKER_NAMESPACE}.php php artisan";
+ARTISAN_COMMAND="docker-compose exec ${DOCKER_NAMESPACE}.php php artisan";
 COMPOSER_COMMAND="docker-compose run ${DOCKER_NAMESPACE}.composer composer";
 NPM_COMMAND="docker-compose exec ${DOCKER_NAMESPACE}.node npm";
 NODE_RESTART_COMMAND="docker-compose restart ${DOCKER_NAMESPACE}.node";
+SUPERVISOR_RESTART_COMMAND="docker exec ${DOCKER_NAMESPACE}.supervisor supervisorctl restart all"
 
 COMMAND="";
 PARAMETERS="";
@@ -54,6 +55,9 @@ get_options() {
 			;;
 			n)
 				COMMAND="npm";
+			;;
+			s)
+				COMMAND="supervisor";
 			;;
 		esac
 	done
@@ -127,6 +131,13 @@ run() {
     then
       output "Restarting node...";
       ${NODE_RESTART_COMMAND};
+    fi
+  fi
+  if [[ ${COMMAND} == 'supervisor' ]]
+  then
+    if [[ ${PARAMETERS} == 'restart' ]]
+    then
+      ${SUPERVISOR_RESTART_COMMAND}
     fi
   fi
 }

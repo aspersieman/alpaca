@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class MySqlDump extends Command
+class MySqlDumpCommand extends Command
 {
   /**
    * The name and signature of the console command.
@@ -36,8 +36,10 @@ class MySqlDump extends Command
 
     $ts = time();
 
+    $out = new \Symfony\Component\Console\Output\ConsoleOutput();
     $path = database_path() . $ds . 'backups' . $ds . date('Y', $ts) . $ds . date('m', $ts) . $ds . date('d', $ts) . $ds;
     $file = date('Y-m-d-His', $ts) . '-dump-' . $database . '.sql.bz2';
+    $out->writeln("Dumping {$database} to {$path}{$file}");
     $command = sprintf('mysqldump -h %s -u %s -p\'%s\' %s | bzip2 -c > %s', $host, $username, $password, $database, $path . $file);
 
     if (!is_dir($path)) {
