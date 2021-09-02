@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Mail\MySqlDumpCommandMail;
+use App\Notifications\MySqlDumpCommandCompletedNotification;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\User;
@@ -52,11 +52,20 @@ class MySqlDumpCommand extends Command
 
     exec($command);
     $user = User::where('email', env('MAIL_DB_DUMP_TO_EMAIL'))->first();
-    Mail::to($user)->send(new MySqlDumpCommandMail(
-      [
-        'title' => "Backup of $database completed",
-        'message' => "$database has been backed up to: $file at " . date('m', $ts),
-      ]
-    ));
+    $template = [
+      'db-name' => $database,
+      'introduction' => "Backup of $database completed",
+      'action-label' => 'View backups',
+      'action-url' => url('/totem'),
+      'body' => "$database has been backed up to: {$path}{$file} at " . date('Y-m-d-His', $ts),
+    ];
+    $user->notify(new MySqlDumpCommandCompletedNotification($template));
+
+    //Mail::to($user)->send(new MySqlDumpCommandMail(
+    //  [
+    //    'title' => "$database has been backed up to: {$path}{$file} at " . date('m', $ts),
+    //    'message' => "Backup of $database completed",
+    //  ]
+    //));
   }
 }
