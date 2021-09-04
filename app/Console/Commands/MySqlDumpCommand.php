@@ -56,7 +56,7 @@ class MySqlDumpCommand extends Command
       'db-name' => $database,
       'introduction' => "Backup of $database completed",
       'action-label' => 'View backups',
-      'action-url' => url('/totem'),
+      'action-url' => url('/admin/backups/'),
       'body' => "$database has been backed up to: {$path}{$file} at " . date('Y-m-d-His', $ts),
     ];
     $user->notify(new MySqlDumpCommandCompletedNotification($template));
