@@ -3,18 +3,29 @@
 # ----------------------
 FROM php:8-fpm as dev
 
-RUN docker-php-ext-install -j$(nproc) pdo_mysql
-RUN pecl install pcov && \
-    docker-php-ext-enable pcov && \
-    # disable pcov by default
-    mv /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini.di
 RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        mariadb-client \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+  libfreetype6-dev \
+  libjpeg62-turbo-dev \
+  libpng-dev \
+  mariadb-client \
+  libzip-dev \
+  unzip
+
+RUN pecl install pcov
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+RUN docker-php-ext-install -j$(nproc) \
+  gd \
+  pcntl \
+  pdo_mysql \
+  zip
+
+RUN docker-php-ext-enable \
+  pcov
+
+# disable pcov by default
+RUN mv /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini.di
 
 RUN printf '[PHP]\ndate.timezone = "Africa/Johannesburg"\n' > /usr/local/etc/php/conf.d/tzone.ini
 
