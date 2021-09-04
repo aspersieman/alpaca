@@ -16,7 +16,7 @@ $factory->define(Task::class, function (Faker $faker) {
         'name' => $faker->name,
         'status' => Task::STATUSES[mt_rand(0, 2)],
         'due' => $randomDate->format("Y-m-d H:i:s"),
-        'project_id' => '',
+        'project_id' => null,
         'priority' => Task::PRIORITIES[mt_rand(0, 3)]
     ];
 });
