@@ -43,10 +43,10 @@ class MySqlDumpCommandCompletedNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Database backup completed: '.$this->template['db-name'])
-                    ->line($this->template['introduction'])
-                    ->action($this->template['action-label'], url($this->template['action-url']))
-                    ->line($this->template['body']);
+          ->subject('Database backup completed: '.$this->template['db-name'])
+          ->line($this->template['introduction'])
+          ->action($this->template['action-label'], url($this->template['action-url']))
+          ->line($this->template['body']);
     }
 
     /**

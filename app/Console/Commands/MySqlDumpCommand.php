@@ -47,7 +47,7 @@ class MySqlDumpCommand extends Command
     $command = sprintf('mysqldump -h %s -u %s -p\'%s\' %s | bzip2 -c > %s', $host, $username, $password, $database, $path . $file);
 
     if (!is_dir($path)) {
-      mkdir($path, 0755, true);
+      mkdir($path, 0777, true);
     }
 
     exec($command);
@@ -60,12 +60,5 @@ class MySqlDumpCommand extends Command
       'body' => "$database has been backed up to: {$path}{$file} at " . date('Y-m-d-His', $ts),
     ];
     $user->notify(new MySqlDumpCommandCompletedNotification($template));
-
-    //Mail::to($user)->send(new MySqlDumpCommandMail(
-    //  [
-    //    'title' => "$database has been backed up to: {$path}{$file} at " . date('m', $ts),
-    //    'message' => "Backup of $database completed",
-    //  ]
-    //));
   }
 }

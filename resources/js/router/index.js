@@ -22,6 +22,8 @@ import AdminUserPermissionAdd from '@/modules/admin/users/components/PermissionF
 import AdminUserPermissionEdit from '@/modules/admin/users/components/PermissionFormEdit';
 import AdminFiles from '@/modules/admin/files/Files';
 import AdminSettings from '@/modules/admin/settings/Settings';
+import AdminBackupIndex from '@/modules/admin/backups/Index';
+import AdminBackupList from '@/modules/admin/backups/components/BackupLists';
 
 Vue.use(Router);
 
@@ -141,13 +143,27 @@ const router = new Router({
                 {
                     name: "admin.files",
                     path: "/admin/files",
+                    beforeEnter: guard,
                     component: AdminFiles,
                 },
                 {
                     name: "admin.settings",
                     path: "/admin/settings",
+                    beforeEnter: guard,
                     component: AdminSettings,
-                }
+                },
+                {
+                    path: "/admin/backups",
+                    component: AdminBackupIndex,
+                    beforeEnter: guard,
+                    children: [
+                        {
+                            name:"admin.backups.list",
+                            path:"/",
+                            component: AdminBackupList
+                        },
+                    ],
+                },
             ]
         },
         {
