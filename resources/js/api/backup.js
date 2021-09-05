@@ -21,5 +21,5 @@ export function isGoogleDriveAuthenticated(payload) {
 }
 
 export function sendToDrive(payload) {
-  return axios.post("/api/v1/db-backup/send-to-drive", { params: payload });
+  return axios.get("/api/v1/db-backup/send-to-drive?code="+payload?.uploadToDriveAuthCode, { params: payload });
 }

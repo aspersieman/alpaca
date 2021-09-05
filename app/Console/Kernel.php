@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+use Illuminate\Support\Facades\Artisan;
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -27,7 +29,11 @@ class Kernel extends ConsoleKernel
       $DB_DUMP_TIME = env('DB_DUMP_TIME');
       $APP_ROOT = env('APP_ROOT');
       echo 'LAMOID SCHEDULER: ' . date('Y-m-d H:i:s') . PHP_EOL;
-      $schedule->exec("php {$APP_ROOT}/artisan db:dump")->dailyAt($DB_DUMP_TIME);
+      $url = 'http://lamoid.nginx/api/v1/db-backup/send-to-drive?code=' . env('GOOGLE_DRIVE_UPLOAD_RUN_CODE');
+      $schedule
+        ->exec("php {$APP_ROOT}/artisan db:dump")
+        ->dailyAt($DB_DUMP_TIME)
+        ->thenPing($url);
     }
 
     /**

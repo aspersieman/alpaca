@@ -31,7 +31,7 @@
             </v-icon>
           </v-btn>
           <v-btn
-            v-if="isGoogleDriveAuthenticated === true && backups.length > 0"
+            v-if="isGoogleDriveAuthenticated === true && backups.length > 0 && uploadToDriveAuthCode !== null"
             class="primary lighten-1"
             :enabled="!sendingToDrive"
             :loading="sendingToDrive"
@@ -157,6 +157,7 @@ export default {
       'isGoogleDriveAuthenticated',
       'googleDriveLoginURL',
       'sendingToDrive',
+      'uploadToDriveAuthCode',
     ]),
   },
   watch: {
@@ -206,7 +207,7 @@ export default {
     },
 
     googleUpload() {
-      this.$store.dispatch('backup/sendToDrive');
+      this.$store.dispatch('backup/sendToDrive', { uploadToDriveAuthCode: this.uploadToDriveAuthCode });
     },
   }
 }

@@ -177,4 +177,18 @@ class GoogleDriveHelper {
     return $op;
   }
 
+  public function sendToDrive() {
+    $fileList = $this->getDriveFiles();
+    $fileList = !empty($fileList) ? array_column($fileList['files'], 'name') : [];
+    $res = [];
+    $iti = new \RecursiveDirectoryIterator(database_path('backups/'));
+    foreach(new \RecursiveIteratorIterator($iti) as $file){
+      if(!in_array(basename($file), $fileList) && strpos($file , '.sql.bz2') !== false){
+        $res[basename($file)] = $this->uploadToDrive(basename($file), dirname($file));
+      }
+    }
+
+    return $res;
+  }
+
 }

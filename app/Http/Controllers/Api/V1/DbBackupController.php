@@ -16,7 +16,7 @@ class DbBackupController extends Controller
    */
   public function __construct()
   {
-    $this->middleware('auth:api');
+    $this->middleware('auth:api')->except(['sendToDrive']);
   }
 
   /**
@@ -95,23 +95,20 @@ class DbBackupController extends Controller
     $info = [
       'is_authenticated' => ( $token_info['is_token_valid'] )? true : false,
       'drive_login_url' => $token_info['auth_url'],
+      'upload_to_drive_auth_code' => env('GOOGLE_DRIVE_UPLOAD_RUN_CODE', ''),
     ];
 
     return $this->sendResponseOk($info, "Google Drive Authentication result.");
   }
 
-  public function sendToDrive(){
-    $googleDriveHelper = new GoogleDriveHelper();
-    $fileList = $googleDriveHelper->getDriveFiles();
-    $fileList = !empty($fileList) ? array_column($fileList['files'], 'name') : [];
-    $res = [];
-    $iti = new \RecursiveDirectoryIterator(database_path('backups/'));
-    foreach(new \RecursiveIteratorIterator($iti) as $file){
-      if(!in_array(basename($file), $fileList) && strpos($file , '.sql.bz2') !== false){
-        $res = $googleDriveHelper->uploadToDrive(basename($file), dirname($file));
-      }
+  public function sendToDrive(Request $request){
+    $requestData = $request->all();
+    $GOOGLE_DRIVE_UPLOAD_RUN_CODE = $requestData['code'] ?? '';
+    if (($GOOGLE_DRIVE_UPLOAD_RUN_CODE !== env('GOOGLE_DRIVE_UPLOAD_RUN_CODE', rand(0, 100)))) {
+      abort(403);
     }
-    return $this->sendResponseOk($res, "Response from Google Drive.");
+    $googleDriveHelper = new GoogleDriveHelper();
+    return $this->sendResponseOk($googleDriveHelper->sendToDrive(), "Response from Google Drive.");
   }
 
   private function formatFilesize($bytes, $dec = 2)

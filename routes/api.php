@@ -26,7 +26,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::get('db-backup', 'DbBackupController@index')->name('db-backup.index');
   Route::delete('db-backup/{name}', 'DbBackupController@destroy')->name('db-backup.destroy');
   Route::get('db-backup/is-google-drive-authenticated', 'DbBackupController@isGoogleDriveAuthenticated')->name('db-backup.is-google-drive-authenticated');
-  Route::post('db-backup/send-to-drive', 'DbBackupController@sendToDrive')->name('db-backup.send-to-drive');
+  Route::get('db-backup/send-to-drive', 'DbBackupController@sendToDrive')->name('db-backup.send-to-drive');
 
   // front
   Route::apiResource('tasks', 'TaskController');

@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use App\Utilities\GoogleDriveHelper;
+
 class MySqlDumpUploadCommand extends Command
 {
   /**
@@ -37,6 +39,8 @@ class MySqlDumpUploadCommand extends Command
    */
   public function handle()
   {
-    return 0;
+    $googleDriveHelper = new GoogleDriveHelper();
+    $result = $googleDriveHelper->sendToDrive();
+    print_r($result);
   }
 }

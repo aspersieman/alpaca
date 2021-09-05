@@ -8,6 +8,7 @@ export const state = {
   isGoogleDriveAuthenticated: false,
   googleDriveLoginURL: false,
   sendingToDrive: false,
+  uploadToDriveAuthCode: null,
 }
 
 export const mutations = {
@@ -22,6 +23,7 @@ export const mutations = {
   IS_GOOGLE_DRIVE_AUTHENTICATED: (state, payload) => { state.isGoogleDriveAuthenticated = payload },
   GOOGLE_DRIVE_LOGIN_URL: (state, payload) => { state.googleDriveLoginURL = payload },
   SENDING_TO_DRIVE: (state, payload) => { state.sendingToDrive = payload },
+  UPLOAD_TO_DRIVE_AUTH_CODE: (state, payload) => { state.uploadToDriveAuthCode = payload },
 }
 
 export const actions = {
@@ -104,6 +106,7 @@ export const actions = {
         .then(({data}) => {
           commit('IS_GOOGLE_DRIVE_AUTHENTICATED', data.data?.is_authenticated ?? false);
           commit('GOOGLE_DRIVE_LOGIN_URL', data.data?.drive_login_url ?? false);
+          commit('UPLOAD_TO_DRIVE_AUTH_CODE', data.data?.upload_to_drive_auth_code ?? false);
           resolve(data)
         })
         .catch(error => reject(error))
@@ -152,6 +155,9 @@ export const getters = {
   },
   sendingToDrive: state => {
     return state.sendingToDrive;
+  },
+  uploadToDriveAuthCode: state => {
+    return state.uploadToDriveAuthCode;
   },
 }
 
