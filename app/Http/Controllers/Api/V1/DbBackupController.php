@@ -27,7 +27,6 @@ class DbBackupController extends Controller
   {
     $requestData = $request->all();
     $name = $requestData['name'] ?? '';
-    Log::info($name);
     $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(database_path('backups/')));
 
     $files = [];

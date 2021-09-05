@@ -16,6 +16,19 @@
               add
             </v-icon>
           </v-btn>
+          <v-btn
+            class="primary lighten-1"
+            dark
+            @click="googleConnect()"
+          >
+            Google Connect
+            <v-icon
+              right
+              dark
+            >
+              mdi-google-drive
+            </v-icon>
+          </v-btn>
         </div>
         <div class="flex-grow-1 pa-2" />
       </div>
@@ -165,6 +178,10 @@ export default {
     saveBackup() {
       this.$store.dispatch('backup/saveBackup');
     },
+
+    googleConnect() {
+      window.location = "/admin/backups/google";
+    }
   }
 }
 </script>
