@@ -17,11 +17,28 @@
             </v-icon>
           </v-btn>
           <v-btn
+            v-if="isGoogleDriveAuthenticated === false"
             class="primary lighten-1"
             dark
             @click="googleConnect()"
           >
             Google Connect
+            <v-icon
+              right
+              dark
+            >
+              mdi-google-drive
+            </v-icon>
+          </v-btn>
+          <v-btn
+            v-if="isGoogleDriveAuthenticated === true && backups.length > 0"
+            class="primary lighten-1"
+            :enabled="!sendingToDrive"
+            :loading="sendingToDrive"
+            dark
+            @click="googleUpload()"
+          >
+            Upload to Google Drive
             <v-icon
               right
               dark
@@ -137,6 +154,9 @@ export default {
     ...mapGetters('backup', [
       'backups',
       'backupsTotal',
+      'isGoogleDriveAuthenticated',
+      'googleDriveLoginURL',
+      'sendingToDrive',
     ]),
   },
   watch: {
@@ -151,6 +171,8 @@ export default {
     },700),
   },
   mounted() {
+    this.$store.dispatch('backup/isGoogleDriveAuthenticated');
+    this.$store.commit('backup/SENDING_TO_DRIVE', false);
     this.$store.subscribe((mutation) => {
       if (
         [
@@ -180,8 +202,12 @@ export default {
     },
 
     googleConnect() {
-      window.location = "/admin/backups/google";
-    }
+      window.location = this.googleDriveLoginURL;
+    },
+
+    googleUpload() {
+      this.$store.dispatch('backup/sendToDrive');
+    },
   }
 }
 </script>

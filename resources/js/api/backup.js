@@ -15,3 +15,11 @@ export function deleteBackup(payload) {
 export function getBackups(payload) {
   return axios.get("/api/v1/db-backup", { params: payload });
 }
+
+export function isGoogleDriveAuthenticated(payload) {
+  return axios.get("/api/v1/db-backup/is-google-drive-authenticated", { params: payload });
+}
+
+export function sendToDrive(payload) {
+  return axios.post("/api/v1/db-backup/send-to-drive", { params: payload });
+}

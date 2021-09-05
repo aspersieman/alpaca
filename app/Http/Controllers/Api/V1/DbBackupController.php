@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+use App\Utilities\GoogleDriveHelper;
+
 class DbBackupController extends Controller
 {
 
@@ -71,6 +73,9 @@ class DbBackupController extends Controller
    */
   public function destroy($name)
   {
+    if (!auth()->user()->isSuperUser()) {
+      abort(403);
+    }
     $path = $this->recursiveDirectorySearch(database_path('backups/'), $name);
     if (!$path || !is_file($path)) {
       return $this->sendResponseNotFound('Resource not found');
@@ -79,6 +84,34 @@ class DbBackupController extends Controller
       unlink($path);
       return $this->sendResponseDeleted('Resource deleted.');
     }
+  }
+
+  public function isGoogleDriveAuthenticated(){
+    if (!auth()->user()->isSuperUser()) {
+      abort(403);
+    }
+    $token_info = (new GoogleDriveHelper())->prepareToken();
+
+    $info = [
+      'is_authenticated' => ( $token_info['is_token_valid'] )? true : false,
+      'drive_login_url' => $token_info['auth_url'],
+    ];
+
+    return $this->sendResponseOk($info, "Google Drive Authentication result.");
+  }
+
+  public function sendToDrive(){
+    $googleDriveHelper = new GoogleDriveHelper();
+    $fileList = $googleDriveHelper->getDriveFiles();
+    $fileList = !empty($fileList) ? array_column($fileList['files'], 'name') : [];
+    $res = [];
+    $iti = new \RecursiveDirectoryIterator(database_path('backups/'));
+    foreach(new \RecursiveIteratorIterator($iti) as $file){
+      if(!in_array(basename($file), $fileList) && strpos($file , '.sql.bz2') !== false){
+        $res = $googleDriveHelper->uploadToDrive(basename($file), dirname($file));
+      }
+    }
+    return $this->sendResponseOk($res, "Response from Google Drive.");
   }
 
   private function formatFilesize($bytes, $dec = 2)

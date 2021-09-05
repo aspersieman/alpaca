@@ -1,10 +1,13 @@
-import { getBackups, deleteBackup, saveBackup } from '@/api/backup';
+import { getBackups, deleteBackup, saveBackup, isGoogleDriveAuthenticated, sendToDrive } from '@/api/backup';
 
 export const state = {
   backups: [],
   added: null,
   deleted: null,
   backupsTotal: 0,
+  isGoogleDriveAuthenticated: false,
+  googleDriveLoginURL: false,
+  sendingToDrive: false,
 }
 
 export const mutations = {
@@ -16,6 +19,9 @@ export const mutations = {
   },
   ADDED: (state, payload) => { state.added = payload },
   DELETED: (state, payload) => { state.deleted = payload },
+  IS_GOOGLE_DRIVE_AUTHENTICATED: (state, payload) => { state.isGoogleDriveAuthenticated = payload },
+  GOOGLE_DRIVE_LOGIN_URL: (state, payload) => { state.googleDriveLoginURL = payload },
+  SENDING_TO_DRIVE: (state, payload) => { state.sendingToDrive = payload },
 }
 
 export const actions = {
@@ -91,14 +97,61 @@ export const actions = {
       dispatch('dialog/dialogShow', settings, {root: true});
     });
   },
+
+  isGoogleDriveAuthenticated({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      isGoogleDriveAuthenticated(payload)
+        .then(({data}) => {
+          commit('IS_GOOGLE_DRIVE_AUTHENTICATED', data.data?.is_authenticated ?? false);
+          commit('GOOGLE_DRIVE_LOGIN_URL', data.data?.drive_login_url ?? false);
+          resolve(data)
+        })
+        .catch(error => reject(error))
+    })
+  },
+
+  sendToDrive({commit}, payload) {
+    console.log('sendToDrive');
+    commit('SENDING_TO_DRIVE', true);
+    return new Promise((resolve, reject) => {
+      sendToDrive(payload)
+        .then(({data}) => {
+          commit(
+            'flash/showMessage',
+            {text: 'Upload to Google Drive successful', color: 'green'},
+            {root: true}
+          );
+          commit('SENDING_TO_DRIVE', false);
+          resolve(data)
+        })
+        .catch(error => {
+          commit(
+            'flash/showMessage',
+            {text: 'Error occurred during upload to Google Drive', color: 'red'},
+            {root: true}
+          );
+          commit('SENDING_TO_DRIVE', false);
+          reject(error);
+        })
+    })
+  },
 }
 
 export const getters = {
-  backups : state => {
-    return state.backups
+  backups: state => {
+    return state.backups;
   },
-  backupsTotal : state => {
-    return state.backupsTotal
+  backupsTotal: state => {
+    return state.backupsTotal;
+  },
+  isGoogleDriveAuthenticated: state => {
+    return state.isGoogleDriveAuthenticated;
+  },
+  googleDriveLoginURL: state => {
+    return state.googleDriveLoginURL;
+  },
+  sendingToDrive: state => {
+    return state.sendingToDrive;
   },
 }
 

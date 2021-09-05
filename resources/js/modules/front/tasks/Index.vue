@@ -416,7 +416,6 @@ export default {
         clearTimeout(bouncer);
         bouncer = setTimeout(() => {
           this.prepareQuery();
-          console.log(this.query);
           this.$store.dispatch('task/getTasks', this.query)
             .then(() => this.sortTasks())
             .then(() => this.$overlay.show(false))
