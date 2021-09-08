@@ -1,0 +1,49 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run JavaScript linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          coverage: none
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-ansi --no-interaction
+          echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+
+      - name: Run PHP linters
+        uses: wearerequired/lint-action@v1
+        with:
+          php_codesniffer: true
