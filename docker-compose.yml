@@ -56,7 +56,7 @@ services:
       environment:
         SSH_AUTH_SOCK: /ssh-auth.sock
       volumes:
-        - ./:/app
+        - ${PWD}/:/app
         - "$SSH_AUTH_SOCK:/ssh-auth.sock"
         - /etc/passwd:/etc/passwd:ro
         - /etc/group:/etc/group:ro

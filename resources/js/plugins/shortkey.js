@@ -1,3 +1,4 @@
+import Vue from 'vue'
 const VueShortkey = require('vue-shortkey');
 
-export default VueShortkey;
+Vue.use(VueShortkey);

@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import store from '@/store';
+
 const overlay = {
   install(Vue, { store }) {
     Vue.prototype.$overlay = new Vue({
@@ -14,4 +17,4 @@ const overlay = {
   }
 }
 
-export default overlay
+Vue.use(overlay, { store });

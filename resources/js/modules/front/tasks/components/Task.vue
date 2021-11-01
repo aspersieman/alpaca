@@ -365,11 +365,11 @@ export default {
 .task.complete {
   border-left: 4px solid $task-status-complete;
 }
-.task.ongoing {
-  border-left: 4px solid $task-status-ongoing;
+.task.inprogress {
+  border-left: 4px solid $task-status-inprogress;
 }
-.task.overdue {
-  border-left: 4px solid $task-status-overdue;
+.task.todo {
+  border-left: 4px solid $task-status-todo;
 }
 .transparent {
   background-color: transparent;

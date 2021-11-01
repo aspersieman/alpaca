@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import store from '@/store'
 
 const Authentication = {
@@ -18,4 +19,4 @@ const Authentication = {
   }
 }
 
-export default Authentication
+Vue.use(Authentication);

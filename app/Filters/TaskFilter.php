@@ -14,7 +14,7 @@ class TaskFilter extends Filters
     return $this->builder->whereRaw(
       '
         (
-            tasks.status IN ("ongoing", "overdue")
+            tasks.status IN ("inprogress", "todo")
             OR (
               DATE(tasks.updated_at) = CURDATE()
             )

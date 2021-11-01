@@ -27,7 +27,11 @@ class TaskSeeder extends Seeder
       $randomDate->setTimestamp($randomTimestamp);
       $task = new Task();
       $task->name = "Task name ".uniqid(). " $i";
-      $task->status = Task::STATUSES[mt_rand(0, 2)];
+      $status = Task::STATUSES[mt_rand(0, 2)];
+      $task->status = $status;
+      if ($status === 'complete') {
+        $task->completed_at = $randomDate->format("Y-m-d H:i:s");
+      }
       $task->due = $randomDate->format("Y-m-d H:i:s");
       $task->user_id = $defaultUserId;
       $task->save();

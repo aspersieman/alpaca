@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import store from '@/store';
+
 const flash = {
   install(Vue, { store }) {
     Vue.prototype.$flash = new Vue({
@@ -26,4 +29,4 @@ const flash = {
   }
 }
 
-export default flash
+Vue.use(flash, { store });

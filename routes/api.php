@@ -41,4 +41,6 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
   Route::post('charts/byday', 'ChartController@byDay')->name('charts.byDay');
   Route::post('charts/bytag', 'ChartController@byTag')->name('charts.byTag');
   Route::post('charts/bytimer', 'ChartController@byTimer')->name('charts.byTimer');
+  Route::post('charts/bycompleted', 'ChartController@byCompleted')->name('charts.byCompleted');
+  Route::post('charts/stats', 'ChartController@stats')->name('charts.stats');
 });

@@ -11,6 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
+mix.browserSync('lamoid.local');
 mix.disableSuccessNotifications();
 mix
     .js('resources/js/app.js', 'public/js')

@@ -209,32 +209,32 @@
 .theme--light.v-btn:not(.v-btn--icon).complete {
   background-color: $task-status-complete;
 }
-.theme--light.v-btn:not(.v-btn--icon).ongoing {
-  background-color: $task-status-ongoing;
+.theme--light.v-btn:not(.v-btn--icon).inprogress {
+  background-color: $task-status-inprogress;
 }
-.theme--light.v-btn:not(.v-btn--icon).overdue {
-  background-color: $task-status-overdue;
+.theme--light.v-btn:not(.v-btn--icon).todo {
+  background-color: $task-status-todo;
 }
 .theme--light.v-btn.complete {
   color: $task-status-complete;
 }
-.theme--light.v-btn.ongoing {
-  color: $task-status-ongoing;
+.theme--light.v-btn.inprogress {
+  color: $task-status-inprogress;
 }
-.theme--light.v-btn.overdue {
-  color: $task-status-overdue;
+.theme--light.v-btn.todo {
+  color: $task-status-todo;
 }
 .theme--light.v-chip.status.complete {
   color: white;
   background-color: $task-status-complete;
 }
-.theme--light.v-chip.status.ongoing {
+.theme--light.v-chip.status.inprogress {
   color: white;
-  background-color: $task-status-ongoing;
+  background-color: $task-status-inprogress;
 }
-.theme--light.v-chip.status.overdue {
+.theme--light.v-chip.status.todo {
   color: white;
-  background-color: $task-status-overdue;
+  background-color: $task-status-todo;
 }
 .uppercase {
   text-transform: uppercase;

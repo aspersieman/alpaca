@@ -1,6 +1,6 @@
 import { stopTimer, getTimerRunning, deleteTimer, saveTimer, updateTimer } from '@/api/timer';
 import TimerMixin from '@/mixins/TimerMixin';
-import { duration } from '@/plugins/formatters';
+import { duration } from '@/formatters';
 
 export const state = {
   timer: null,

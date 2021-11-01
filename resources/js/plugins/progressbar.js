@@ -1,3 +1,6 @@
+import Vue from 'vue'
+import VueProgressBar from 'vue-progressbar';
+
 const progressBarOptions = {
   color: '#ff4f4f',
   failedColor: '#bf5329',
@@ -10,4 +13,5 @@ const progressBarOptions = {
   autoRevert: true,
   inverse: false
 };
-export default progressBarOptions;
+
+Vue.use(VueProgressBar, progressBarOptions);

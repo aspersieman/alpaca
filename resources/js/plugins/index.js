@@ -1,0 +1,12 @@
+import '@/plugins/analytics';
+import '@/plugins/authentication';
+import '@/plugins/authorization';
+import '@/plugins/base';
+import '@/plugins/chartist';
+import '@/plugins/debug';
+import '@/plugins/event-bus';
+import '@/plugins/flash';
+import '@/plugins/overlay';
+import '@/plugins/progressbar';
+import '@/plugins/shortkey';
+import '@/plugins/quill';

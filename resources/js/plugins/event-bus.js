@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const eventBus = {
   install(Vue) {
     Vue.prototype.$eventBus = new Vue({
@@ -8,11 +10,6 @@ const eventBus = {
         'note-dialog-update',
       ],
       methods: {
-        /* Dashboard/charts */
-        dashboardParametersChanged(parameters) {
-          this.$emit('dashboard-parameters-changed', parameters);
-        },
-
         /* Notes */
         noteDrawerToggle(state, notes = null, task = null) {
           this.$emit('note-drawer-toggle', state, notes, task);
@@ -27,5 +24,4 @@ const eventBus = {
     })
   }
 }
-
-export default eventBus;
+Vue.use(eventBus);

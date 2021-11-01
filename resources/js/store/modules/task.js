@@ -28,8 +28,8 @@ export const state = {
   taskDialogUpdate: false,
   statuses: [
     'complete',
-    'ongoing',
-    'overdue'
+    'inprogress',
+    'todo'
   ],
   priorities: [
     { id: 0, name: '' },
@@ -204,14 +204,14 @@ export const actions = {
   changeTaskStatus({dispatch}, task) {
     var newStatus = null;
     switch (task.status.toLowerCase()) {
-      case 'ongoing':
+      case 'inprogress':
         newStatus = 'complete';
         break;
       case 'complete':
-        newStatus = 'overdue';
+        newStatus = 'todo';
         break;
-      case 'overdue':
-        newStatus = 'ongoing';
+      case 'todo':
+        newStatus = 'inprogress';
         break;
       default:
         break;

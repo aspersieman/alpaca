@@ -172,13 +172,13 @@ export default {
   color: white;
   background-color: $task-status-complete;
 }
-.theme--light.v-chip.status.ongoing {
+.theme--light.v-chip.status.inprogress {
   color: white;
-  background-color: $task-status-ongoing;
+  background-color: $task-status-inprogress;
 }
-.theme--light.v-chip.status.overdue {
+.theme--light.v-chip.status.todo {
   color: white;
-  background-color: $task-status-overdue;
+  background-color: $task-status-todo;
 }
 
 .search-input-container {

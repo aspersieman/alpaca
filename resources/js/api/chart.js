@@ -11,3 +11,11 @@ export function getChartByDay(params) {
 export function getChartByTag(params) {
   return axios.post(`/api/v1/charts/bytag`, params);
 }
+
+export function getChartByCompleted(params) {
+  return axios.post(`/api/v1/charts/bycompleted`, params);
+}
+
+export function getChartStats(params) {
+  return axios.post(`/api/v1/charts/stats`, params);
+}

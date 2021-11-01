@@ -1,7 +1,5 @@
 <template>
   <v-card
-    flat
-    tile
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -10,7 +8,5 @@
 </template>
 
 <script>
-  export default {
-    name: 'BaseCard',
-  }
+  export default { name: 'AppCard' }
 </script>

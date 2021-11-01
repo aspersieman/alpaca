@@ -239,7 +239,7 @@ export default {
       loading: false,
       mode: '',
       name: '',
-      status: 'ongoing',
+      status: 'inprogress',
       timers: [],
       due: moment().format('YYYY-MM-DD'),
 
@@ -333,7 +333,7 @@ export default {
       this.due = moment().format('YYYY-MM-DD');
       this.name = '';
       this.timers = [];
-      this.status = 'ongoing';
+      this.status = 'inprogress';
       this.priority = { id: 0, name: '' };
     },
 
