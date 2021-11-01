@@ -20,4 +20,4 @@ yarn-error.log
 .notes
 ubuntu*.log
 .phpunit.result.cache
-/database
+/database/backups
