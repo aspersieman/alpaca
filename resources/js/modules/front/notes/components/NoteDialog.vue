@@ -155,8 +155,10 @@ export default {
         self.id = self.note.id;
         self.name = self.note.name;
         self.content = self.note.content;
-        self.$store.dispatch('task/getTask', self.note.task_id)
-          .then(() => self.subtitle = self.task.name || '');
+        if (self.note.task_id) {
+          self.$store.dispatch('task/getTask', self.note.task_id)
+            .then(() => self.subtitle = self.task.name || '');
+        }
         self.mode = 'UPDATE';
       }
     });

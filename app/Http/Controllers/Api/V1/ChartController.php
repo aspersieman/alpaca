@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Task;
 use App\Models\Timer;
+use App\Models\Note;
 
 use Illuminate\Support\Facades\Log;
 
@@ -130,7 +131,7 @@ class ChartController extends Controller
       ->whereNotNull('stopped_at')
       ->whereIn('user_id', $userIds)
       ->first();
-    $notesTotal = Task::select(
+    $notesTotal = Note::select(
       [
         \DB::raw("COUNT(id) AS total_notes_count")
       ]

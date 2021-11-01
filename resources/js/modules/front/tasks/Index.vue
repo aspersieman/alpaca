@@ -85,15 +85,7 @@
             >
               Search focus
             </v-btn>
-            <v-progress-circular
-              v-if="searching"
-              indeterminate
-              color="primary"
-              size="24"
-              class="searching-progress-indicator"
-            />
             <v-icon
-              v-else
               class="top--12"
             >
               search
@@ -104,8 +96,8 @@
               outlined
               :clearable="clearable"
               dense
-              label="Search"
-              class="search-input search-input-max-width"
+              label="Title"
+              class="search-input-max-width"
               type="text"
               @change="setTasksSettings()"
             />
@@ -118,7 +110,7 @@
               :items="statuses"
               multiple
               label="Status"
-              class="search-input search-input-max-width"
+              class="ml-1 search-input-max-width"
               @change="setTasksSettings()"
               @input="searchTasks()"
             >
@@ -144,11 +136,12 @@
               :label="dateRangeLabel"
               :value="dates"
               :clearable="clearable"
-              class="search-input search-input-max-width"
+              :width="`220px`"
+              classes="ml-1 search-input-max-width"
             />
             <v-combobox
               v-model="priority"
-              class="search-input search-input-max-width"
+              class="ml-1 search-input-max-width"
               :items="priorities"
               :clearable="clearable"
               item-text="name"
@@ -166,7 +159,7 @@
               dense
               :items="sortList"
               label="Sort"
-              class="search-input sort-input search-input-max-width"
+              class="ml-1 sort-input search-input-max-width"
               prepend-icon="filter_list"
               @change="sortTasks()"
             />
@@ -206,20 +199,6 @@
             :key="index"
             :task="task"
           />
-          <v-btn
-            v-if="$auth.check && $vuetify.breakpoint.smAndDown"
-            fab
-            small
-            dark
-            fixed
-            bottom
-            right
-            color="primary"
-            class="task-add-button-mobile hidden-lg-and-up mr-12"
-            @click="$store.dispatch('task/openTaskDialog')"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -278,7 +257,6 @@ export default {
         default: true
       },
       debounce: null,
-      searching: false,
     }
   },
   computed: {
@@ -320,6 +298,7 @@ export default {
           'timer/DELETED',
           'timer/TIMER_STOPPED',
           'note/ADDED',
+          'note/UPDATED',
           'note/DELETED',
         ].includes(mutation.type)
       ) {
@@ -410,7 +389,6 @@ export default {
     },
 
     searchTasks(debounce) {
-      this.searching = true;
       if (debounce) {
         let bouncer;
         clearTimeout(bouncer);
@@ -419,16 +397,13 @@ export default {
           this.$store.dispatch('task/getTasks', this.query)
             .then(() => this.sortTasks())
             .then(() => this.$overlay.show(false))
-            .then(() => this.searching = false);
         }, 700);
       } else {
         this.prepareQuery();
         this.$store.dispatch('task/getTasks', this.query)
           .then(() => this.sortTasks())
           .then(() => this.$overlay.show(false))
-          .then(() => this.searching = false);
       }
-
     },
 
     prepareQuery() {
@@ -500,10 +475,6 @@ export default {
   background-color: $task-status-todo;
 }
 
-.search-input {
-  margin-left: 5px;
-}
-
 .filter-toggle-container {
   text-align: right;
   margin-top: 15px;
@@ -527,14 +498,6 @@ export default {
 
 .top--12 {
   top: -12px;
-}
-.searching-progress-indicator {
-  top: 7px;
-  margin-right: 3px;
-}
-
-.filters {
-  height: 70px;
 }
 
 .filters-title {

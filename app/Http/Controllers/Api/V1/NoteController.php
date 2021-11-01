@@ -34,7 +34,7 @@ class NoteController extends Controller
       ->get();
     return $this->sendResponseOk(
       new NoteCollection($notes),
-      "List resource ok."
+      "List resource ok.".json_encode($filter)
     );
   }
 

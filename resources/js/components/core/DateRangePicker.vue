@@ -11,6 +11,7 @@
       <v-text-field
         v-model="selected"
         class="date-range-input"
+        :class="classes"
         :label="label"
         :prepend-icon="getIcon()"
         :clearable="clearable"
@@ -62,6 +63,11 @@ export default {
       required: false,
       type: String,
       default: "100%"
+    },
+    classes: {
+      required: false,
+      type: String,
+      default: ""
     }
   },
 

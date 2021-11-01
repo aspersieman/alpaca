@@ -72,16 +72,21 @@ export const actions = {
     return new Promise((resolve, reject) => {
       saveNote(payload)
         .then(({data}) => {
-          dispatch('task/getTask', data.data.task_id, {root: true})
-            .then(() => {
-              commit(
-                'flash/showMessage',
-                {text: 'Note added successfully', color: 'green'},
-                {root: true}
-              );
-              commit('NOTE', data);
-              commit('ADDED', data);
-            });
+          if (payload.task_id) {
+            dispatch('task/getTask', data.data.task_id, {root: true})
+              .then(() => {
+                commit(
+                  'flash/showMessage',
+                  {text: 'Note added successfully', color: 'green'},
+                  {root: true}
+                );
+                commit('NOTE', data);
+                commit('ADDED', data);
+              });
+          } else {
+            commit('NOTE', data);
+            commit('ADDED', data);
+          }
           resolve(data)
         })
         .catch((error) => {
@@ -100,17 +105,22 @@ export const actions = {
     return new Promise((resolve, reject) => {
       updateNote(payload)
         .then(({data}) => {
-          dispatch('task/getTask', data.data.task_id, {root: true})
-            .then(() => {
-              commit(
-                'flash/showMessage',
-                {text: 'Note updated successfully', color: 'green'},
-                {root: true}
-              );
-              commit('NOTE', data);
-              commit('UPDATED', data);
-            });
-          resolve(data)
+          if (payload.task_id) {
+            dispatch('task/getTask', data.data.task_id, {root: true})
+              .then(() => {
+                commit(
+                  'flash/showMessage',
+                  {text: 'Note updated successfully', color: 'green'},
+                  {root: true}
+                );
+                commit('NOTE', data);
+                commit('UPDATED', data);
+              });
+          } else {
+            commit('NOTE', data);
+            commit('UPDATED', data);
+          }
+            resolve(data)
         })
         .catch((error) => {
           console.error(error);
@@ -135,16 +145,21 @@ export const actions = {
           dispatch('dialog/dialogHide', null, {root: true});
           deleteNote(payload)
             .then(({data}) => {
-              dispatch('task/getTask', payload.task_id, {root: true}).
-                then(() => {
-                  commit(
-                    'flash/showMessage',
-                    {text: 'Note deleted successfully', color: 'green'},
-                    {root: true}
-                  );
+              if (payload.task_id) {
+                dispatch('task/getTask', payload.task_id, {root: true}).
+                  then(() => {
+                    commit(
+                      'flash/showMessage',
+                      {text: 'Note deleted successfully', color: 'green'},
+                      {root: true}
+                    );
+                    commit('NOTE', { note: payload, remove: true });
+                    commit('DELETED', data);
+                  });
+              } else {
                   commit('NOTE', { note: payload, remove: true });
                   commit('DELETED', data);
-                });
+              }
               resolve(data)
             }).catch((error) => {
               console.error(error)

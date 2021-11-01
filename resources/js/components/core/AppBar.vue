@@ -55,19 +55,46 @@
           >
             Reports
           </v-btn>
-          <v-spacer />
-          <base-btn-primary
+          <v-speed-dial
             v-if="$auth.check"
-            v-shortkey.once="['ctrl', 'alt', 't']"
-            class="hidden-sm-and-down"
-            dark
-            title="Add new Task"
-            icon="add"
-            @shortkey="$store.dispatch('task/openTaskDialog')"
-            @click="$store.dispatch('task/openTaskDialog')"
+            v-model="fab"
+            :direction="`bottom`"
+            :open-on-hover="openOnHover"
+            :transition="`slide-y-reverse-transition`"
           >
-            New task
-          </base-btn-primary>
+            <template #activator>
+              <v-btn
+                v-model="fab"
+                color="primary"
+                fab
+              >
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-plus
+                </v-icon>
+              </v-btn>
+            </template>
+            <v-btn
+              fab
+              small
+              dark
+              color="#565555"
+              @click="$store.dispatch('task/openTaskDialog')"
+            >
+              <v-icon>mdi-check-circle-outline</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              small
+              dark
+              color="#565555"
+              @click="$store.dispatch('note/openNoteDialog')"
+            >
+              <v-icon>mdi-note-plus-outline</v-icon>
+            </v-btn>
+          </v-speed-dial>
           <timer-running />
           <v-btn
             v-if="!$auth.check"
@@ -78,6 +105,7 @@
           >
             Login
           </v-btn>
+          <v-spacer />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
         <timer-dialog @timerAdded="snackbar=true" />
@@ -113,6 +141,8 @@ export default {
   ],
   data: () => ({
     drawer: false,
+    fab: false,
+    openOnHover: true
   }),
   computed: {
     ...mapGetters('menu', ['menu'])

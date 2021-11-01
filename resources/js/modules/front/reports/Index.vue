@@ -187,12 +187,4 @@ export default {
 .search-input {
   margin-left: 5px;
 }
-
-.task-add-button-mobile {
-  bottom: 5px;
-  right: 0;
-  position: sticky;
-  margin-left: 10px;
-  float: right;
-}
 </style>

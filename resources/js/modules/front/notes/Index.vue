@@ -42,12 +42,13 @@
             label="Search"
             class="search-input"
             type="text"
+            @input="searchNotes(true)"
           />
         </v-flex>
       </v-layout>
 
       <v-layout
-        v-if="searchNotes.length == 0"
+        v-if="notes.length == 0"
         row
         justify-center
       >
@@ -67,7 +68,7 @@
             class="col-12"
           >
             <note-list
-              :notes="searchNotes"
+              :notes="notes"
               :width="350"
               :height="350"
               :show-task="showTask"
@@ -87,45 +88,39 @@ export default {
   components: {
     NoteList,
   },
+
   data() {
     return {
       search: '',
-      showTask: true
+      showTask: true,
+      query: {
+        name: '',
+        userId: '',
+      },
     }
   },
+
   computed: {
     ...mapGetters('note', [
       'notes',
     ]),
-    searchNotes() {
-      const self = this;
-      self.setNotesSettings();
-      return this.notes.filter(note => {
-        if (self.search != '' && self.search != null) {
-          let value = self.search.toLowerCase();
-          if (note.name.toLowerCase().includes(value)) {
-            return note;
-          }
-          if (note.content.toLowerCase().includes(value)) {
-            return note;
-          }
-        } else {
-          return note;
-        }
-      });
-    },
   },
+
   mounted() {
-    this.$nextTick(function () {
-      this.getNotesSettings();
-      // TODO Introduce paging here
-      this.$overlay.show(true);
-      this.$store.dispatch('note/getNotes')
-        .then(() => {
-          this.$overlay.show(false);
-        });
+    this.searchNotes();
+    this.$store.subscribe((mutation) => {
+      if (
+        [
+          'note/ADDED',
+          'note/UPDATED',
+          'note/DELETED',
+        ].includes(mutation.type)
+      ) {
+        this.searchNotes();
+      }
     });
   },
+
   methods: {
     setNotesSettings() {
       const parsedSearch = JSON.stringify(this.search);
@@ -135,6 +130,7 @@ export default {
       const parsedSort = JSON.stringify(this.sort);
       localStorage.setItem('notes-sort', parsedSort);
     },
+
     getNotesSettings() {
       if (localStorage.getItem('notes-search')) {
         try {
@@ -156,6 +152,44 @@ export default {
         } catch(e) {
           localStorage.removeItem('notes-sort');
         }
+      }
+    },
+
+    searchNotes(debounce) {
+      this.setNotesSettings();
+      if (debounce) {
+        let bouncer;
+        clearTimeout(bouncer);
+        bouncer = setTimeout(() => {
+          this.prepareQuery();
+          this.$store.dispatch('note/getNotes', this.query)
+            .then(() => this.$overlay.show(false))
+        }, 700);
+      } else {
+        this.prepareQuery();
+        this.$store.dispatch('note/getNotes', this.query)
+          .then(() => this.$overlay.show(false))
+      }
+    },
+
+    prepareQuery() {
+      this.resetQuery();
+      this.setQueryValue('name', this.search || null);
+      this.setQueryValue('userId', this.$auth?.user?.id);
+    },
+
+    setQueryValue(key, value) {
+      if (value === null) {
+        delete(this.query[key]);
+      } else {
+        this.query[key] = value;
+      }
+    },
+
+    resetQuery(){
+      this.query = {
+        name: null,
+        userId: null,
       }
     },
   }
