@@ -97,9 +97,6 @@ export default {
       .ct-series-a .ct-slice-donut
           stroke: rgba(255,255,255,.8)
 
-      .ct-series-a .ct-slice-pie,
-      .ct-series-a .ct-area
-          fill: rgba(255,255,255,.4)
 
       .ct-legend
         position: relative

@@ -1,5 +1,8 @@
 <template>
-  <div class="clock">
+  <div
+    class="clock"
+    :class="`clock-${size}`"
+  >
     <div class="outer-clock-face">
       <div class="marking marking-one" />
       <div class="marking marking-two" />
@@ -17,11 +20,21 @@
 <script>
 export default {
   name: 'CoreClock',
+
+  props: {
+    size: {
+      required: false,
+      type: String,
+      default: 'medium',
+    }
+  },
+
   data: () => ({
     secondHand: null,
     minsHand: null,
     hourHand: null
   }),
+
   mounted() {
     this.secondHand = document.querySelector('.second-hand');
     this.minsHand = document.querySelector('.min-hand');
@@ -29,6 +42,7 @@ export default {
     setInterval(this.setDate, 1000);
     this.setDate();
   },
+
   methods: {
     setDate() {
       const now = new Date();
@@ -57,16 +71,24 @@ export default {
   align-items: center;
   text-align: center;
   font-size: 10px;
-  width: 33px;
-  height: 33px;
-  max-height: 33px;
-  max-width: 33px;
   border: 1px solid #545271;
   border-radius: 50%;
   margin: 1px auto;
   position: relative;
   padding: 1px;
   background: #545271;
+}
+.clock-medium {
+  width: 56px;
+  height: 56px;
+  max-height: 56px;
+  max-width: 56px;
+}
+.clock-small {
+  width: 40px;
+  height: 40px;
+  max-height: 40px;
+  max-width: 40px;
 }
 
 .outer-clock-face {

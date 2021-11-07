@@ -1,7 +1,7 @@
 <template>
   <div class="tasks">
     <note-drawer />
-    <v-container class="my-2">
+    <v-container>
       <v-row>
         <v-col>
           <v-layout
@@ -26,6 +26,8 @@
               Active tasks and tasks completed today
             </h4>
           </v-layout>
+          <add-fab />
+          <timer-running />
         </v-col>
         <v-col
           class="filter-toggle-container"
@@ -61,111 +63,141 @@
           </span>
         </v-col>
       </v-row>
-      <v-fade-transition leave-absolute>
-        <v-card
-          v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
-          class="pt-3 mt-5"
-          :class="{ 'filters': $vuetify.breakpoint.mdAndUp }"
-        >
-          <v-card-title
-            class="filters-title grey--text"
-          >
-            Filters
-          </v-card-title>
-          <v-layout
-            row
-            class="mb-1 mt-1"
-            wrap
-            transition="scroll-y-transition"
-          >
-            <v-btn
-              v-shortkey.once="['ctrl', 'alt', '/']"
-              style="display: none;"
-              @shortkey="searchFocus()"
+      <v-row>
+        <v-col>
+          <v-fade-transition leave-absolute>
+            <v-card
+              v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
             >
-              Search focus
-            </v-btn>
-            <v-icon
-              class="top--12"
-            >
-              search
-            </v-icon>
-            <v-text-field
-              ref="searchInput"
-              v-model="search"
-              outlined
-              :clearable="clearable"
-              dense
-              label="Title"
-              class="search-input-max-width"
-              type="text"
-              @change="setTasksSettings()"
-            />
-            <v-combobox
-              v-model="status"
-              outlined
-              :clearable="clearable"
-              dense
-              chips
-              :items="statuses"
-              multiple
-              label="Status"
-              class="ml-1 search-input-max-width"
-              @change="setTasksSettings()"
-              @input="searchTasks()"
-            >
-              <template
-                #selection="data"
+              <v-card-title
+                class="grey--text"
               >
-                <v-chip
-                  :key="JSON.stringify(data.item)"
-                  :small="$vuetify.breakpoint.mdAndUp"
-                  :x-small="$vuetify.breakpoint.smAndDown"
-                  :class="`status ${data.item}`"
-                  :input-value="data.selected"
-                  :disabled="data.disabled"
-                  v-bind="data.attrs"
-                  @click:close="data.parent.selectItem(data.item)"
-                >
-                  {{ data.item }}
-                </v-chip>
-              </template>
-            </v-combobox>
-            <date-range-picker
-              v-model="dates"
-              :label="dateRangeLabel"
-              :value="dates"
-              :clearable="clearable"
-              :width="`220px`"
-              classes="ml-1 search-input-max-width"
-            />
-            <v-combobox
-              v-model="priority"
-              class="ml-1 search-input-max-width"
-              :items="priorities"
-              :clearable="clearable"
-              item-text="name"
-              item-value="id"
-              label="Priority"
-              outlined
-              dense
-              @change="setTasksSettings()"
-              @input="searchTasks()"
-            />
-            <v-combobox
-              v-model="sort"
-              outlined
-              :clearable="clearable"
-              dense
-              :items="sortList"
-              label="Sort"
-              class="ml-1 sort-input search-input-max-width"
-              prepend-icon="filter_list"
-              @change="sortTasks()"
-            />
-          </v-layout>
-        </v-card>
-      </v-fade-transition>
+                Filters
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row
+                    class="filters-row"
+                  >
+                    <v-col
+                      class="filters-column"
+                      cols="12"
+                      sm="12"
+                      md="2"
+                    >
+                      <v-btn
+                        v-shortkey.once="['ctrl', 'alt', '/']"
+                        style="display: none;"
+                        @shortkey="searchFocus()"
+                      >
+                        Search focus
+                      </v-btn>
+                      <v-text-field
+                        ref="searchInput"
+                        v-model="search"
+                        outlined
+                        :clearable="clearable"
+                        dense
+                        label="Title"
+                        type="text"
+                        @change="setTasksSettings()"
+                      />
+                    </v-col>
+                    <v-col
+                      class="filters-column"
+                      cols="12"
+                      sm="12"
+                      md="2"
+                    >
+                      <v-combobox
+                        v-model="status"
+                        outlined
+                        :clearable="clearable"
+                        dense
+                        chips
+                        :items="statuses"
+                        item-text="name"
+                        item-value="id"
+                        multiple
+                        label="Status"
+                        @change="setTasksSettings()"
+                        @input="searchTasks()"
+                      >
+                        <template
+                          #selection="data"
+                        >
+                          <v-chip
+                            :key="JSON.stringify(data.item.id)"
+                            :small="$vuetify.breakpoint.mdAndUp"
+                            :x-small="$vuetify.breakpoint.smAndDown"
+                            :class="`status ${data.item.id}`"
+                            :input-value="data.selected"
+                            :disabled="data.disabled"
+                            v-bind="data.attrs"
+                            @click:close="data.parent.selectItem(data.item)"
+                          >
+                            {{ data.item.name }}
+                          </v-chip>
+                        </template>
+                      </v-combobox>
+                    </v-col>
+                    <v-col
+                      class="filters-column"
+                      cols="12"
+                      sm="12"
+                      md="2"
+                    >
+                      <date-range-picker
+                        v-model="dates"
+                        :label="dateRangeLabel"
+                        :value="dates"
+                        :clearable="clearable"
+                      />
+                    </v-col>
+                    <v-col
+                      class="filters-column"
+                      cols="12"
+                      sm="12"
+                      md="3"
+                    >
+                      <v-combobox
+                        v-model="priority"
+                        :items="priorities"
+                        :clearable="clearable"
+                        item-text="name"
+                        item-value="id"
+                        label="Priority"
+                        outlined
+                        dense
+                        @change="setTasksSettings()"
+                        @input="searchTasks()"
+                      />
+                    </v-col>
+                    <v-spacer />
+                    <v-col
+                      class="filters-column"
+                      cols="12"
+                      sm="12"
+                      md="2"
+                    >
+                      <v-combobox
+                        v-model="sort"
+                        outlined
+                        :clearable="clearable"
+                        dense
+                        :items="sortList"
+                        label="Sort"
+                        prepend-icon="filter_list"
+                        @change="sortTasks()"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-fade-transition>
+        </v-col>
+      </v-row>
     </v-container>
     <v-container
       class="tasks-container"
@@ -213,12 +245,16 @@ import DateRangePicker from '@/components/core/DateRangePicker';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
 import SettingMixin from '@/mixins/SettingMixin';
+import AddFab from '@/components/core/AddFab';
+import TimerRunning from '@/modules/front/tasks/components/timer/TimerRunning';
 
 export default {
   components: {
     Task,
     NoteDrawer,
-    DateRangePicker
+    DateRangePicker,
+    AddFab,
+    TimerRunning,
   },
   mixins: [
     TaskMixin,
@@ -231,7 +267,7 @@ export default {
       search: '',
       status: [],
       dates: [],
-      dateRangeLabel: 'Due date range',
+      dateRangeLabel: 'Due dates',
       showFilters: false,
       sort: '',
       sortList: [
@@ -242,11 +278,6 @@ export default {
       filtersCount: 0,
       clearable: true,
       priority: null,
-      priorities: [
-        { id: 1, name: 'High' },
-        { id: 2, name: 'Medium' },
-        { id: 3, name: 'Low' },
-      ],
       query: {
         name: '',
         status: '',
@@ -262,7 +293,8 @@ export default {
   computed: {
     ...mapGetters('task', [
       'tasks',
-      'statuses'
+      'statuses',
+      'priorities',
     ]),
   },
   watch: {
@@ -409,9 +441,14 @@ export default {
     prepareQuery() {
       this.resetQuery();
       this.setQueryValue('name', this.search || null);
-      const status = this.status.join(',');
+      let statuses = [];
+      this.status.forEach((s) => statuses.push(s.id));
+      const status = statuses.join(',');
       this.setQueryValue('status', status || null);
       if (this.dates) {
+        if ((new Date(this.dates[1])) < (new Date(this.dates[0]))) {
+          this.dates = [this.dates[1], this.dates[0]];
+        }
         this.setQueryValue('dueFrom', this.dates[0] || null);
         this.setQueryValue('dueTo', this.dates[1] || null);
       } else {
@@ -475,34 +512,24 @@ export default {
   background-color: $task-status-todo;
 }
 
-.filter-toggle-container {
-  text-align: right;
-  margin-top: 15px;
-}
-
-.search-input-max-width {
-  max-width: 220px;
-}
-
 .tasks-container {
-  margin-top: -10px;
   @media (max-width: 960px) {
     padding: 0px !important;
     padding-right: 5px !important;
   }
 }
 
-.sort-input {
-  max-width: 165px;
+.filter-toggle-container {
+  text-align: right;
+  margin-top: 15px;
 }
-
-.top--12 {
-  top: -12px;
+.filters-row {
+  margin-bottom: -35px;
 }
-
-.filters-title {
-  font-size: 0.7em;
-  margin-top: -40px;
-  margin-bottom: -20px;
+.filters-column {
+  padding: 0px;
+  @media (min-width: 960px) {
+    padding-right: 5px !important;
+  }
 }
 </style>

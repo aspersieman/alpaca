@@ -27,12 +27,11 @@ export const state = {
   taskDialogAdd: false,
   taskDialogUpdate: false,
   statuses: [
-    'complete',
-    'inprogress',
-    'todo'
+    { id: 'complete', name: 'Complete' },
+    { id: 'inprogress', name: 'In progress' },
+    { id: 'todo', name: 'To do' },
   ],
   priorities: [
-    { id: 0, name: '' },
     { id: 1, name: 'High' },
     { id: 2, name: 'Medium' },
     { id: 3, name: 'Low' },
@@ -201,22 +200,10 @@ export const actions = {
     commit('TASK_DIALOG_UPDATE', false);
   },
 
-  changeTaskStatus({dispatch}, task) {
-    var newStatus = null;
-    switch (task.status.toLowerCase()) {
-      case 'inprogress':
-        newStatus = 'complete';
-        break;
-      case 'complete':
-        newStatus = 'todo';
-        break;
-      case 'todo':
-        newStatus = 'inprogress';
-        break;
-      default:
-        break;
-    }
-    if (newStatus) {
+  changeTaskStatus({dispatch}, payload) {
+    const newStatus = payload.newStatus || null;
+    const task = payload.task || null;
+    if (newStatus && task) {
       task.status = newStatus
       dispatch('updateTask', task);
     }

@@ -100,15 +100,42 @@
           class="pt-0"
         >
           <div class="mt-0 pt-0">
-            <v-btn
-              text
-              small
-              rounded
-              :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
-              @click="$store.dispatch('task/changeTaskStatus', task)"
+            <v-menu
+              offset-y
+              transition="slide-y-transition"
             >
-              {{ task.status }}
-            </v-btn>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  text
+                  small
+                  rounded
+                  :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ statuses.find(status => status.id === task.status).name }}
+                </v-btn>
+              </template>
+              <v-list
+                dense
+              >
+                <v-subheader>Change status</v-subheader>
+                <v-list-item
+                  v-for="(status) in getChangeStatusList(task.status)"
+                  :key="status.id"
+                >
+                  <v-btn
+                    text
+                    small
+                    rounded
+                    :class="`${status.id} white--text px-3 mx-0 status v-btn--round status-list-button`"
+                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
+                  >
+                    {{ status.name }}
+                  </v-btn>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
         </v-flex>
         <v-flex
@@ -336,6 +363,9 @@ export default {
       'isTimerRunning',
       'timerRunning'
     ]),
+    ...mapGetters('task', [
+      'statuses',
+    ]),
   },
   methods: {
     openNoteDrawer() {
@@ -348,6 +378,9 @@ export default {
     countTimers(task) {
       return task?.timers?.length > 0 ? task?.timers?.length : '';
     },
+    getChangeStatusList(status) {
+      return this.statuses.filter(s => s.id != status);
+    }
   },
 }
 </script>
@@ -358,9 +391,18 @@ export default {
   background-color: $theme-light-background;
   border-bottom: 1px solid $border-light-grey;
 }
-.task button.status {
-  min-width: 88px;
+.task button.status,
+.status-list-button
+{
   height: 28px;
+  padding: 3px;
+}
+.task button.status {
+  min-width: 95px;
+}
+.status-list-button
+{
+  width: 100%;
 }
 .task.complete {
   border-left: 4px solid $task-status-complete;

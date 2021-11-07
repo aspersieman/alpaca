@@ -28,6 +28,7 @@
             Get an overeview of your productivity
           </h4>
         </v-layout>
+        <add-fab />
       </v-col>
     </v-row>
     <v-row>
@@ -246,13 +247,12 @@ import { mapActions, mapGetters } from 'vuex';
 
 import MaterialChartCard from '@/components/core/MaterialChartCard';
 import MaterialStatCard from '@/components/core/MaterialStatsCard';
+import AddFab from '@/components/core/AddFab';
 
 import Chartist from "chartist";
 require('chartist-plugin-legend');
 require('chartist-plugin-tooltips');
-
 import 'chartist/dist/chartist.min.css'
-
 Vue.use(require('vue-chartist'))
 
 const lineSmooth = Vue.chartist.Interpolation.cardinal({
@@ -265,6 +265,7 @@ export default {
   components: {
     MaterialChartCard,
     MaterialStatCard,
+    AddFab,
   },
 
   data() {
@@ -312,7 +313,9 @@ export default {
           showLabel: false,
           plugins: [
             Chartist.plugins.legend(),
-            Chartist.plugins.tooltip()
+            Chartist.plugins.tooltip({
+              appendToBody: true,
+            })
           ]
         },
       },
@@ -512,11 +515,11 @@ export default {
   text-align: center;
   pointer-events: none;
   z-index: 1;
-  -webkit-transition: opacity .2s linear;
-  -moz-transition: opacity .2s linear;
-  -o-transition: opacity .2s linear;
-  transition: opacity .2s linear;
   border-radius: 5px;
+  opacity: 0;
+}
+.tooltip-show {
+  opacity: 1;
 }
 .chartist-tooltip-meta, .chartist-tooltip-value {
   background: rgba(0,0,0,0);

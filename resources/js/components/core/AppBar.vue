@@ -48,55 +48,6 @@
             Notes
           </v-btn>
           <v-btn
-            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
-            class="d-none d-sm-flex appbar-button"
-            text
-            to="/reports"
-          >
-            Reports
-          </v-btn>
-          <v-speed-dial
-            v-if="$auth.check"
-            v-model="fab"
-            :direction="`bottom`"
-            :open-on-hover="openOnHover"
-            :transition="`slide-y-reverse-transition`"
-          >
-            <template #activator>
-              <v-btn
-                v-model="fab"
-                color="primary"
-                fab
-              >
-                <v-icon v-if="fab">
-                  mdi-close
-                </v-icon>
-                <v-icon v-else>
-                  mdi-plus
-                </v-icon>
-              </v-btn>
-            </template>
-            <v-btn
-              fab
-              small
-              dark
-              color="#565555"
-              @click="$store.dispatch('task/openTaskDialog')"
-            >
-              <v-icon>mdi-check-circle-outline</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              small
-              dark
-              color="#565555"
-              @click="$store.dispatch('note/openNoteDialog')"
-            >
-              <v-icon>mdi-note-plus-outline</v-icon>
-            </v-btn>
-          </v-speed-dial>
-          <timer-running />
-          <v-btn
             v-if="!$auth.check"
             class="d-none d-sm-flex"
             text
@@ -121,7 +72,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import CoreDrawer from '@/components/core/Drawer.vue';
-import TimerRunning from '@/modules/front/tasks/components/timer/TimerRunning';
 import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
 import TimerDialog from '@/modules/front/tasks/components/timer/TimerDialog';
 import Avatar from '@/components/core/Avatar';
@@ -131,7 +81,6 @@ export default {
   name: 'CoreAppBar',
   components: {
     CoreDrawer,
-    TimerRunning,
     TaskDialog,
     TimerDialog,
     Avatar
@@ -141,8 +90,6 @@ export default {
   ],
   data: () => ({
     drawer: false,
-    fab: false,
-    openOnHover: true
   }),
   computed: {
     ...mapGetters('menu', ['menu'])
