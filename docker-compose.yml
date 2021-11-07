@@ -50,6 +50,8 @@ services:
         - default
       volumes:
         - ./public:/app/public:ro
+        - "/etc/timezone:/etc/timezone:ro"
+        - "/etc/localtime:/etc/localtime:ro"
     lamoid.composer:
       image: composer:2.1
       working_dir: /app

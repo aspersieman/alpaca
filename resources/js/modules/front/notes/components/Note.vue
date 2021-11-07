@@ -17,26 +17,28 @@
       <v-list-item-subtitle
         v-if="showTask && note.task"
       >
-        <v-icon small>
-          task_alt
-        </v-icon>
-        {{ note.task.name }}
         <v-chip
           small
           :class="`uppercase status ${note.task.status}`"
         >
           {{ note.task.status }}
         </v-chip>
+        <v-icon small>
+          task_alt
+        </v-icon>
+        {{ note.task.name }}
       </v-list-item-subtitle>
     </v-card-title>
     <v-divider class="mx-1" />
     <v-card-text
       class="note-text"
     >
+      <!-- eslint-disable vue/no-v-html -->
       <div
         class="text-sm-caption note-content"
         v-html="note.content"
       />
+      <!--eslint-enable-->
       <br>
     </v-card-text>
     <v-card-actions class="note-actions">

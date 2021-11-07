@@ -3,8 +3,8 @@
     <v-navigation-drawer
       v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
       temporary
-      absolute
       left
+      app
       :value="value"
       @input="$emit('input', $event)"
     >

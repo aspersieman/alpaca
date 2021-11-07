@@ -12,12 +12,14 @@ use Laravel\Passport\HasApiTokens;
 
 use App\Traits\UserTrait;
 
+use \DateTimeInterface;
+
 class User extends Authenticatable
 {
-  use Notifiable;
-  use SoftDeletes;
-  use HasApiTokens;
-  use UserTrait;
+  use Notifiable,
+    SoftDeletes,
+    HasApiTokens,
+    UserTrait;
 
   /**
    * The attributes that are mass assignable.
@@ -49,6 +51,17 @@ class User extends Authenticatable
   protected $with = [
     'groups'
   ];
+
+  /**
+   * Prepare a date for array / JSON serialization.
+   *
+   * @param  \DateTimeInterface  $date
+   * @return string
+   */
+  protected function serializeDate(DateTimeInterface $date)
+  {
+      return $date->format('Y-m-d H:i:s');
+  }
 
   protected static function boot()
   {

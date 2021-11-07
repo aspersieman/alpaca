@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use \DateTimeInterface;
 
 class Project extends Model
 {
@@ -13,6 +14,17 @@ class Project extends Model
    * {@inheritDoc}
    */
   protected $fillable = ['name', 'created_by_user_id'];
+
+  /**
+   * Prepare a date for array / JSON serialization.
+   *
+   * @param  \DateTimeInterface  $date
+   * @return string
+   */
+  protected function serializeDate(DateTimeInterface $date)
+  {
+      return $date->format('Y-m-d H:i:s');
+  }
 
   /**
    * Get associated user.

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\FilterTrait;
+use \DateTimeInterface;
 
 class Task extends Model
 {
@@ -34,6 +35,17 @@ class Task extends Model
     2, // medium
     3 // low
   ];
+
+  /**
+   * Prepare a date for array / JSON serialization.
+   *
+   * @param  \DateTimeInterface  $date
+   * @return string
+   */
+  protected function serializeDate(DateTimeInterface $date)
+  {
+      return $date->format('Y-m-d H:i:s');
+  }
 
   /**
    * Get associated user.
