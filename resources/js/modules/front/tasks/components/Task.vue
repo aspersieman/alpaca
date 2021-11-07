@@ -15,8 +15,8 @@
         <v-flex
           xs12
           sm12
-          md5
-          lg5
+          md4
+          lg4
         >
           <div
             class="caption grey--text ml-2"
@@ -112,6 +112,7 @@
                   :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
                   v-bind="attrs"
                   v-on="on"
+                  @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
                 >
                   {{ statuses.find(status => status.id === task.status).name }}
                 </v-btn>
@@ -129,7 +130,6 @@
                     small
                     rounded
                     :class="`${status.id} white--text px-3 mx-0 status v-btn--round status-list-button`"
-                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
                   >
                     {{ status.name }}
                   </v-btn>
@@ -140,11 +140,13 @@
         </v-flex>
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
-          md2
-          lg2
+          md3
+          lg3
           class="align-right"
         >
-          <div class="mt-0 pt-0">
+          <div
+            class="mt-0 pt-0"
+          >
             <v-btn
               icon
               class="pa-0 ma-0"
@@ -179,14 +181,14 @@
                 Delete
               </v-tooltip>
             </v-btn>
-            <v-btn
+            <div
               v-if="getTaskTimers(task, onlyActive).length > 0"
-              icon
+              class="mt-0 pt-0 v-btn v-btn--icon v-btn--round theme--light"
             >
               <timer-running
                 :small="small"
               />
-            </v-btn>
+            </div>
             <v-btn
               v-if="isTimerRunning !== true"
               icon
@@ -272,16 +274,9 @@
                   v-if="getTaskTimers(task, onlyActive).length > 0"
                   :class="`${task.status}`"
                 >
-                  <v-list-item-icon class="horizontal-center">
-                    <v-btn
-                      icon
-                    >
-                      <timer-running
-                        :small="small"
-                      />
-                    </v-btn>
-                  </v-list-item-icon>
-                  <v-list-item-title>Timer</v-list-item-title>
+                  <timer-running
+                    :small="small"
+                  />
                 </v-list-item>
                 <v-list-item
                   v-if="$store.getters['timer/timerRunning'].seconds == 0"

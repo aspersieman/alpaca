@@ -26,8 +26,8 @@
               Active tasks and tasks completed today
             </h4>
           </v-layout>
-          <add-fab />
           <timer-running />
+          <add-fab />
         </v-col>
         <v-col
           class="filter-toggle-container"
@@ -45,6 +45,9 @@
                 title="Filters"
                 @click="toggleFilters()"
               >
+                <v-icon>
+                  search
+                </v-icon>
                 Filters
                 <v-icon
                   v-if="!showFilters"
@@ -70,6 +73,7 @@
               v-if="$vuetify.breakpoint.mdAndUp || (showFilters && $vuetify.breakpoint.smAndDown)"
             >
               <v-card-title
+                v-if="$vuetify.breakpoint.mdAndUp"
                 class="grey--text"
               >
                 Filters
@@ -521,7 +525,10 @@ export default {
 
 .filter-toggle-container {
   text-align: right;
-  margin-top: 15px;
+  margin-top: 55px;
+}
+.filter-toggle-container i {
+  color: #ff4f4f;
 }
 .filters-row {
   margin-bottom: -35px;
