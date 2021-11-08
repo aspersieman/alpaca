@@ -112,7 +112,6 @@
                   :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
                   v-bind="attrs"
                   v-on="on"
-                  @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
                 >
                   {{ statuses.find(status => status.id === task.status).name }}
                 </v-btn>
@@ -130,6 +129,7 @@
                     small
                     rounded
                     :class="`${status.id} white--text px-3 mx-0 status v-btn--round status-list-button`"
+                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
                   >
                     {{ status.name }}
                   </v-btn>
