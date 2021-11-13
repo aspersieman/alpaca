@@ -134,7 +134,7 @@
                             :key="JSON.stringify(data.item.id)"
                             :small="$vuetify.breakpoint.mdAndUp"
                             :x-small="$vuetify.breakpoint.smAndDown"
-                            :class="`status ${data.item.id}`"
+                            :class="`status ${data.item.id} status-chip`"
                             :input-value="data.selected"
                             :disabled="data.disabled"
                             v-bind="data.attrs"
@@ -499,6 +499,12 @@ export default {
 
 .v-list {
   text-transform: uppercase;
+}
+.status-chip {
+  min-width: 100px;
+  width: 100%;
+  justify-content: center;
+  margin: 5px;
 }
 .theme--light.v-chip.status {
   text-transform: uppercase;
