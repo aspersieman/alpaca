@@ -103,13 +103,13 @@
             <v-menu
               offset-y
               transition="slide-y-transition"
+              rounded="b-xl"
             >
               <template #activator="{ on, attrs }">
                 <v-btn
                   text
                   small
-                  rounded
-                  :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
+                  :class="`${task.status} white--text px-0 mx-0 status`"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -127,8 +127,7 @@
                   <v-btn
                     text
                     small
-                    rounded
-                    :class="`${status.id} white--text px-3 mx-0 status v-btn--round status-list-button`"
+                    :class="`${status.id} white--text px-3 mx-0 status status-list-button`"
                     @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
                   >
                     {{ status.name }}
@@ -393,7 +392,7 @@ export default {
   padding: 3px;
 }
 .task button.status {
-  min-width: 95px;
+  min-width: 145px;
 }
 .status-list-button
 {
