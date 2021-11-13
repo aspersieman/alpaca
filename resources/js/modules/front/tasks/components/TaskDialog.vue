@@ -54,6 +54,12 @@
               @input="menu2 = false"
             />
           </v-menu>
+          <v-text-field
+            :value="completed_at"
+            label="Completed"
+            prepend-icon="task_alt"
+            readonly
+          />
           <v-combobox
             v-model="priority"
             class="cmb-priority"
@@ -242,6 +248,7 @@ export default {
       mode: '',
       name: '',
       status: { id: 'todo', name: 'To do' },
+      completed_at: null,
       timers: [],
       due: moment().format('YYYY-MM-DD'),
 
@@ -289,6 +296,7 @@ export default {
         if (self.taskDialogUpdate === true) {
           self.name = self.task.name;
           self.due = self.task.due;
+          self.completed_at = self.$appFormatters.dateTimeFormat(self.task.completed_at, 'YYYY-MM-DD');
           self.timers = self.task.timers || [];
           self.status = self.statuses.find(status => status.id === self.task.status);
           self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
