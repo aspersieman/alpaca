@@ -505,6 +505,7 @@ export default {
   width: 100%;
   justify-content: center;
   margin: 5px;
+  margin-top: 3px !important;
 }
 .theme--light.v-chip.status {
   text-transform: uppercase;

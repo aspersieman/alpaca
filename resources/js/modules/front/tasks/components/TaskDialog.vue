@@ -83,7 +83,9 @@
               <template
                 #item="data"
               >
-                {{ data.item.toUpperCase() }}
+                <span class="uppercase">
+                  {{ data.item.name }}
+                </span>
               </template>
               <template
                 #selection="data"
@@ -94,10 +96,10 @@
                   v-bind="data.attrs"
                   :input-value="data.selected"
                   :disabled="data.disabled"
-                  :class="`uppercase status ${data.item}`"
+                  :class="`uppercase status ${data.item.id}`"
                   @click:close="data.parent.selectItem(data.item)"
                 >
-                  {{ data.item }}
+                  {{ data.item.name }}
                 </v-chip>
               </template>
             </v-combobox>
@@ -239,7 +241,7 @@ export default {
       loading: false,
       mode: '',
       name: '',
-      status: 'todo',
+      status: { id: 'todo', name: 'To do' },
       timers: [],
       due: moment().format('YYYY-MM-DD'),
 
@@ -288,7 +290,7 @@ export default {
           self.name = self.task.name;
           self.due = self.task.due;
           self.timers = self.task.timers || [];
-          self.status = self.task.status;
+          self.status = self.statuses.find(status => status.id === self.task.status);
           self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
             .then((value) => self.priority = value);
           self.mode = 'UPDATE';

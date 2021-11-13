@@ -113,7 +113,7 @@ export const actions = {
 
   updateTask({commit}, payload) {
     return new Promise((resolve, reject) => {
-      payload.status = payload.status.toLowerCase();
+      payload.status = payload.status.id.toLowerCase();
       updateTask(payload)
         .then(({data}) => {
           commit('TASK', data);

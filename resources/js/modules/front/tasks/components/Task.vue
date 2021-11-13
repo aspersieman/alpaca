@@ -391,12 +391,13 @@ export default {
   height: 28px;
   padding: 3px;
 }
-.task button.status {
-  min-width: 145px;
-}
 .status-list-button
 {
   width: 100%;
+}
+
+.task button.status {
+  min-width: 145px;
 }
 .task.complete {
   border-left: 4px solid $task-status-complete;
@@ -407,6 +408,7 @@ export default {
 .task.todo {
   border-left: 4px solid $task-status-todo;
 }
+
 .transparent {
   background-color: transparent;
 }

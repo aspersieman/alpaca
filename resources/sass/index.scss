@@ -195,16 +195,11 @@
   background-color: $selected-light-grey;
 }
 
-.priority-0 {
-  display: none;
-}
 .priority-1 {
-  display: default;
-  color: $brand-danger;
+  color: $brand-danger !important;
 }
 .priority-2 {
-  display: default;
-  color: $brand-warning;
+  color: $brand-warning !important;
 }
 .theme--light.v-btn:not(.v-btn--icon).complete {
   background-color: $task-status-complete;
