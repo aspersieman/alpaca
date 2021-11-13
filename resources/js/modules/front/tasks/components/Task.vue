@@ -68,11 +68,23 @@
           <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">
             {{ task.due }}
           </div>
+          <div
+            v-if="task.completed_at"
+            class="caption grey--text"
+          >
+            Completed
+          </div>
+          <div
+            v-if="task.completed_at"
+            :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}"
+          >
+            {{ $appFormatters.dateTimeFormat(task.completed_at, 'YYYY-MM-DD') }}
+          </div>
         </v-flex>
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
-          md2
-          lg2
+          md1
+          lg1
           class="pt-0"
         >
           <div
@@ -95,21 +107,21 @@
         <v-flex
           xs4
           sm4
-          md1
-          lg1
+          md2
+          lg2
           class="pt-0"
         >
           <div class="mt-0 pt-0">
             <v-menu
               offset-y
               transition="slide-y-transition"
-              rounded="b-xl"
+              :rounded="$vuetify.breakpoint.mdAndUp ? 'b-xl' : ''"
             >
               <template #activator="{ on, attrs }">
                 <v-btn
                   text
                   small
-                  :class="`${task.status} white--text px-0 mx-0 status`"
+                  :class="`${task.status} white--text mx-0 status ${$vuetify.breakpoint.mdAndUp ? 'large' : ''}`"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -128,7 +140,7 @@
                     text
                     small
                     :class="`${status.id} white--text px-3 mx-0 status status-list-button`"
-                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: status.id })"
+                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: statuses.find(s => s.id === status.id) })"
                   >
                     {{ status.name }}
                   </v-btn>
@@ -390,13 +402,10 @@ export default {
 {
   height: 28px;
   padding: 3px;
-}
-.status-list-button
-{
   width: 100%;
 }
 
-.task button.status {
+.task button.status.large {
   min-width: 145px;
 }
 .task.complete {
