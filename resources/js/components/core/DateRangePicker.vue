@@ -10,7 +10,6 @@
     <template #activator="{ on, attrs }">
       <v-text-field
         v-model="selected"
-        class="date-range-input"
         :class="classes"
         :label="label"
         :prepend-icon="getIcon()"

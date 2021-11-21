@@ -201,6 +201,7 @@ export const getters = {
   notes : state => state.notes,
   noteDialogAdd: state => state.noteDialogAdd,
   noteDialogUpdate: state => state.noteDialogUpdate,
+  updated: state => state.updated,
 }
 
 export default {

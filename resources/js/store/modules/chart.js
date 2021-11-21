@@ -86,7 +86,7 @@ export const mutations = {
 }
 
 export const actions = {
-  getChartByDayData({commit}, payload) {
+  getChartByDayData({commit, state}, payload) {
     return new Promise((resolve, reject) => {
       commit('CHART_BY_DAY_LOADING', true);
       getChartByDay(payload)
@@ -94,17 +94,21 @@ export const actions = {
           let days = data.data;
           let labels = [];
           let series = [];
+          let high = state.chartByDayHigh;
           days.forEach(day => {
-            let formattedDay = dateTimeFormat(day[0], "ddd")
+            let formattedDay = dateTimeFormat(day[0], "ddd");
+            let seconds = secondsToMinutes(day[1]);
+            high = seconds > high ? seconds : high;
             labels.push(formattedDay);
             series.push({
               meta: dateTimeFormat(day[0], "ddd, D MMM") + ': ',
-              value: secondsToMinutes(day[1])
+              value: seconds
             });
           });
           commit('CHART_BY_DAY_DATA', { 'labels': labels, 'series': [series] });
           commit('CHART_BY_DAY_LOADING', false);
           commit('CHART_BY_DAY_AGE', new Date());
+          commit('CHART_BY_DAY_HIGH', high);
           resolve(data)
         })
         .catch(error => reject(error))
@@ -135,7 +139,7 @@ export const actions = {
     });
   },
 
-  getChartByCompletedData({commit}, payload) {
+  getChartByCompletedData({commit, state}, payload) {
     let dates = []
     const startDate = new Date(payload.start);
     const endDate = new Date(payload.end);
@@ -165,9 +169,10 @@ export const actions = {
               value: task.total
             });
           });
-          let highest = Math.max.apply(Math, taskData.map((task) => { return task.total; }));
+          let max = Math.max.apply(Math, taskData.map((task) => { return task.total; }));
+          let high = max > state.chartByCompletedHigh ? max : state.chartByCompletedHigh;
           commit('CHART_BY_COMPLETED_DATA', { 'labels': labels, 'series': [series] });
-          commit('CHART_BY_COMPLETED_HIGH', highest);
+          commit('CHART_BY_COMPLETED_HIGH', high);
           commit('CHART_BY_COMPLETED_AGE', new Date());
           commit('CHART_BY_COMPLETED_LOADING', false);
           resolve(data)

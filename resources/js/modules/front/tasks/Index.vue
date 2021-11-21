@@ -87,7 +87,8 @@
                       class="filters-column"
                       cols="12"
                       sm="12"
-                      md="2"
+                      md="4"
+                      lg="2"
                     >
                       <v-btn
                         v-shortkey.once="['ctrl', 'alt', '/']"
@@ -111,7 +112,8 @@
                       class="filters-column"
                       cols="12"
                       sm="12"
-                      md="2"
+                      md="4"
+                      lg="3"
                     >
                       <v-combobox
                         v-model="status"
@@ -124,6 +126,7 @@
                         item-value="id"
                         multiple
                         label="Status"
+                        class="status-list-filter"
                         @change="setTasksSettings()"
                         @input="searchTasks()"
                       >
@@ -149,7 +152,8 @@
                       class="filters-column"
                       cols="12"
                       sm="12"
-                      md="2"
+                      md="4"
+                      lg="3"
                     >
                       <date-range-picker
                         v-model="dates"
@@ -162,7 +166,8 @@
                       class="filters-column"
                       cols="12"
                       sm="12"
-                      md="3"
+                      md="4"
+                      lg="2"
                     >
                       <v-combobox
                         v-model="priority"
@@ -173,17 +178,23 @@
                         label="Priority"
                         outlined
                         dense
+                        class="priority-list-filter"
                         @change="setTasksSettings()"
                         @input="searchTasks()"
                       />
                     </v-col>
-                    <v-spacer />
+                    <v-col
+                      v-if="$vuetify.breakpoint.mdOnly"
+                      md="4"
+                    />
                     <v-col
                       class="filters-column"
                       cols="12"
                       sm="12"
-                      md="2"
+                      md="4"
+                      lg="2"
                     >
+                      <v-spacer />
                       <v-combobox
                         v-model="sort"
                         outlined
@@ -192,6 +203,7 @@
                         :items="sortList"
                         label="Sort"
                         prepend-icon="filter_list"
+                        class="sort-filter"
                         @change="sortTasks()"
                       />
                     </v-col>
@@ -502,7 +514,7 @@ export default {
 }
 .status-chip {
   min-width: 100px;
-  width: 100%;
+  max-width: 130px;
   justify-content: center;
   margin: 5px;
   margin-top: 3px !important;
@@ -529,9 +541,7 @@ export default {
     padding-right: 5px !important;
   }
 }
-
-.filter-toggle-container {
-  text-align: right;
+.filter-toggle-container { text-align: right;
   margin-top: 55px;
 }
 .filter-toggle-container i {
@@ -545,5 +555,14 @@ export default {
   @media (min-width: 960px) {
     padding-right: 5px !important;
   }
+}
+.status-list-filter {
+  min-width: 170px;
+}
+.priority-list-filter {
+  max-width: 269px;
+}
+.sort-filter {
+  max-width: 120px;
 }
 </style>

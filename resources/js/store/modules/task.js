@@ -90,8 +90,8 @@ export const actions = {
       payload.status = payload.status.toLowerCase();
       saveTask(payload)
         .then(({data}) => {
-          commit('TASK', data);
-          commit('ADDED', data);
+          commit('TASK', data.data);
+          commit('ADDED', data.data);
           commit(
             'flash/showMessage',
             {text: 'Task added successfully', color: 'green'},
@@ -116,8 +116,10 @@ export const actions = {
       payload.status = payload.status.id.toLowerCase();
       updateTask(payload)
         .then(({data}) => {
-          commit('TASK', data);
-          commit('UPDATED', data);
+          console.log('updateTask:');
+          console.log(data.data);
+          commit('TASK', data.data);
+          commit('UPDATED', data.data);
           commit(
             'flash/showMessage',
             {text: 'Task updated successfully', color: 'green'},

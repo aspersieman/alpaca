@@ -4,14 +4,28 @@
     max-width="600px"
     scrollable
     :fullscreen="$vuetify.breakpoint.xs"
+    class="form-dialog"
   >
     <v-card>
       <v-card-title class="grey--text">
-        <span v-if="mode == 'ADD'">
-          Add a New Timer
-        </span>
-        <span v-if="mode == 'UPDATE'">
-          Update Timer
+        Timer
+        <v-spacer />
+        <span
+          class="text-right"
+        >
+          <v-btn
+            class="text-sm-caption text-right"
+            icon
+            text
+            x-small
+            light
+            color="error"
+            @click="close()"
+          >
+            <v-icon>
+              close
+            </v-icon>
+          </v-btn>
         </span>
       </v-card-title>
       <v-card-subtitle
@@ -121,7 +135,36 @@
                     v-if="startTimeMenu"
                     v-model="startTime"
                     width="290"
+                    format="24hr"
                     @click:minute="$refs.menu.save(startTime)"
+                  />
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-menu
+                  ref="menu"
+                  v-model="endTimeMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  @update:name="val => startTime = val"
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="endTime"
+                      label="End time"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="endTimeMenu"
+                    v-model="endTime"
+                    width="290"
+                    format="24hr"
+                    @click:minute="$refs.menu.save(endTime)"
                   />
                 </v-menu>
               </v-col>
@@ -132,6 +175,7 @@
                   type="number"
                   hint="minutes"
                   persistent-hint
+                  disabled
                 />
               </v-col>
             </v-row>
@@ -156,16 +200,12 @@
           :disabled="!valid"
           @click="update()"
         >
-          Update timer
+          Save
         </v-btn>
-        <v-spacer />
-        <v-btn
-          text
-          class="error mx-0 mt-3"
-          @click="close();"
-        >
-          Cancel
-        </v-btn>
+        <success-checkmark
+          v-if="updated"
+          class="success-checkmark"
+        />
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -173,10 +213,14 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import SuccessCheckmark from '@/components/core/SuccessCheckmark';
 import TimerMixin from '@/mixins/TimerMixin';
 import TaskMixin from '@/mixins/TaskMixin';
 
 export default {
+  components: {
+    SuccessCheckmark
+  },
   mixins: [
     TimerMixin,
     TaskMixin
@@ -191,11 +235,12 @@ export default {
       startDate: '',
       startTime: '',
       endTime: '',
-      duration: '',
       subtitle: '',
       loading: false,
       dateMenu: false,
       startTimeMenu: false,
+      endTimeMenu: false,
+      updated: false,
       nameRules: [
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
@@ -220,37 +265,44 @@ export default {
     ...mapGetters('task', [
       'task'
     ]),
+    duration() {
+      return window.moment(this.startDate + ' ' + this.endTime, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(this.startDate + ' ' + this.startTime, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
+    }
   },
   created() {
-    const self = this;
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'timer/TIMER_DIALOG_ADD') {
-        self.formReset();
-        self.dialog = self.timerDialogAdd;
-        if (self.timerDialogAdd === true) {
-          self.mode = 'ADD';
-          self.subtitle = self.task.name || '';
-          self.name = self.task.name || '';
-          self.task_id = self.task.id;
+        this.formReset();
+        this.dialog = this.timerDialogAdd;
+        if (this.timerDialogAdd === true) {
+          this.mode = 'ADD';
+          this.subtitle = this.task.name || '';
+          this.name = this.task.name || '';
+          this.task_id = this.task.id;
         }
       }
       if (mutation.type === 'timer/TIMER_DIALOG_UPDATE') {
-        self.formReset();
-        self.dialog = self.timerDialogUpdate;
-        if (self.timerDialogUpdate === true) {
-          self.name = self.timer.name;
-          self.task_id = self.timer.task_id;
-          self.startDate = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
-          self.startTime = self.timer.started_at ? window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-          self.endTime = self.timer.stopped_at ? window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm:ss') : '';
-          self.duration = window.moment(self.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').diff(window.moment(self.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS'), 'minutes')
-          self.subtitle = self.task.name || '';
-          self.mode = 'UPDATE';
-          const tags = self.timer.tagged.map(function (item) {
+        this.formReset();
+        this.dialog = this.timerDialogUpdate;
+        if (this.timerDialogUpdate === true) {
+          this.name = this.timer.name;
+          this.task_id = this.timer.task_id;
+          this.startDate = this.timer.started_at ? window.moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('YYYY-MM-DD') : '';
+          this.startTime = this.timer.started_at ? window.moment(this.timer.started_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm') : '';
+          this.endTime = this.timer.stopped_at ? window.moment(this.timer.stopped_at, 'YYYY-MM-DDTHH:mm:ss.SSS').format('HH:mm') : '';
+          this.subtitle = this.task.name || '';
+          this.mode = 'UPDATE';
+          const tags = this.timer.tagged.map(function (item) {
             return item.tag_name;
           });
-          self.tags = tags;
+          this.tags = tags;
         }
+      }
+      if (mutation.type === 'timer/UPDATED') {
+        this.updated = true;
+        setTimeout(function () {
+          this.updated = false;
+        }, 3000);
       }
     });
   },
@@ -279,8 +331,7 @@ export default {
           tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
           tags: this.tags
         };
-        this.$store.dispatch('timer/updateTimer', timer)
-          .then(this.close());
+        this.$store.dispatch('timer/updateTimer', timer);
       }
     },
     close() {
@@ -293,7 +344,6 @@ export default {
       this.startDate = '';
       this.startTime = '';
       this.endTime = '';
-      this.duration = '';
       this.tags = [];
       this.subtitle = '';
     },
@@ -304,5 +354,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>

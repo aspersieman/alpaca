@@ -6,6 +6,7 @@
     persistent
     :fullscreen="$vuetify.breakpoint.xs"
     :retain-focus="false"
+    class="form-dialog"
   >
     <v-card>
       <v-card-title class="grey--text">
@@ -13,7 +14,25 @@
           Add a New Task
         </span>
         <span v-if="mode == 'UPDATE'">
-          Update Task
+          Task
+        </span>
+        <v-spacer />
+        <span
+          class="text-right"
+        >
+          <v-btn
+            class="text-sm-caption text-right"
+            icon
+            text
+            x-small
+            light
+            color="error"
+            @click="close()"
+          >
+            <v-icon>
+              close
+            </v-icon>
+          </v-btn>
         </span>
       </v-card-title>
       <v-divider />
@@ -55,6 +74,7 @@
             />
           </v-menu>
           <v-text-field
+            v-if="mode == 'ADD' && completed_at"
             :value="completed_at"
             label="Completed"
             prepend-icon="task_alt"
@@ -191,7 +211,7 @@
           :disabled="!valid || loading"
           @click="save"
         >
-          Add
+          Save
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE'"
@@ -200,7 +220,7 @@
           :disabled="!valid || loading"
           @click="update"
         >
-          Update
+          Save
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE' && isTimerRunning !== true"
@@ -209,17 +229,12 @@
           :disabled="!valid || loading"
           @click="$store.dispatch('timer/openTimerDialog', {task: task, timer: null })"
         >
-          Add timer
+          New timer
         </v-btn>
-        <v-spacer />
-        <v-btn
-          text
-          class="error mx-0 mt-3"
-          :disabled="loading"
-          @click="close();"
-        >
-          Cancel
-        </v-btn>
+        <success-checkmark
+          v-if="updated"
+          class="success-checkmark"
+        />
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -228,13 +243,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import TimerList from '@/modules/front/tasks/components/timer/TimerList';
+import SuccessCheckmark from '@/components/core/SuccessCheckmark';
 import moment from 'moment';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: {
-    TimerList
+    TimerList,
+    SuccessCheckmark
   },
   mixins: [
     TaskMixin,
@@ -266,6 +283,8 @@ export default {
       counter: { seconds: 0, timer: null },
       onlyActive: false,
       priority: { id: 0, name: '' },
+      updated: false,
+      added: false,
     }
   },
   computed: {
@@ -304,6 +323,18 @@ export default {
           self.mode = 'UPDATE';
         }
       }
+      if (mutation.type === 'task/UPDATED') {
+        self.updated = true;
+        setTimeout(function () {
+          self.updated = false;
+        }, 3000);
+      }
+      if (mutation.type === 'task/ADDED') {
+        self.added = true;
+        setTimeout(function () {
+          self.added = false;
+        }, 3000);
+      }
     });
   },
   methods: {
@@ -317,8 +348,8 @@ export default {
         };
         this.$overlay.show(true);
         this.$store.dispatch('task/saveTask', task)
+          .then(this.close())
           .then(() => {
-            this.close();
             this.$overlay.show(false);
           });
       }
@@ -332,8 +363,8 @@ export default {
           priority: this.priority.id,
           status: this.status,
         };
-        this.$store.dispatch('task/updateTask', task)
-          .then(this.close());
+        this.$store.dispatch('task/updateTask', task);
+        console.log(this.task.id);
       }
     },
     close() {

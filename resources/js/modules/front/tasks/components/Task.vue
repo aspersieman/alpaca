@@ -403,6 +403,7 @@ export default {
   height: 28px;
   padding: 3px;
   width: 100%;
+  max-width: 130px;
 }
 
 .task button.status.large {

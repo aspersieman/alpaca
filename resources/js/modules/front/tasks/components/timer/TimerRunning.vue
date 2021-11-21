@@ -8,6 +8,7 @@
           v-if="$auth.check && !small"
           :class="{'timer-button-singleton': $vuetify.breakpoint.mdAndUp}"
           absolute
+          fixed
           top
           right
         >
@@ -169,6 +170,7 @@ export default {
 <style scoped lang="scss">
 @import "../../../../../../sass/index";
 .timer-button-singleton {
+  margin-top: 64px;
   margin-right: 60px;
 }
 .timer-started {
@@ -180,9 +182,10 @@ export default {
   padding: 5px;
 }
 .timer-time.singleton {
-  position: absolute;
-  top: 26px;
+  position: fixed;
+  top: 90px;
   margin: 2px;
+  z-index: 3;
 }
 .timer-time.singleton.sm {
   right: 67px;

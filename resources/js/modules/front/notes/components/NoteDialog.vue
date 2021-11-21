@@ -6,6 +6,7 @@
     persistent
     scrollable
     :fullscreen="$vuetify.breakpoint.xs || fullscreen"
+    class="form-dialog"
   >
     <v-form
       v-model="valid"
@@ -13,22 +14,17 @@
     >
       <v-card>
         <v-card-title class="grey--text">
-          <span v-if="mode == 'ADD'">
-            Add a New Note
-          </span>
-          <span v-if="mode == 'UPDATE'">
-            Update Note
-          </span>
+          Note
           <v-spacer />
           <span
-            class="maximise-button text-right"
-            :class="{ 'maximise-button-normal': !fullscreen, 'maximise-button-maximised': fullscreen }"
+            class="text-right"
           >
             <v-btn
               v-if="!$vuetify.breakpoint.xs"
               ref="maximiseButton"
               class="text-sm-caption text-right"
-              fab
+              icon
+              text
               x-small
               light
               @click="maximise()"
@@ -42,6 +38,19 @@
                 v-if="fullscreen"
               >
                 fullscreen_exit
+              </v-icon>
+            </v-btn>
+            <v-btn
+              class="text-sm-caption text-right"
+              icon
+              text
+              x-small
+              light
+              color="error"
+              @click="close()"
+            >
+              <v-icon>
+                close
               </v-icon>
             </v-btn>
           </span>
@@ -62,6 +71,7 @@
             label="Title"
           />
           <quill-editor
+            class="note-editor"
             ref="myQuillEditor"
             v-model="content"
           />
@@ -75,7 +85,7 @@
             :disabled="loading"
             @click="save()"
           >
-            Add note
+            Save
           </v-btn>
           <v-btn
             v-if="mode == 'UPDATE'"
@@ -83,16 +93,12 @@
             class="success mx-0 mt-3"
             @click="update(note)"
           >
-            Update note
+            Save
           </v-btn>
-          <v-spacer />
-          <v-btn
-            text
-            class="error mx-0 mt-3"
-            @click="close()"
-          >
-            Cancel
-          </v-btn>
+          <success-checkmark
+            v-if="updated || added"
+            class="success-checkmark"
+          />
         </v-card-actions>
       </v-card>
     </v-form>
@@ -101,13 +107,13 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Editor from '@/components/core/Editor';
 import { quillEditor } from 'vue-quill-editor'
-import Quill from 'quill'
+import SuccessCheckmark from '@/components/core/SuccessCheckmark';
 
 export default {
   components: {
     quillEditor,
+    SuccessCheckmark
   },
 
   data() {
@@ -122,6 +128,8 @@ export default {
       loading: false,
       fullscreen: false,
       onlyEdit: true,
+      updated: false,
+      added: false,
       nameRules: [
         (v) => (v.length >= 2) || 'Cannot be shorter than 2 characters',
         (v) => !!v || 'Name is required',
@@ -161,6 +169,18 @@ export default {
         }
         self.mode = 'UPDATE';
       }
+      if (mutation.type === 'note/UPDATED') {
+        self.updated = true;
+        setTimeout(function () {
+          self.updated = false;
+        }, 3000);
+      }
+      if (mutation.type === 'note/ADDED') {
+        self.added = true;
+        setTimeout(function () {
+          self.added = false;
+        }, 3000);
+      }
     });
   },
   methods: {
@@ -195,7 +215,6 @@ export default {
         this.$store.dispatch('note/saveNote', note)
           .then(() => {
             this.$overlay.show(false);
-            this.close();
             this.loading = false;
           })
           .catch(() => {

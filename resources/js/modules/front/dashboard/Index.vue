@@ -390,22 +390,11 @@ export default {
     chartByCompletedAgeReadable: function() { return 'updated ' + window.moment(this.chartByTagAge).fromNow(); },
   },
 
-  created() {
+  mounted() {
     this.fetchChartByDayData();
     this.fetchChartByTagData();
     this.fetchChartByCompletedData();
     this.fetchChartStats();
-  },
-
-  mounted() {
-    this.$store.subscribe((mutation) => {
-      if (
-        [
-          'task/ADDED',
-        ].includes(mutation.type)
-      ) {
-      }
-    });
   },
 
   methods: {
@@ -417,6 +406,7 @@ export default {
     }),
 
     fetchChartByDayData(parameters) {
+      console.log('fetchChartByDayData');
       let dateStart = this.dates[0];
       let dateEnd = this.dates[1];
       if (
@@ -432,6 +422,7 @@ export default {
         userIds: [ this.$auth.user?.id ]
       };
       this.getChartByDayData(params);
+      this.chartByDay.options.high = this.chartByDayHigh;
     },
 
     fetchChartByTagData(parameters) {
@@ -468,6 +459,7 @@ export default {
         userIds: [ this.$auth.user?.id ]
       };
       this.getChartByCompletedData(params);
+      this.chartByCompleted.options.high = this.chartByCompletedHigh;
     },
 
     fetchChartStats(parameters) {
