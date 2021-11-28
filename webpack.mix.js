@@ -24,7 +24,8 @@ mix
 mix.webpackConfig({
   resolve: {
     alias: {
-      '@': __dirname + '/resources/js'
+      '@': __dirname + '/resources/js',
+      path: require.resolve("path-browserify")
     }
   }
 });
