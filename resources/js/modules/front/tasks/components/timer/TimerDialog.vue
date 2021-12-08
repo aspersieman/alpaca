@@ -186,19 +186,23 @@
       <v-card-actions>
         <v-btn
           v-if="mode == 'ADD'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success mx-0 mt-3"
           :disabled="!valid"
           @click="save()"
+          @shortkey="save"
         >
           Start
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success mx-0 mt-3"
           :disabled="!valid"
           @click="update()"
+          @shortkey="update"
         >
           Save
         </v-btn>
@@ -297,6 +301,9 @@ export default {
           });
           this.tags = tags;
         }
+      }
+      if (mutation.type === 'timer/ADDED') {
+        this.updated = false;
       }
       if (mutation.type === 'timer/UPDATED') {
         this.updated = true;

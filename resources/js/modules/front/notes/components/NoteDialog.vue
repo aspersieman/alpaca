@@ -80,18 +80,22 @@
         <v-card-actions>
           <v-btn
             v-if="mode == 'ADD'"
+            v-shortkey.once="['ctrl', 'enter']"
             text
             class="success mx-0 mt-3"
             :disabled="loading"
             @click="save()"
+            @shortkey="save"
           >
             Save
           </v-btn>
           <v-btn
             v-if="mode == 'UPDATE'"
+            v-shortkey.once="['ctrl', 'enter']"
             text
             class="success mx-0 mt-3"
             @click="update(note)"
+            @shortkey="update(note)"
           >
             Save
           </v-btn>

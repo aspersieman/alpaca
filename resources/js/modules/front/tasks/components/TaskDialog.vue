@@ -74,7 +74,7 @@
             />
           </v-menu>
           <v-text-field
-            v-if="mode == 'ADD' && completed_at"
+            v-if="mode == 'UPDATE' && completed_at"
             :value="completed_at"
             label="Completed"
             prepend-icon="task_alt"
@@ -205,6 +205,14 @@
       <v-divider />
       <v-card-actions>
         <v-btn
+          v-if="false == true"
+          v-shortkey.once="['ctrl', 'enter']"
+          style="display: none;"
+          @shortkey="update"
+        >
+          Save
+        </v-btn>
+        <v-btn
           v-if="mode == 'ADD'"
           text
           class="success mx-0 mt-3"
@@ -215,6 +223,7 @@
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success ml-1 mx-0 mt-3"
           :disabled="!valid || loading"
@@ -315,7 +324,7 @@ export default {
         if (self.taskDialogUpdate === true) {
           self.name = self.task.name;
           self.due = self.task.due;
-          self.completed_at = self.$appFormatters.dateTimeFormat(self.task.completed_at, 'YYYY-MM-DD');
+          self.completed_at = self.task.completed_at ? self.$appFormatters.dateTimeFormat(self.task.completed_at, 'YYYY-MM-DD') : null;
           self.timers = self.task.timers || [];
           self.status = self.statuses.find(status => status.id === self.task.status);
           self.$store.dispatch('task/getTaskPriorityById', self.task.priority)

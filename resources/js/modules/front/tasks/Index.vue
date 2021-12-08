@@ -541,8 +541,8 @@ export default {
     padding-right: 5px !important;
   }
 }
-.filter-toggle-container { text-align: right;
-  margin-top: 55px;
+.filter-toggle-container {
+  text-align: right;
 }
 .filter-toggle-container i {
   color: #ff4f4f;

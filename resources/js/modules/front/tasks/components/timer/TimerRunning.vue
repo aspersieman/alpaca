@@ -6,10 +6,11 @@
       <template #activator="{ on, attrs }">
         <v-speed-dial
           v-if="$auth.check && !small"
-          :class="{'timer-button-singleton': $vuetify.breakpoint.mdAndUp}"
-          absolute
+          :class="{'timer-button-singleton': $vuetify.breakpoint.mdAndUp, 'timer-button-mobile': $vuetify.breakpoint.smAndDown}"
+          :absolute="!$vuetify.breakpoint.smAndDown"
+          :bottom="$vuetify.breakpoint.smAndDown"
+          :top="!$vuetify.breakpoint.smAndDown"
           fixed
-          top
           right
         >
           <template #activator>
@@ -17,9 +18,10 @@
               fab
               v-bind="attrs"
               v-on="on"
+              :small="$vuetify.breakpoint.smAndDown"
             >
               <core-clock
-                size="medium"
+                :size="$vuetify.breakpoint.smAndDown ? 'small' : 'medium'"
               />
             </v-btn>
           </template>
@@ -173,6 +175,9 @@ export default {
   margin-top: 64px;
   margin-right: 60px;
 }
+.timer-button-mobile {
+  margin-right: 90px;
+}
 .timer-started {
   margin-left: 27px;
 }
@@ -186,9 +191,15 @@ export default {
   top: 90px;
   margin: 2px;
   z-index: 3;
+  padding-right: 8px;
 }
 .timer-time.singleton.sm {
-  right: 67px;
+  position: fixed;
+  top: unset;
+  bottom: 20px;
+  right: 130px;
+  font-size: 0.8em;
+  padding-right: 15px;
 }
 .timer-time.singleton.md {
   right: 126px;

@@ -5,6 +5,6 @@ if (process.env.NODE_ENV === 'production') {
   Vue.use(VuePlausible, {
     domain: "lamoid.com",
     enableAutoPageviews: true,
-    apiHost: "http://plausible.nicolaas.me"
+    apiHost: "https://plausible.nicolaas.me"
   })
 }

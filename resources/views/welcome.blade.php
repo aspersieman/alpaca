@@ -17,12 +17,17 @@
   <link href="{{ asset('css/index.css') }}?@version" rel="stylesheet">
 
   <!-- favicon -->
-  <link rel="icon" type="image/png" href="{{ asset('img/logo/llama_emoji.png') }}?@version">
+  <link rel="icon" type="image/ico" href="{{ asset('img/logo/favicon.ico') }}?@version">
+
+  @if (env('APP_ENV', '') === 'production')
+  <!-- plausible -->
+  <script defer data-domain="lamoid.com" src="https://plausible.nicolaas.me/js/plausible.js"></script>
+  @endif
 
   <!-- app js values -->
-<script type="application/javascript">
-window.APP_GLOBALS = {};
-window.APP_GLOBALS.APP_VERSION = '@version()';
+  <script type="application/javascript">
+  window.APP_GLOBALS = {};
+  window.APP_GLOBALS.APP_VERSION = '@version()';
 </script>
   <style type="text/css">
     [v-cloak] > * { display:none; }
