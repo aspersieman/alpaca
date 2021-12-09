@@ -2,6 +2,7 @@ version: "3.8"
 services:
     lamoid.db:
       image: 'mariadb:10'
+      restart: always
       ports:
         - '${FORWARD_DB_PORT:-3306}:3306'
       environment:
@@ -20,6 +21,7 @@ services:
         timeout: 5s
     lamoid.redis:
       image: redis:6.0-alpine
+      restart: always
       expose:
         - "6379"
     lamoid.node:
