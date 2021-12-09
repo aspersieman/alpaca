@@ -17,6 +17,7 @@
   <link href="{{ asset('css/index.css') }}?@version" rel="stylesheet">
 
   <!-- favicon -->
+  <link rel="icon" type="image/png" href="{{ asset('img/logo/llama-head-pink.png') }}?@version">
   <link rel="icon" type="image/ico" href="{{ asset('img/logo/favicon.ico') }}?@version">
 
   @if (env('APP_ENV', '') === 'production')
