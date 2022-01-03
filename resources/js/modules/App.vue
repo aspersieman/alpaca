@@ -44,7 +44,7 @@ export default {
   methods: {
     reset() {
       this.$store.commit('drawer/NOTE_DRAWER', false);
-      this.$store.dispatch('dialog/dialogHide');
+      this.$store.dispatch('dialog/hide');
       this.$overlay.show(false);
     },
   }
