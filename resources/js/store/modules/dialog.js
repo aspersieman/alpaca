@@ -33,7 +33,7 @@ export const mutations = {
 }
 
 export const actions = {
-  dialogReset({commit}) {
+  reset({commit}) {
     commit('DIALOG_TYPE', "");
     commit('DIALOG_TITLE', "");
     commit('DIALOG_MESSAGE', "");
@@ -42,8 +42,9 @@ export const actions = {
     commit('DIALOG_CANCEL_CB', ()=>{});
   },
 
-  dialogShow({commit, dispatch}, payload) {
-    dispatch('dialogReset');
+  show({commit, dispatch}, payload) {
+    console.log('dialog/show dispatching...')
+    dispatch('reset');
     commit('DIALOG_TYPE', payload.type || "confirm");
     commit('DIALOG_TITLE', payload.title);
     commit('DIALOG_MESSAGE', payload.message);
@@ -53,8 +54,8 @@ export const actions = {
     commit('DIALOG_SHOW', true);
   },
 
-  dialogHide({commit, dispatch}) {
-    dispatch('dialogReset');
+  hide({commit, dispatch}) {
+    dispatch('reset');
     commit('DIALOG_SHOW', false);
   },
 }
