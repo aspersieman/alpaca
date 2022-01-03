@@ -52,7 +52,7 @@
               <v-btn
                 icon
                 small
-                @click="trash(props.item)"
+                @click="trash(item)"
               >
                 <v-icon class="red--text">
                   mdi-delete
@@ -65,7 +65,7 @@
                 :size="'50px'"
                 class="grey lighten-4"
               >
-                <img :src="getFullUrl(item,50,'fit')">
+                <img :src="getFullUrl(item, 50, 50, 'fit')">
               </v-avatar>
             </td>
             <td>{{ item.name }}</td>
@@ -207,14 +207,14 @@ export default {
     self.loadFileGroups(() => {});
   },
   methods: {
-    getFullUrl(file, width, action) {
+    getFullUrl(file, width, height, action) {
       let w = width || 4000;
+      let h = height || 4000;
       let act = action || 'resize';
-      return window.APP_GLOBALS.APP_URL +`/files/`+file.id+`/preview?w=`+w+`&action=`+act;
+      return `${window.location.origin}/files/${file.id}/preview?w=${w}&h=${h}&action=${act}`;
     },
     downloadFile(file) {
-      window.open(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
-      this.$debug(window.APP_GLOBALS.APP_URL + '/files/'+file.id+'/download?file_token='+file.file_token);
+      window.open(window.location.origin + '/files/'+file.id+'/download?file_token='+file.file_token);
     },
     showDialog(dialog, data) {
       const self = this;
@@ -229,7 +229,7 @@ export default {
     },
     trash(file) {
       const self = this;
-      self.$store.commit('showDialog',{
+      self.$store.dispatch('dialog/show',{
         type: "confirm",
         title: "Confirm Deletion",
         message: "Are you sure you want to delete this file?",

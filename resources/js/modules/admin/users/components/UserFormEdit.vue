@@ -161,7 +161,7 @@
               <v-switch
                 v-for="(g,k) in options.groups"
                 :key="k"
-                v-model="groups[g.id]"
+                v-model="groups[getGroupIndex(g.id)].shouldAttach"
                 :label="g.name"
               />
             </v-flex>
@@ -282,18 +282,15 @@ export default {
       });
     },
     addSpecialPermission() {
-        const self = this;
-
-        window._.each(self.options.permissions,(p)=>{
-
-            if(self.selectedPermission===p.key) {
-
-                if(!self.existsInPermissions(self.selectedPermission)) {
-                    p.value = self.selectedPermissionValue;
-                    self.permissions.push(p);
-                }
-            }
-        });
+      const self = this;
+      window._.each(self.options.permissions,(p)=>{
+        if(self.selectedPermission===p.key) {
+          if(!self.existsInPermissions(self.selectedPermission)) {
+            p.value = self.selectedPermissionValue;
+            self.permissions.push(p);
+          }
+        }
+      });
     },
     existsInPermissions(permissionKey) {
         const self = this;
@@ -304,23 +301,24 @@ export default {
         return found;
     },
     loadUser(cb) {
-
         const self = this;
-
         // reset first
         self.groups = [];
 
         window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
-            let User = response.data.data;
+            let user = response.data.data;
 
-            self.name = User.name;
-            self.email = User.email;
-            self.active = (User.active!==null);
-            self.permissions = User.permissions;
+            self.name = user.name;
+            self.email = user.email;
+            self.active = (user.active!==null);
+            self.permissions = user.permissions;
 
             // groups
-            window._.each(User.groups,(g)=>{
-                self.groups[g.id] = true;
+            self.groups = user.groups.map((g)=>{
+              return {
+                id: g.id,
+                shouldAttach: true
+              };
             });
 
             cb();
@@ -356,6 +354,14 @@ export default {
 
             cb();
         });
+    },
+
+    getGroupIndex (id) {
+      console.log(this.groups)
+      console.log(id)
+      const index = this.groups.findIndex(i => i.id === id);
+      console.log(index)
+      return index;
     }
   }
 }

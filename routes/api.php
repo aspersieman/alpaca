@@ -4,8 +4,6 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],function() {
   // public
-  Route::get('files/{id}/download','FileController@fileDownload')->name('files.download');
-  Route::get('files/{id}/preview','FileController@filePreview')->name('files.preview');
   Route::get('menus','MenuController@index')->name('menu.index');
   Route::get('ping', 'PingController@index')->name('ping.index');
 
@@ -18,6 +16,7 @@ Route::group(['prefix' => 'v1', 'namespace' => '\App\Http\Controllers\Api\V1'],f
 
   // admin
   Route::apiResource('users','UserController');
+  Route::post('users/{id}/avatar', 'UserController@updateAvatar')->name('users.avatar');
   Route::apiResource('groups','GroupController');
   Route::apiResource('permissions','PermissionController');
   Route::apiResource('files','FileController');

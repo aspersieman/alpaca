@@ -9,6 +9,7 @@ import Dashboard from '@/modules/front/dashboard/Index';
 import Tasks from '@/modules/front/tasks/Index';
 import Reports from '@/modules/front/reports/Index';
 import Notes from '@/modules/front/notes/Index';
+import User from '@/modules/front/user/Index';
 import AdminDashboard from '@/modules/admin/dashboard/Home';
 import AdminUsers from '@/modules/admin/users/Users';
 import AdminUserList from '@/modules/admin/users/components/UserLists';
@@ -54,6 +55,12 @@ const router = new Router({
                     name: "index.home",
                     path: "",
                     component: FrontHome
+                },
+                {
+                    path: '/profile',
+                    name: 'profile',
+                    beforeEnter: guard,
+                    component: User
                 },
                 {
                     path: '/dashboard',

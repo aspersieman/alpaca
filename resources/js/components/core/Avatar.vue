@@ -17,7 +17,16 @@
             :color="user.color"
             size="48"
           >
-            <span class="white--text headline">{{ user.initials }}</span>
+            <v-img
+              v-if="user.avatar"
+              :src="avatarUrl"
+            />
+            <span
+              v-else
+              class="white--text headline"
+            >
+              {{ user.initials }}
+            </span>
           </v-avatar>
         </v-btn>
       </template>
@@ -27,7 +36,17 @@
             <v-avatar
               :color="user.color"
             >
-              <span class="white--text headline">{{ user.initials }}</span>
+              <v-img
+                v-if="user.avatar"
+                :src="avatarUrl"
+                width="128"
+              />
+              <span
+                v-else
+                class="white--text headline"
+              >
+                {{ user.initials }}
+              </span>
             </v-avatar>
             <h3>{{ user.name }}</h3>
             <p class="caption mt-1">
@@ -38,6 +57,7 @@
               depressed
               rounded
               text
+              to="/profile"
             >
               Edit Account
             </v-btn>
@@ -64,26 +84,52 @@ export default {
   mixins: [
     AvatarMixin,
   ],
+
   data: () => ({
     user: {
+      id: '',
       initials: '',
       name: '',
       email: '',
-      color: ''
+      color: '',
+      avatar: null
     }
   }),
-  mounted() {
-    if (this.$auth.check) {
-      this.user.name = this.$auth.user.name;
-      this.user.email = this.$auth.user.email;
-      this.user.initials = this.getInitials(this.user.name);
-      this.user.color = this.getAvatarColour(this.user.name);
+
+  computed: {
+    avatarUrl() {
+      return this.user.avatar ? `/avatar/${this.user.id}?path=${this.user.avatar}` : null;
     }
   },
+
+  mounted() {
+    this.setUser(this.$auth.user);
+    if (this.$auth.check) {
+      this.$store.subscribe((mutation) => {
+        if (
+          [
+            'auth/SET_AUTH_USER'
+          ].includes(mutation.type)
+        ) {
+          this.setUser(this.$auth.user);
+        }
+      });
+    }
+  },
+
   methods: {
     logout() {
       this.$store.dispatch('auth/logout')
       this.$router.push("/");
+    },
+
+    setUser(user) {
+      this.user.id = user.id;
+      this.user.name = user.name;
+      this.user.email = user.email;
+      this.user.initials = this.getInitials(user.name);
+      this.user.avatar = user.avatar;
+      this.user.color = this.getAvatarColour(user.name);
     }
   }
 }
