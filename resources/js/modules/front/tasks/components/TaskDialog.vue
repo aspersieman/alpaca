@@ -205,19 +205,13 @@
       <v-divider />
       <v-card-actions>
         <v-btn
-          v-if="false == true"
-          v-shortkey.once="['ctrl', 'enter']"
-          style="display: none;"
-          @shortkey="update"
-        >
-          Save
-        </v-btn>
-        <v-btn
           v-if="mode == 'ADD'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success mx-0 mt-3"
           :disabled="!valid || loading"
           @click="save"
+          @shortkey.propagate="save"
         >
           Save
         </v-btn>
@@ -228,6 +222,7 @@
           class="success ml-1 mx-0 mt-3"
           :disabled="!valid || loading"
           @click="update"
+          @shortkey.propagate="update"
         >
           Save
         </v-btn>
