@@ -198,6 +198,7 @@
             >
               <timer-running
                 :small="small"
+                :hide-time="$vuetify.breakpoint.mdAndDown"
               />
             </div>
             <v-btn
