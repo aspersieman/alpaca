@@ -98,6 +98,7 @@ export default {
         name: '',
         userId: '',
       },
+      searchNotesTimeout: null
     }
   },
 
@@ -159,9 +160,8 @@ export default {
     searchNotes(debounce) {
       this.setNotesSettings();
       if (debounce) {
-        let bouncer;
-        clearTimeout(bouncer);
-        bouncer = setTimeout(() => {
+        clearTimeout(this.searchNotesTimeout);
+        this.searchNotesTimeout = setTimeout(() => {
           this.prepareQuery();
           this.$store.dispatch('note/getNotes', this.query)
             .then(() => this.$overlay.show(false))

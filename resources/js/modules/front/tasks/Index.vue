@@ -128,7 +128,7 @@
                         label="Status"
                         class="status-list-filter"
                         @change="setTasksSettings()"
-                        @input="searchTasks()"
+                        @input="searchTasks(true)"
                       >
                         <template
                           #selection="data"
@@ -180,7 +180,7 @@
                         dense
                         class="priority-list-filter"
                         @change="setTasksSettings()"
-                        @input="searchTasks()"
+                        @input="searchTasks(true)"
                       />
                     </v-col>
                     <v-col
@@ -303,7 +303,7 @@ export default {
         userId: '',
         default: true
       },
-      debounce: null,
+      searchTasksTimeout: null,
     }
   },
   computed: {
@@ -438,9 +438,8 @@ export default {
 
     searchTasks(debounce) {
       if (debounce) {
-        let bouncer;
-        clearTimeout(bouncer);
-        bouncer = setTimeout(() => {
+        clearTimeout(this.searchTasksTimeout);
+        this.searchTasksTimeout = setTimeout(() => {
           this.prepareQuery();
           this.$store.dispatch('task/getTasks', this.query)
             .then(() => this.sortTasks())
