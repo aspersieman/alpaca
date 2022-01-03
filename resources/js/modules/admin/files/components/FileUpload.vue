@@ -50,18 +50,21 @@
 <script>
 import EventNames from '../../../../common/EventNames';
 
+const dz = require('dropzone');
+
 export default {
   data() {
     return {
       dropzone: null,
       fileGroups: [],
       uploadTo: '',
-      addedFiles: []
+      addedFiles: [],
+      token: null
     }
   },
   mounted() {
     const self = this;
-
+    self.token = self.$store.getters['auth/getToken'];
     self.loadFileGroups(()=>{});
     self.initDropzone();
 
@@ -86,25 +89,28 @@ export default {
     },
     initDropzone() {
       const self = this;
-      window.Dropzone.autoDiscover = false;
-      self.dropzone = new window.Dropzone("#fileupload", {
+      Dropzone.autoDiscover = false;
+      self.dropzone = new dz.Dropzone("#fileupload", {
         url:'/api/v1/files',
         paramName: "file", // The name that will be used to transfer the file
-        maxFilesize: 50, // 50MB
+        maxFilesize: 2, // 50MB
         uploadMultiple: true,
-        //acceptedFiles: 'image/*',
-        headers: {'X-CSRF-TOKEN' : window._token},
+        acceptedFiles: 'image/*',
+        headers: {
+          'X-CSRF-TOKEN': window._token,
+          'Authorization': `Bearer ${this.token}`
+        },
         autoProcessQueue: true
       });
 
       self.dropzone.on("addedfile", function(file) {
         if(!self.uploadTo) {
-          self.$store.commit('showDialog',{
+          self.$store.dispatch('dialog/show',{
             type: "ok",
             icon: 'warning',
             title: "Warning",
             message: "Please choose file group to upload the file(s)",
-            okCb: ()=>{ }
+            okCb: () => { }
           });
           self.dropzone.removeFile(file);
         } else {
@@ -112,7 +118,7 @@ export default {
         }
       });
 
-      self.dropzone.on('sending',(file,xhr,formData)=> {
+      self.dropzone.on('sending',(_file, _xhr, formData)=> {
           formData.append('file_group_id',self.uploadTo);
       });
 
