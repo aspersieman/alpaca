@@ -27,7 +27,7 @@
           </template>
         </v-speed-dial>
         <span
-          v-if="$auth.check && !small"
+          v-if="$auth.check && !small && hideTime !== true"
           :class="{ 'timer-time singleton md' : $vuetify.breakpoint.mdAndUp, 'timer-time singleton sm' : $vuetify.breakpoint.smAndDown }"
         >
           {{ timerTime }}
@@ -36,6 +36,7 @@
           v-if="$auth.check && small"
         >
           <span
+            v-if="hideTime !== true"
             class="timer-time-multiple"
           >
             {{ timerTime }}
@@ -115,6 +116,7 @@
                   </v-btn>
                 </v-row>
                 <v-row
+                  v-if="hideTime !== true"
                   justify="center"
                 >
                   {{ timerTime }}
@@ -140,6 +142,11 @@ export default {
   mixins: [ TimerMixin ],
   props: {
     small: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    hideTime: {
       required: false,
       type: Boolean,
       default: false
