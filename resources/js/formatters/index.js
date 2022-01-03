@@ -8,7 +8,7 @@ export function formatDate(dateString, format) {
   }
 }
 
-export function exportformatByteToMB(sizeInBytes) {
+export function formatByteToMB(sizeInBytes) {
   return (sizeInBytes / (1024*1024)).toFixed(2);
 }
 
