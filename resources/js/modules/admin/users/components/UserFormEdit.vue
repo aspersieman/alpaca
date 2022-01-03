@@ -157,11 +157,14 @@
               </h1>
               <v-divider />
             </v-flex>
-            <v-flex xs12>
+            <v-flex
+              v-if="options.groups"
+              xs12
+            >
               <v-switch
                 v-for="(g,k) in options.groups"
                 :key="k"
-                v-model="groups[getGroupIndex(g.id)].shouldAttach"
+                v-model="options.groups[getGroupIndex(g.id)].shouldAttach"
                 :label="g.name"
               />
             </v-flex>
@@ -216,7 +219,6 @@ export default {
         (v) => !(v!==self.password) || 'Password do not match.',
       ],
       permissions: [],
-      groups: [],
       active:'',
       options: {
         permissions: [],
@@ -241,12 +243,13 @@ export default {
   mounted() {
     const self = this;
     self.loadPermissions(()=>{
-      self.loadGroups(()=>{});
+      self.loadGroups(()=>{
+        self.loadUser(()=>{});
+      });
     });
     /*self.$eventBus.$on([EventName.GROUP_ADDED],()=>{*/
     /*  self.loadGroups(()=>{});*/
     /*});*/
-    this.loadUser(()=>{});
   },
   methods: {
     removePermission(i) {
@@ -255,13 +258,16 @@ export default {
     },
     save() {
       const self = this;
+      const groups = self.options.groups.filter((group) => {
+        return group.shouldAttach === true
+      });
       let payload = {
         name: self.name,
         email: self.email,
         password: self.password ? self.password : null,
         active: self.active ? window.moment().format('YYYY-MM-DD') : null,
         permissions: self.permissions,
-        groups: self.groups,
+        groups: groups,
       };
       this.$overlay.show(true);
 
@@ -301,66 +307,53 @@ export default {
         return found;
     },
     loadUser(cb) {
-        const self = this;
-        // reset first
-        self.groups = [];
+      const self = this;
+      window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
+        let user = response.data.data;
 
-        window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
-            let user = response.data.data;
+        self.name = user.name;
+        self.email = user.email;
+        self.active = (user.active!==null);
+        self.permissions = user.permissions;
 
-            self.name = user.name;
-            self.email = user.email;
-            self.active = (user.active!==null);
-            self.permissions = user.permissions;
+        user.groups.forEach((group) => {
+          const index = self.options.groups.findIndex(i => i.id === group.id);
+          self.options.groups[index].shouldAttach = true;
+        })
 
-            // groups
-            self.groups = user.groups.map((g)=>{
-              return {
-                id: g.id,
-                shouldAttach: true
-              };
-            });
-
-            cb();
-        });
+        cb();
+      });
     },
+
     loadPermissions(cb) {
 
-        const self = this;
+      const self = this;
 
-        let params = {
-            paginate: 'no'
-        };
+      let params = {
+        paginate: 'no'
+      };
 
-        window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
-            self.options.permissions = response.data.data;
-            cb();
-        });
+      window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
+        self.options.permissions = response.data.data;
+        cb();
+      });
     },
+
     loadGroups(cb) {
+      const self = this;
+      let params = {
+        paginate: 'no'
+      };
 
-        const self = this;
+      window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
+        self.options.groups = response.data.data;
 
-        let params = {
-            paginate: 'no'
-        };
-
-        window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
-            self.options.groups = response.data.data;
-
-            window._.each(self.options.groups,g=>{
-                g.selected = false;
-            });
-
-            cb();
-        });
+        cb();
+      });
     },
 
     getGroupIndex (id) {
-      console.log(this.groups)
-      console.log(id)
-      const index = this.groups.findIndex(i => i.id === id);
-      console.log(index)
+      const index = this.options.groups.findIndex(i => i.id === id);
       return index;
     }
   }
