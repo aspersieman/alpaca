@@ -60,7 +60,7 @@ class User extends Authenticatable
    */
   protected function serializeDate(DateTimeInterface $date)
   {
-      return $date->format('Y-m-d H:i:s');
+    return $date->format('Y-m-d H:i:s');
   }
 
   protected static function boot()
