@@ -163,7 +163,7 @@
                 small
                 icon
                 color="info"
-                @click="$router.push({name:'admin.users.edit',params:{id: item.id}})"
+                @click="$router.push({name:'admin.users.edit',params:{id: String(item.id)}})"
               >
                 <v-icon>
                   mdi-pencil
