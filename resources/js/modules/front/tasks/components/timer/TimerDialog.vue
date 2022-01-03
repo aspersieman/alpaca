@@ -2,6 +2,7 @@
   <v-dialog
     v-model="dialog"
     max-width="600px"
+    persistent
     scrollable
     :fullscreen="$vuetify.breakpoint.xs"
     class="form-dialog"
@@ -306,9 +307,10 @@ export default {
         this.updated = false;
       }
       if (mutation.type === 'timer/UPDATED') {
-        this.updated = true;
+        const self = this;
+        self.updated = true;
         setTimeout(function () {
-          this.updated = false;
+          self.updated = false;
         }, 3000);
       }
     });
@@ -316,6 +318,7 @@ export default {
   methods: {
     save() {
       if (this.valid) {
+        this.updated = false;
         const timer = {
           name: this.name,
           task_id: this.task_id,
@@ -328,6 +331,7 @@ export default {
     },
     update() {
       if (this.valid) {
+        this.updated = false;
         const started_at = window.moment(this.startDate + ' ' + this.startTime, 'YYYY-MM-DD HH:mm:ss');
         const timer = {
           id: this.timer.id,
@@ -342,6 +346,7 @@ export default {
       }
     },
     close() {
+      this.updated = false;
       this.dialog = false;
       this.$store.commit('timer/TIMER_DIALOG_UPDATE', false);
       this.$store.commit('timer/TIMER_DIALOG_ADD', false);
@@ -353,6 +358,7 @@ export default {
       this.endTime = '';
       this.tags = [];
       this.subtitle = '';
+      this.updated = false;
     },
     removeCategory(item) {
       this.tags.splice(this.tags.indexOf(item), 1)
