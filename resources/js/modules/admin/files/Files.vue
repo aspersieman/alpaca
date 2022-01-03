@@ -72,14 +72,6 @@ export default {
       console.log('active tab: ' + v);
     }
   },
-  mounted() {
-    const self = this;
-    self.$store.commit('setBreadcrumbs',[
-      { label: 'Files', name:'' }
-    ]);
-  },
-  methods: {
-  }
 }
 </script>
 
