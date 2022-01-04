@@ -187,6 +187,8 @@
 
 <script>
 
+import EventNames from '@/common/EventNames';
+
 export default {
   props: {
     propUserId: {
@@ -247,9 +249,9 @@ export default {
         self.loadUser(()=>{});
       });
     });
-    /*self.$eventBus.$on([EventName.GROUP_ADDED],()=>{*/
-    /*  self.loadGroups(()=>{});*/
-    /*});*/
+    self.$eventBus.$on([EventNames.GROUP_ADDED],()=>{
+      self.loadGroups(()=>{});
+    });
   },
   methods: {
     removePermission(i) {
