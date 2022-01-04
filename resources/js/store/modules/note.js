@@ -61,7 +61,7 @@ export const actions = {
     return new Promise((resolve, reject) => {
       getNote(payload.id)
         .then(({data}) => {
-          commit('NOTE', data)
+          commit('NOTE', data.data)
           resolve(data)
         })
         .catch(error => reject(error))
@@ -72,16 +72,18 @@ export const actions = {
     return new Promise((resolve, reject) => {
       saveNote(payload)
         .then(({data}) => {
-          dispatch('task/getTask', data.data.task_id, {root: true})
-            .then(() => {
-              commit(
-                'flash/showMessage',
-                {text: 'Note added successfully', color: 'green'},
-                {root: true}
-              );
-              commit('NOTE', data);
-              commit('ADDED', data);
-            });
+          commit('NOTE', data.data);
+          commit('ADDED', data.data);
+          if (payload.task_id) {
+            dispatch('task/getTask', data.data.task_id, {root: true})
+              .then(() => {
+                commit(
+                  'flash/showMessage',
+                  {text: 'Note added successfully', color: 'green'},
+                  {root: true}
+                );
+              });
+          }
           resolve(data)
         })
         .catch((error) => {
@@ -100,16 +102,18 @@ export const actions = {
     return new Promise((resolve, reject) => {
       updateNote(payload)
         .then(({data}) => {
-          dispatch('task/getTask', data.data.task_id, {root: true})
-            .then(() => {
-              commit(
-                'flash/showMessage',
-                {text: 'Note updated successfully', color: 'green'},
-                {root: true}
-              );
-              commit('NOTE', data);
-              commit('UPDATED', data);
-            });
+          commit('NOTE', data.data);
+          commit('UPDATED', data.data);
+          if (payload.task_id) {
+            dispatch('task/getTask', data.data.task_id, {root: true})
+              .then(() => {
+                commit(
+                  'flash/showMessage',
+                  {text: 'Note updated successfully', color: 'green'},
+                  {root: true}
+                );
+              });
+          }
           resolve(data)
         })
         .catch((error) => {
@@ -132,19 +136,21 @@ export const actions = {
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this note?',
         okCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
           deleteNote(payload)
             .then(({data}) => {
-              dispatch('task/getTask', payload.task_id, {root: true}).
-                then(() => {
-                  commit(
-                    'flash/showMessage',
-                    {text: 'Note deleted successfully', color: 'green'},
-                    {root: true}
-                  );
-                  commit('NOTE', { note: payload, remove: true });
-                  commit('DELETED', data);
-                });
+              commit('NOTE', { note: payload, remove: true });
+              commit('DELETED', data.data);
+              if (payload.task_id) {
+                dispatch('task/getTask', payload.task_id, {root: true}).
+                  then(() => {
+                    commit(
+                      'flash/showMessage',
+                      {text: 'Note deleted successfully', color: 'green'},
+                      {root: true}
+                    );
+                  });
+              }
               resolve(data)
             }).catch((error) => {
               console.error(error)
@@ -157,10 +163,10 @@ export const actions = {
             })
         },
         cancelCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
         }
       };
-      dispatch('dialog/dialogShow', settings, {root: true});
+      dispatch('dialog/show', settings, {root: true});
     });
   },
 
@@ -186,6 +192,7 @@ export const getters = {
   notes : state => state.notes,
   noteDialogAdd: state => state.noteDialogAdd,
   noteDialogUpdate: state => state.noteDialogUpdate,
+  updated: state => state.updated,
 }
 
 export default {

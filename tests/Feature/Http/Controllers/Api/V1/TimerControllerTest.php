@@ -353,9 +353,11 @@ class TimerControllerTest extends TestCase
       $response->assertOk();
       $this->assertEquals($response['message'], 'Resource updated.');
       $this->assertEquals($response['data']['name'], 'Test timer 8');
+      $date = new \DateTime($response['data']['stopped_at']);
+      $date->setTimezone(new \DateTimeZone(env('APP_TIMEZONE')));
       $this->assertDatabaseHas('timers', [
         'name' => 'Test timer 8',
-        'stopped_at' => (new \DateTime($response['data']['stopped_at']))->format("Y-m-d H:i:s")
+        'stopped_at' => $date,
       ]);
     }
 }

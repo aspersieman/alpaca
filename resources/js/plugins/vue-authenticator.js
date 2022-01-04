@@ -8,9 +8,7 @@ Vue.use(Vuex)
 Vue.use(VueAxios, axios)
 
 export const getVueAuthenticate = () => {
-  const baseUrl = process.env.NODE_ENV === 'development'
-    ? 'https://alpaca.vagrant'
-    : 'https://alpaca.nicolaas.me';
+  const baseUrl = process.env.MIX_APP_URL;
   return new VueAuthenticate(Vue.prototype.$http, {
     providers: {
       facebook: {

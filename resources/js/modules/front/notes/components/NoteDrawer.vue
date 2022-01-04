@@ -2,16 +2,16 @@
   <div>
     <v-navigation-drawer
       ref="drawer"
+      v-model="drawer"
       clipped
       app
       right
       hide-overlay
-      :value="noteDrawer"
+      temporary
       :width="navigation.width"
-      :touchless="true"
     >
       <div
-        v-if="$vuetify.breakpoint.mdAndUp"
+        v-if="resize"
         class="toggle"
       >
         <v-btn
@@ -35,7 +35,9 @@
           v-if="!showSearch"
         >
           <v-list-item-title>Notes</v-list-item-title>
-          <v-list-item-subtitle>
+          <v-list-item-subtitle
+            v-if="task"
+          >
             <v-icon small>
               task_alt
             </v-icon>
@@ -111,6 +113,7 @@ export default {
     NoteList,
     NoteCreate,
   },
+
   data() {
     return {
       notes: [],
@@ -121,9 +124,12 @@ export default {
         maxWidth: 700
       },
       search: "",
-      showSearch: false
+      showSearch: false,
+      drawer: false,
+      resize: false,
     };
   },
+
   computed: {
     ...mapGetters('drawer', [
       'noteDrawer',
@@ -147,12 +153,22 @@ export default {
       });
     },
   },
+
+  watch: {
+    drawer: function () {
+      if (!this.drawer) {
+        this.$store.dispatch('drawer/toggleNoteDrawer');
+      }
+    },
+  },
+
   created() {
     const self = this;
     self.navigation.width = self.$vuetify.breakpoint.mdAndUp ? self.defaultWidth : window.innerWidth;
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'drawer/NOTE_DRAWER') {
         if (this.noteDrawer) {
+          this.drawer = this.noteDrawer;
           self.notes = this.task?.notes ?? [];
         } else {
           self.notes = [];
@@ -167,16 +183,19 @@ export default {
           'note/DELETED',
         ].includes(mutation.type)
       ) {
+        console.log('NoteDrawer: ' + mutation.type);
         self.notes = this.task?.notes ?? [];
       }
     });
   },
+
   mounted() {
     if (this.$vuetify.breakpoint.mdAndUp) {
       this.setBorderWidth();
       this.setEvents();
     }
   },
+
   methods: {
     setBorderWidth() {
       let i = this.$refs.drawer.$el.querySelector(
@@ -192,7 +211,7 @@ export default {
       const minSize = this.navigation.borderSize;
       const el = this.$refs.drawer.$el;
       const drawerBorder = el.querySelector(".v-navigation-drawer__border");
-      const resizeButton = this.$refs.resizeButton.$el;
+      const resizeButton = this.$refs.resizeButton?.$el ?? null;
       const direction = el.classList.contains("v-navigation-drawer--right")
         ? "right"
         : "left";
@@ -220,14 +239,16 @@ export default {
         false
       );
 
-      resizeButton.addEventListener(
-        "mousedown",
-        () => {
-          el.style.transition = "initial";
-          document.addEventListener("mousemove", resize, false);
-        },
-        false
-      );
+      if (resizeButton) {
+        resizeButton.addEventListener(
+          "mousedown",
+          () => {
+            el.style.transition = "initial";
+            document.addEventListener("mousemove", resize, false);
+          },
+          false
+        );
+      }
 
       drawerBorder.addEventListener(
         "touchstart",
@@ -240,14 +261,16 @@ export default {
         false
       );
 
-      resizeButton.addEventListener(
-        "touchstart",
-        () => {
-          el.style.transition = "initial";
-          document.addEventListener("touchmove", resize, false);
-        },
-        false
-      );
+      if (resizeButton) {
+        resizeButton.addEventListener(
+          "touchstart",
+          () => {
+            el.style.transition = "initial";
+            document.addEventListener("touchmove", resize, false);
+          },
+          false
+        );
+      }
 
       document.addEventListener(
         "mouseup",
@@ -273,7 +296,7 @@ export default {
     },
 
     close() {
-      this.$store.commit('drawer/NOTE_DRAWER', false);
+      this.drawer = false;
     },
 
     searchShow(value) {

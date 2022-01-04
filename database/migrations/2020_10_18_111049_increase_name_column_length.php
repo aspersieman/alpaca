@@ -13,10 +13,10 @@ class IncreaseNameColumnLength extends Migration
      */
     public function up()
     {
-      Schema::table('tasks', function ($table) {
+      Schema::table('tasks', function (Blueprint $table) {
         $table->string('name', 1000)->change();
       });
-      Schema::table('timers', function ($table) {
+      Schema::table('timers', function (Blueprint $table) {
         $table->string('name', 1000)->change();
       });
     }

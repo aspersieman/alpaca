@@ -1,6 +1,9 @@
 <template>
   <v-main>
-    <v-container fluid>
+    <v-container
+      fluid
+      class="pl-0"
+    >
       <transition name="fade">
         <router-view />
       </transition>
@@ -11,11 +14,12 @@
 <script>
 export default {
   name: 'CoreContent',
+
   computed: {
     getBreadcrumbs() {
       return this.$store.getters.getBreadcrumbs
     },
-  }
+  },
 }
 </script>
 

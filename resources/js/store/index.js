@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate'
 
 import auth from './modules/auth';
+import backup from './modules/backup';
 import chart from './modules/chart';
 import dialog from './modules/dialog';
 import drawer from './modules/drawer';
@@ -19,6 +20,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   modules: {
     auth,
+    backup,
     chart,
     dialog,
     drawer,
@@ -28,7 +30,7 @@ export default new Vuex.Store({
     overlay,
     task,
     timer,
-    user
+    user,
   },
   plugins: [createPersistedState()]
 })

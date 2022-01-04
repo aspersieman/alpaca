@@ -4,39 +4,51 @@
   >
     <v-bottom-sheet inset>
       <template #activator="{ on, attrs }">
-        <div
-          v-if="!small"
-          :class="{'timer-button-block': $vuetify.breakpoint.mdAndUp}"
+        <v-speed-dial
+          v-if="$auth.check && !small"
+          :class="{'timer-button-singleton': $vuetify.breakpoint.mdAndUp, 'timer-button-mobile': $vuetify.breakpoint.smAndDown}"
+          :absolute="!$vuetify.breakpoint.smAndDown"
+          :bottom="$vuetify.breakpoint.smAndDown"
+          :top="!$vuetify.breakpoint.smAndDown"
+          fixed
+          right
         >
-          <v-btn
-            class="timer-button"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <core-clock
-              v-if="$vuetify.breakpoint.smAndDown"
-            />
-            <span
-              v-if="$vuetify.breakpoint.mdAndUp"
+          <template #activator>
+            <v-btn
+              fab
+              v-bind="attrs"
+              v-on="on"
+              :small="$vuetify.breakpoint.smAndDown"
             >
-              Running Timer
-            </span>
-          </v-btn>
+              <core-clock
+                :size="$vuetify.breakpoint.smAndDown ? 'small' : 'medium'"
+              />
+            </v-btn>
+          </template>
+        </v-speed-dial>
+        <span
+          v-if="$auth.check && !small && hideTime !== true"
+          :class="{ 'timer-time singleton md' : $vuetify.breakpoint.mdAndUp, 'timer-time singleton sm' : $vuetify.breakpoint.smAndDown }"
+        >
+          {{ timerTime }}
+        </span>
+        <span
+          v-if="$auth.check && small"
+        >
           <span
-            class="hidden-md-and-down"
+            v-if="hideTime !== true"
+            class="timer-time-multiple"
           >
             {{ timerTime }}
           </span>
-        </div>
-        <span
-          v-else
-        >
           <v-btn
             icon
             v-bind="attrs"
             v-on="on"
           >
-            <core-clock />
+            <core-clock
+              size="small"
+            />
           </v-btn>
         </span>
       </template>
@@ -104,6 +116,7 @@
                   </v-btn>
                 </v-row>
                 <v-row
+                  v-if="hideTime !== true"
                   justify="center"
                 >
                   {{ timerTime }}
@@ -129,6 +142,11 @@ export default {
   mixins: [ TimerMixin ],
   props: {
     small: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    hideTime: {
       required: false,
       type: Boolean,
       default: false
@@ -160,19 +178,41 @@ export default {
 
 <style scoped lang="scss">
 @import "../../../../../../sass/index";
-
-.timer-button {
-  background-color: $active-green !important;
+.timer-button-singleton {
+  margin-top: 64px;
+  margin-right: 60px;
 }
-
-.timer-button-block {
-  border: solid 1px $active-green;
-  margin: 2px;
-  padding: 5px;
-  border-radius: 4px;
+.timer-button-mobile {
+  margin-right: 90px;
 }
-
 .timer-started {
   margin-left: 27px;
 }
+.timer-time {
+  background-color: $active-green;
+  border-radius: 10px 0px 0px 10px;
+  padding: 5px;
+}
+.timer-time.singleton {
+  position: fixed;
+  top: 90px;
+  margin: 2px;
+  z-index: 3;
+  padding-right: 8px;
+}
+.timer-time.singleton.sm {
+  position: fixed;
+  top: unset;
+  bottom: 20px;
+  right: 130px;
+  font-size: 0.8em;
+  padding-right: 15px;
+}
+.timer-time.singleton.md {
+  right: 126px;
+}
+.timer-time.multiple {
+  margin-right: -7px;
+}
+
 </style>

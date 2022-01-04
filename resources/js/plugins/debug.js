@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export function debug(message, type = "info") {
   let style = "";
   switch (type) {
@@ -17,7 +19,7 @@ export function debug(message, type = "info") {
   }
 };
 
-export default {
+const debugging = {
   install(Vue) {
     Vue.prototype.$debug = {
       info(message) {
@@ -30,3 +32,4 @@ export default {
   }
 }
 
+Vue.use(debugging);

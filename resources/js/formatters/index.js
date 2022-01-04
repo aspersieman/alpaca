@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export function formatDate(dateString, format) {
   if (dateString) {
     return window.moment(dateString).format(format ? format : 'MMMM DD, YYYY');
@@ -6,7 +8,7 @@ export function formatDate(dateString, format) {
   }
 }
 
-export function exportformatByteToMB(sizeInBytes) {
+export function formatByteToMB(sizeInBytes) {
   return (sizeInBytes / (1024*1024)).toFixed(2);
 }
 
@@ -41,6 +43,12 @@ export function secondsToMinutes(seconds, round = true) {
   return minutes;
 }
 
+export function secondsToHours(seconds, round = true) {
+  let hours = ((parseInt(seconds) / 60 ) / 60) || 0;
+  hours = round ? Math.floor(hours) : hours;
+  return hours;
+}
+
 export function dateOnly(dateString) {
   let date = new Date(dateString);
   date.setHours(0);
@@ -63,7 +71,28 @@ export function timerFormat(dateValue, time = false) {
   }
 }
 
-export default {
+export function findCeiling(value) {
+  let ceiling = value;
+  let absoluteValue = Math.abs(parseInt(value));
+  if (aboluteValue > 10 && aboluteValue <= 200) {
+      ceilint = Math.ceil(aboluteValue / 10) * 10;
+  }
+  if (aboluteValue > 10 && aboluteValue <= 200) {
+      ceilint = Math.ceil(aboluteValue / 20) * 20;
+  }
+  if (aboluteValue > 500 && aboluteValue <= 1000) {
+      ceilint = Math.ceil(aboluteValue / 100) * 100;
+  }
+  if (aboluteValue > 1000 && aboluteValue <= 2000) {
+      ceilint = Math.ceil(aboluteValue / 200) * 200;
+  }
+  if (aboluteValue > 2000 && aboluteValue <= 10000) {
+      ceilint = Math.ceil(aboluteValue / 1000) * 1000;
+  }
+  return parseInt(value) < 0 ? ceiling * -1 : ceiling;
+}
+
+const formatters = {
   install(Vue) {
     Vue.prototype.$appFormatters = {
       formatDate(dateString,format) {
@@ -93,3 +122,5 @@ export default {
     }
   }
 }
+
+Vue.use(formatters);

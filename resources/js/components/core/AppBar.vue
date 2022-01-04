@@ -48,28 +48,6 @@
             Notes
           </v-btn>
           <v-btn
-            v-if="$auth.check && $vuetify.breakpoint.mdAndUp"
-            class="d-none d-sm-flex appbar-button"
-            text
-            to="/reports"
-          >
-            Reports
-          </v-btn>
-          <v-spacer />
-          <base-btn-primary
-            v-if="$auth.check"
-            v-shortkey.once="['ctrl', 'alt', 't']"
-            class="hidden-sm-and-down"
-            dark
-            title="Add new Task"
-            icon="add"
-            @shortkey="$store.dispatch('task/openTaskDialog')"
-            @click="$store.dispatch('task/openTaskDialog')"
-          >
-            New task
-          </base-btn-primary>
-          <timer-running />
-          <v-btn
             v-if="!$auth.check"
             class="d-none d-sm-flex"
             text
@@ -78,6 +56,7 @@
           >
             Login
           </v-btn>
+          <v-spacer />
         </v-row>
         <task-dialog @taskAdded="snackbar=true" />
         <timer-dialog @timerAdded="snackbar=true" />
@@ -93,7 +72,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import CoreDrawer from '@/components/core/Drawer.vue';
-import TimerRunning from '@/modules/front/tasks/components/timer/TimerRunning';
 import TaskDialog from '@/modules/front/tasks/components/TaskDialog';
 import TimerDialog from '@/modules/front/tasks/components/timer/TimerDialog';
 import Avatar from '@/components/core/Avatar';
@@ -103,7 +81,6 @@ export default {
   name: 'CoreAppBar',
   components: {
     CoreDrawer,
-    TimerRunning,
     TaskDialog,
     TimerDialog,
     Avatar

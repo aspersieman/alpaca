@@ -27,12 +27,11 @@ export const state = {
   taskDialogAdd: false,
   taskDialogUpdate: false,
   statuses: [
-    'complete',
-    'ongoing',
-    'overdue'
+    { id: 'complete', name: 'Complete' },
+    { id: 'inprogress', name: 'In progress' },
+    { id: 'todo', name: 'To do' },
   ],
   priorities: [
-    { id: 0, name: '' },
     { id: 1, name: 'High' },
     { id: 2, name: 'Medium' },
     { id: 3, name: 'Low' },
@@ -91,8 +90,8 @@ export const actions = {
       payload.status = payload.status.toLowerCase();
       saveTask(payload)
         .then(({data}) => {
-          commit('TASK', data);
-          commit('ADDED', data);
+          commit('TASK', data.data);
+          commit('ADDED', data.data);
           commit(
             'flash/showMessage',
             {text: 'Task added successfully', color: 'green'},
@@ -114,11 +113,13 @@ export const actions = {
 
   updateTask({commit}, payload) {
     return new Promise((resolve, reject) => {
-      payload.status = payload.status.toLowerCase();
+      payload.status = payload.status.id.toLowerCase();
       updateTask(payload)
         .then(({data}) => {
-          commit('TASK', data);
-          commit('UPDATED', data);
+          console.log('updateTask:');
+          console.log(data.data);
+          commit('TASK', data.data);
+          commit('UPDATED', data.data);
           commit(
             'flash/showMessage',
             {text: 'Task updated successfully', color: 'green'},
@@ -146,7 +147,7 @@ export const actions = {
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this task?',
         okCb: () => {
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
           deleteTask(payload)
             .then(({data}) => {
               commit('TASK', { task: payload, remove: true });
@@ -169,10 +170,10 @@ export const actions = {
             });
         },
         cancelCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
         }
       };
-      dispatch('dialog/dialogShow', settings, {root: true});
+      dispatch('dialog/show', settings, {root: true});
     });
   },
 
@@ -201,22 +202,10 @@ export const actions = {
     commit('TASK_DIALOG_UPDATE', false);
   },
 
-  changeTaskStatus({dispatch}, task) {
-    var newStatus = null;
-    switch (task.status.toLowerCase()) {
-      case 'ongoing':
-        newStatus = 'complete';
-        break;
-      case 'complete':
-        newStatus = 'overdue';
-        break;
-      case 'overdue':
-        newStatus = 'ongoing';
-        break;
-      default:
-        break;
-    }
-    if (newStatus) {
+  changeTaskStatus({dispatch}, payload) {
+    const newStatus = payload.newStatus || null;
+    const task = payload.task || null;
+    if (newStatus && task) {
       task.status = newStatus
       dispatch('updateTask', task);
     }

@@ -88,7 +88,6 @@ class FileController extends Controller
         'size' => $fileData['size'],
         'path' => $fileData['path'],
       ]);
-
       if(!$fileRecord)
       {
         $this->fileService->deleteFile($fileData['path']);

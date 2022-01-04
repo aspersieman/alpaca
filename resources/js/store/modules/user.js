@@ -1,4 +1,4 @@
-import { update, saveUser, updateUser, deleteUser, getUsers, getUser, } from '@/api/user'
+import { saveUser, updateUser, updateAvatar, deleteUser, getUsers, getUser, } from '@/api/user'
 
 export const state = {
   userMain: {
@@ -70,7 +70,6 @@ export const actions = {
 
   saveUser({commit}, payload) {
     return new Promise((resolve, reject) => {
-      payload.status = payload.status.toLowerCase();
       saveUser(payload)
         .then(({data}) => {
           commit('USER', data);
@@ -96,7 +95,6 @@ export const actions = {
 
   updateUser({commit}, payload) {
     return new Promise((resolve, reject) => {
-      payload.status = payload.status.toLowerCase();
       updateUser(payload)
         .then(({data}) => {
           commit('USER', data);
@@ -120,11 +118,38 @@ export const actions = {
     });
   },
 
-  update({commit}, payload) {
+  updateAvatar({commit}, payload) {
     return new Promise((resolve, reject) => {
-      update(payload)
+      updateAvatar(payload.id, payload.payload)
         .then(({data}) => {
-          commit('auth/SET_AUTH_USER', data.user, { root: true })
+          commit('USER', data);
+          commit('UPDATED', data);
+          commit(
+            'flash/showMessage',
+            {text: 'User updated successfully', color: 'green'},
+            {root: true}
+          );
+          resolve(data)
+        })
+        .catch((error) => {
+          console.error(error);
+          commit(
+            'flash/showMessage',
+            {text: 'Error updating user', color: 'red'},
+            {root: true}
+          );
+          reject(error);
+        });
+    });
+  },
+
+  updateActive({commit}, payload) {
+    return new Promise((resolve, reject) => {
+      updateUser(payload)
+        .then(({data}) => {
+          console.log('updateActive store')
+          console.log(data)
+          commit('auth/SET_AUTH_USER', data.data, { root: true })
           resolve(data)
         })
         .catch(error => reject(error))
@@ -139,7 +164,7 @@ export const actions = {
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this user?',
         okCb: () => {
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
           deleteUser(payload)
             .then(({data}) => {
               commit('USER', { user: payload, remove: true });
@@ -162,10 +187,10 @@ export const actions = {
             });
         },
         cancelCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
         }
       };
-      dispatch('dialog/dialogShow', settings, {root: true});
+      dispatch('dialog/show', settings, {root: true});
     });
   },
 }

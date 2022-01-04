@@ -1,6 +1,6 @@
 import { stopTimer, getTimerRunning, deleteTimer, saveTimer, updateTimer } from '@/api/timer';
 import TimerMixin from '@/mixins/TimerMixin';
-import { duration } from '@/plugins/formatters';
+import { duration } from '@/formatters';
 
 export const state = {
   timer: null,
@@ -105,7 +105,7 @@ export const actions = {
         title: 'Confirm deletion',
         message: 'Are you sure you want to delete this timer?',
         okCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
           deleteTimer(payload)
             .then(({data}) => {
               commit('TIMER', null);
@@ -128,10 +128,10 @@ export const actions = {
             })
         },
         cancelCb: ()=>{
-          dispatch('dialog/dialogHide', null, {root: true});
+          dispatch('dialog/hide', null, {root: true});
         }
       };
-      dispatch('dialog/dialogShow', settings, {root: true});
+      dispatch('dialog/show', settings, {root: true});
     });
   },
 

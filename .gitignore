@@ -7,6 +7,7 @@
 /public/hot
 /public/storage
 /public/*.json
+/public/secret/token.json
 /storage/*.key
 /vendor
 /.idea
@@ -19,3 +20,4 @@ yarn-error.log
 .notes
 ubuntu*.log
 .phpunit.result.cache
+/database/backups

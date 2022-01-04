@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\FilterTrait;
+use \DateTimeInterface;
 
 class Note extends Model
 {
   use FilterTrait;
+
   /**
    * {@inheritDoc}
    */
@@ -17,6 +19,17 @@ class Note extends Model
    * {@inheritDoc}
    */
   protected $with = [];
+
+  /**
+   * Prepare a date for array / JSON serialization.
+   *
+   * @param  \DateTimeInterface  $date
+   * @return string
+   */
+  protected function serializeDate(DateTimeInterface $date)
+  {
+      return $date->format('Y-m-d H:i:s');
+  }
 
   /**
    * Get associated user.

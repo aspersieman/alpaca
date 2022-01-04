@@ -21,7 +21,7 @@
             >
               <v-text-field
                 v-model="name"
-                label="First Name"
+                label="Full Name"
                 :rules="nameRules"
               />
             </v-flex>
@@ -157,11 +157,14 @@
               </h1>
               <v-divider />
             </v-flex>
-            <v-flex xs12>
+            <v-flex
+              v-if="options.groups"
+              xs12
+            >
               <v-switch
                 v-for="(g,k) in options.groups"
                 :key="k"
-                v-model="groups[g.id]"
+                v-model="options.groups[getGroupIndex(g.id)].shouldAttach"
                 :label="g.name"
               />
             </v-flex>
@@ -183,6 +186,8 @@
 </template>
 
 <script>
+
+import EventNames from '@/common/EventNames';
 
 export default {
   props: {
@@ -216,7 +221,6 @@ export default {
         (v) => !(v!==self.password) || 'Password do not match.',
       ],
       permissions: [],
-      groups: [],
       active:'',
       options: {
         permissions: [],
@@ -241,12 +245,13 @@ export default {
   mounted() {
     const self = this;
     self.loadPermissions(()=>{
+      self.loadGroups(()=>{
+        self.loadUser(()=>{});
+      });
+    });
+    self.$eventBus.$on([EventNames.GROUP_ADDED],()=>{
       self.loadGroups(()=>{});
     });
-    /*self.$eventBus.$on([EventName.GROUP_ADDED],()=>{*/
-    /*  self.loadGroups(()=>{});*/
-    /*});*/
-    this.loadUser(()=>{});
   },
   methods: {
     removePermission(i) {
@@ -255,13 +260,16 @@ export default {
     },
     save() {
       const self = this;
+      const groups = self.options.groups.filter((group) => {
+        return group.shouldAttach === true
+      });
       let payload = {
         name: self.name,
         email: self.email,
         password: self.password ? self.password : null,
         active: self.active ? window.moment().format('YYYY-MM-DD') : null,
         permissions: self.permissions,
-        groups: self.groups,
+        groups: groups,
       };
       this.$overlay.show(true);
 
@@ -282,18 +290,15 @@ export default {
       });
     },
     addSpecialPermission() {
-        const self = this;
-
-        window._.each(self.options.permissions,(p)=>{
-
-            if(self.selectedPermission===p.key) {
-
-                if(!self.existsInPermissions(self.selectedPermission)) {
-                    p.value = self.selectedPermissionValue;
-                    self.permissions.push(p);
-                }
-            }
-        });
+      const self = this;
+      window._.each(self.options.permissions,(p)=>{
+        if(self.selectedPermission===p.key) {
+          if(!self.existsInPermissions(self.selectedPermission)) {
+            p.value = self.selectedPermissionValue;
+            self.permissions.push(p);
+          }
+        }
+      });
     },
     existsInPermissions(permissionKey) {
         const self = this;
@@ -304,58 +309,54 @@ export default {
         return found;
     },
     loadUser(cb) {
+      const self = this;
+      window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
+        let user = response.data.data;
 
-        const self = this;
+        self.name = user.name;
+        self.email = user.email;
+        self.active = (user.active!==null);
+        self.permissions = user.permissions;
 
-        // reset first
-        self.groups = [];
+        user.groups.forEach((group) => {
+          const index = self.options.groups.findIndex(i => i.id === group.id);
+          self.options.groups[index].shouldAttach = true;
+        })
 
-        window.axios.get('/api/v1/users/' + self.propUserId).then(function(response) {
-            let User = response.data.data;
-
-            self.name = User.name;
-            self.email = User.email;
-            self.active = (User.active!==null);
-            self.permissions = User.permissions;
-
-            // groups
-            window._.each(User.groups,(g)=>{
-                self.groups[g.id] = true;
-            });
-
-            cb();
-        });
+        cb();
+      });
     },
+
     loadPermissions(cb) {
 
-        const self = this;
+      const self = this;
 
-        let params = {
-            paginate: 'no'
-        };
+      let params = {
+        paginate: 'no'
+      };
 
-        window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
-            self.options.permissions = response.data.data;
-            cb();
-        });
+      window.axios.get('/api/v1/permissions',{params: params}).then(function(response) {
+        self.options.permissions = response.data.data;
+        cb();
+      });
     },
+
     loadGroups(cb) {
+      const self = this;
+      let params = {
+        paginate: 'no'
+      };
 
-        const self = this;
+      window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
+        self.options.groups = response.data.data;
 
-        let params = {
-            paginate: 'no'
-        };
+        cb();
+      });
+    },
 
-        window.axios.get('/api/v1/groups',{params: params}).then(function(response) {
-            self.options.groups = response.data.data;
-
-            window._.each(self.options.groups,g=>{
-                g.selected = false;
-            });
-
-            cb();
-        });
+    getGroupIndex (id) {
+      const index = this.options.groups.findIndex(i => i.id === id);
+      return index;
     }
   }
 }

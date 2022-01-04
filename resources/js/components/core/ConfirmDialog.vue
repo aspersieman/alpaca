@@ -64,7 +64,7 @@ export default {
       },
       set(val) {
         if(!val) {
-          self.$store.commit('dialog/dialogHide');
+          this.$store.dispatch('dialog/hide');
         }
       }
     },
@@ -95,10 +95,11 @@ export default {
     },
     dialogOk() {
       this.$store.getters['dialog/dialogOkCb']();
+      this.$store.dispatch('dialog/hide');
     },
     dialogCancel() {
       this.$store.getters['dialog/dialogCancelCb']();
-      this.$store.dispatch('dialog/dialogHide');
+      this.$store.dispatch('dialog/hide');
     }
   },
 }

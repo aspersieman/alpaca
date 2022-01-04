@@ -6,6 +6,7 @@
     persistent
     :fullscreen="$vuetify.breakpoint.xs"
     :retain-focus="false"
+    class="form-dialog"
   >
     <v-card>
       <v-card-title class="grey--text">
@@ -13,7 +14,25 @@
           Add a New Task
         </span>
         <span v-if="mode == 'UPDATE'">
-          Update Task
+          Task
+        </span>
+        <v-spacer />
+        <span
+          class="text-right"
+        >
+          <v-btn
+            class="text-sm-caption text-right"
+            icon
+            text
+            x-small
+            light
+            color="error"
+            @click="close()"
+          >
+            <v-icon>
+              close
+            </v-icon>
+          </v-btn>
         </span>
       </v-card-title>
       <v-divider />
@@ -54,6 +73,13 @@
               @input="menu2 = false"
             />
           </v-menu>
+          <v-text-field
+            v-if="mode == 'UPDATE' && completed_at"
+            :value="completed_at"
+            label="Completed"
+            prepend-icon="task_alt"
+            readonly
+          />
           <v-combobox
             v-model="priority"
             class="cmb-priority"
@@ -83,7 +109,9 @@
               <template
                 #item="data"
               >
-                {{ data.item.toUpperCase() }}
+                <span class="uppercase">
+                  {{ data.item.name }}
+                </span>
               </template>
               <template
                 #selection="data"
@@ -94,10 +122,10 @@
                   v-bind="data.attrs"
                   :input-value="data.selected"
                   :disabled="data.disabled"
-                  :class="`uppercase status ${data.item}`"
+                  :class="`uppercase status ${data.item.id}`"
                   @click:close="data.parent.selectItem(data.item)"
                 >
-                  {{ data.item }}
+                  {{ data.item.name }}
                 </v-chip>
               </template>
             </v-combobox>
@@ -178,21 +206,25 @@
       <v-card-actions>
         <v-btn
           v-if="mode == 'ADD'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success mx-0 mt-3"
           :disabled="!valid || loading"
           @click="save"
+          @shortkey.propagate="save"
         >
-          Add
+          Save
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE'"
+          v-shortkey.once="['ctrl', 'enter']"
           text
           class="success ml-1 mx-0 mt-3"
           :disabled="!valid || loading"
           @click="update"
+          @shortkey.propagate="update"
         >
-          Update
+          Save
         </v-btn>
         <v-btn
           v-if="mode == 'UPDATE' && isTimerRunning !== true"
@@ -201,17 +233,12 @@
           :disabled="!valid || loading"
           @click="$store.dispatch('timer/openTimerDialog', {task: task, timer: null })"
         >
-          Add timer
+          New timer
         </v-btn>
-        <v-spacer />
-        <v-btn
-          text
-          class="error mx-0 mt-3"
-          :disabled="loading"
-          @click="close();"
-        >
-          Cancel
-        </v-btn>
+        <success-checkmark
+          v-if="updated"
+          class="success-checkmark"
+        />
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -220,13 +247,15 @@
 <script>
 import { mapGetters } from 'vuex';
 import TimerList from '@/modules/front/tasks/components/timer/TimerList';
+import SuccessCheckmark from '@/components/core/SuccessCheckmark';
 import moment from 'moment';
 import TaskMixin from '@/mixins/TaskMixin';
 import TimerMixin from '@/mixins/TimerMixin';
 
 export default {
   components: {
-    TimerList
+    TimerList,
+    SuccessCheckmark
   },
   mixins: [
     TaskMixin,
@@ -239,7 +268,8 @@ export default {
       loading: false,
       mode: '',
       name: '',
-      status: 'ongoing',
+      status: { id: 'todo', name: 'To do' },
+      completed_at: null,
       timers: [],
       due: moment().format('YYYY-MM-DD'),
 
@@ -257,6 +287,8 @@ export default {
       counter: { seconds: 0, timer: null },
       onlyActive: false,
       priority: { id: 0, name: '' },
+      updated: false,
+      added: false,
     }
   },
   computed: {
@@ -287,12 +319,25 @@ export default {
         if (self.taskDialogUpdate === true) {
           self.name = self.task.name;
           self.due = self.task.due;
+          self.completed_at = self.task.completed_at ? self.$appFormatters.dateTimeFormat(self.task.completed_at, 'YYYY-MM-DD') : null;
           self.timers = self.task.timers || [];
-          self.status = self.task.status;
+          self.status = self.statuses.find(status => status.id === self.task.status);
           self.$store.dispatch('task/getTaskPriorityById', self.task.priority)
             .then((value) => self.priority = value);
           self.mode = 'UPDATE';
         }
+      }
+      if (mutation.type === 'task/UPDATED') {
+        self.updated = true;
+        setTimeout(function () {
+          self.updated = false;
+        }, 3000);
+      }
+      if (mutation.type === 'task/ADDED') {
+        self.added = true;
+        setTimeout(function () {
+          self.added = false;
+        }, 3000);
       }
     });
   },
@@ -307,8 +352,8 @@ export default {
         };
         this.$overlay.show(true);
         this.$store.dispatch('task/saveTask', task)
+          .then(this.close())
           .then(() => {
-            this.close();
             this.$overlay.show(false);
           });
       }
@@ -322,8 +367,8 @@ export default {
           priority: this.priority.id,
           status: this.status,
         };
-        this.$store.dispatch('task/updateTask', task)
-          .then(this.close());
+        this.$store.dispatch('task/updateTask', task);
+        console.log(this.task.id);
       }
     },
     close() {
@@ -333,7 +378,7 @@ export default {
       this.due = moment().format('YYYY-MM-DD');
       this.name = '';
       this.timers = [];
-      this.status = 'ongoing';
+      this.status = 'todo';
       this.priority = { id: 0, name: '' };
     },
 

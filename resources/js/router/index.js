@@ -9,6 +9,7 @@ import Dashboard from '@/modules/front/dashboard/Index';
 import Tasks from '@/modules/front/tasks/Index';
 import Reports from '@/modules/front/reports/Index';
 import Notes from '@/modules/front/notes/Index';
+import User from '@/modules/front/user/Index';
 import AdminDashboard from '@/modules/admin/dashboard/Home';
 import AdminUsers from '@/modules/admin/users/Users';
 import AdminUserList from '@/modules/admin/users/components/UserLists';
@@ -22,6 +23,8 @@ import AdminUserPermissionAdd from '@/modules/admin/users/components/PermissionF
 import AdminUserPermissionEdit from '@/modules/admin/users/components/PermissionFormEdit';
 import AdminFiles from '@/modules/admin/files/Files';
 import AdminSettings from '@/modules/admin/settings/Settings';
+import AdminBackupIndex from '@/modules/admin/backups/Index';
+import AdminBackupList from '@/modules/admin/backups/components/BackupLists';
 
 Vue.use(Router);
 
@@ -52,6 +55,12 @@ const router = new Router({
                     name: "index.home",
                     path: "",
                     component: FrontHome
+                },
+                {
+                    path: '/profile',
+                    name: 'profile',
+                    beforeEnter: guard,
+                    component: User
                 },
                 {
                     path: '/dashboard',
@@ -141,13 +150,27 @@ const router = new Router({
                 {
                     name: "admin.files",
                     path: "/admin/files",
+                    beforeEnter: guard,
                     component: AdminFiles,
                 },
                 {
                     name: "admin.settings",
                     path: "/admin/settings",
+                    beforeEnter: guard,
                     component: AdminSettings,
-                }
+                },
+                {
+                    path: "/admin/backups",
+                    component: AdminBackupIndex,
+                    beforeEnter: guard,
+                    children: [
+                        {
+                            name:"admin.backups.list",
+                            path:"/",
+                            component: AdminBackupList
+                        },
+                    ],
+                },
             ]
         },
         {

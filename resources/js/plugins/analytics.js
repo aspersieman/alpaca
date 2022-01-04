@@ -1,7 +1,10 @@
-import VueGtag from "vue-gtag";
+import Vue from 'vue'
+import { VuePlausible } from 'vue-plausible'
 
-export default [ VueGtag, {
-  config: { id: "G-634ZXVJ4GH" },
-  enabled: process.env.NODE_ENV === 'production',
-  disableScriptLoad: process.env.NODE_ENV !== 'production',
-} ];
+if (process.env.NODE_ENV === 'production') {
+  Vue.use(VuePlausible, {
+    domain: "lamoid.com",
+    enableAutoPageviews: true,
+    apiHost: "https://plausible.nicolaas.me"
+  })
+}

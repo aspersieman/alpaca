@@ -15,8 +15,8 @@
         <v-flex
           xs12
           sm12
-          md5
-          lg5
+          md4
+          lg4
         >
           <div
             class="caption grey--text ml-2"
@@ -68,11 +68,23 @@
           <div :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}">
             {{ task.due }}
           </div>
+          <div
+            v-if="task.completed_at"
+            class="caption grey--text"
+          >
+            Completed
+          </div>
+          <div
+            v-if="task.completed_at"
+            :class="{'mt-0 mx-0 px-0 ml-3': $vuetify.breakpoint.smAndDown}"
+          >
+            {{ $appFormatters.dateTimeFormat(task.completed_at, 'YYYY-MM-DD') }}
+          </div>
         </v-flex>
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
-          md2
-          lg2
+          md1
+          lg1
           class="pt-0"
         >
           <div
@@ -95,29 +107,57 @@
         <v-flex
           xs4
           sm4
-          md1
-          lg1
+          md2
+          lg2
           class="pt-0"
         >
           <div class="mt-0 pt-0">
-            <v-btn
-              text
-              small
-              rounded
-              :class="`${task.status} white--text px-0 mx-0 status v-btn--round`"
-              @click="$store.dispatch('task/changeTaskStatus', task)"
+            <v-menu
+              offset-y
+              transition="slide-y-transition"
+              :rounded="$vuetify.breakpoint.mdAndUp ? 'b-xl' : ''"
             >
-              {{ task.status }}
-            </v-btn>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  text
+                  small
+                  :class="`${task.status} white--text mx-0 status ${$vuetify.breakpoint.mdAndUp ? 'large' : ''}`"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ statuses.find(status => status.id === task.status).name }}
+                </v-btn>
+              </template>
+              <v-list
+                dense
+              >
+                <v-subheader>Change status</v-subheader>
+                <v-list-item
+                  v-for="(status) in getChangeStatusList(task.status)"
+                  :key="status.id"
+                >
+                  <v-btn
+                    text
+                    small
+                    :class="`${status.id} white--text px-3 mx-0 status status-list-button`"
+                    @click="$store.dispatch('task/changeTaskStatus', { task: task, newStatus: statuses.find(s => s.id === status.id) })"
+                  >
+                    {{ status.name }}
+                  </v-btn>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
         </v-flex>
         <v-flex
           v-if="$vuetify.breakpoint.mdAndUp"
-          md2
-          lg2
+          md3
+          lg3
           class="align-right"
         >
-          <div class="mt-0 pt-0">
+          <div
+            class="mt-0 pt-0"
+          >
             <v-btn
               icon
               class="pa-0 ma-0"
@@ -152,14 +192,15 @@
                 Delete
               </v-tooltip>
             </v-btn>
-            <v-btn
+            <div
               v-if="getTaskTimers(task, onlyActive).length > 0"
-              icon
+              class="mt-0 pt-0 v-btn v-btn--icon v-btn--round theme--light"
             >
               <timer-running
                 :small="small"
+                :hide-time="$vuetify.breakpoint.mdAndDown"
               />
-            </v-btn>
+            </div>
             <v-btn
               v-if="isTimerRunning !== true"
               icon
@@ -245,16 +286,9 @@
                   v-if="getTaskTimers(task, onlyActive).length > 0"
                   :class="`${task.status}`"
                 >
-                  <v-list-item-icon class="horizontal-center">
-                    <v-btn
-                      icon
-                    >
-                      <timer-running
-                        :small="small"
-                      />
-                    </v-btn>
-                  </v-list-item-icon>
-                  <v-list-item-title>Timer</v-list-item-title>
+                  <timer-running
+                    :small="small"
+                  />
                 </v-list-item>
                 <v-list-item
                   v-if="$store.getters['timer/timerRunning'].seconds == 0"
@@ -336,11 +370,14 @@ export default {
       'isTimerRunning',
       'timerRunning'
     ]),
+    ...mapGetters('task', [
+      'statuses',
+    ]),
   },
   methods: {
     openNoteDrawer() {
       this.$store.commit('task/TASK', this.task);
-      this.$store.commit('drawer/NOTE_DRAWER', true);
+      this.$store.dispatch('drawer/toggleNoteDrawer');
     },
     countNotes(task) {
       return task?.notes?.length > 0 ? task?.notes?.length : '';
@@ -348,6 +385,9 @@ export default {
     countTimers(task) {
       return task?.timers?.length > 0 ? task?.timers?.length : '';
     },
+    getChangeStatusList(status) {
+      return this.statuses.filter(s => s.id != status);
+    }
   },
 }
 </script>
@@ -358,19 +398,28 @@ export default {
   background-color: $theme-light-background;
   border-bottom: 1px solid $border-light-grey;
 }
-.task button.status {
-  min-width: 88px;
+.task button.status,
+.status-list-button
+{
   height: 28px;
+  padding: 3px;
+  width: 100%;
+  max-width: 130px;
+}
+
+.task button.status.large {
+  min-width: 145px;
 }
 .task.complete {
   border-left: 4px solid $task-status-complete;
 }
-.task.ongoing {
-  border-left: 4px solid $task-status-ongoing;
+.task.inprogress {
+  border-left: 4px solid $task-status-inprogress;
 }
-.task.overdue {
-  border-left: 4px solid $task-status-overdue;
+.task.todo {
+  border-left: 4px solid $task-status-todo;
 }
+
 .transparent {
   background-color: transparent;
 }

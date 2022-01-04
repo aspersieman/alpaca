@@ -1,4 +1,4 @@
-import { duration } from '@/plugins/formatters';
+import { duration } from '@/formatters';
 
 export default {
   methods: {

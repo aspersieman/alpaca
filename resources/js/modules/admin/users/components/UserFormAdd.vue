@@ -21,7 +21,7 @@
             >
               <v-text-field
                 v-model="name"
-                label="First name"
+                label="Full name"
                 :rules="nameRules"
               />
             </v-flex>

@@ -3,27 +3,43 @@
     <v-navigation-drawer
       v-if="$vuetify.breakpoint.smAndDown || menu.length > 0"
       temporary
-      absolute
       left
+      app
       :value="value"
       @input="$emit('input', $event)"
     >
       <template
-        v-if="$auth.check && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
         #prepend
       >
-        <v-list-item two-line>
-          <avatar />
-          <v-list-item-content>
-            <v-list-item-title>{{ user.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
+        <div
+          v-if="$auth.check && ($vuetify.breakpoint.smAndDown || $store.getters.getAppBarBreakpoint == 'sm' || $store.getters.getAppBarBreakpoint == 'sx')"
+        >
+          <v-list-item two-line>
+            <avatar />
+            <v-list-item-content>
+              <v-list-item-title>{{ user.name }}</v-list-item-title>
+              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div
+          v-if="$auth.check && ($vuetify.breakpoint.mdAndUp && $store.getters.getAppBarBreakpoint != 'sm' && $store.getters.getAppBarBreakpoint != 'sx')"
+        >
+          <v-list-item two-line>
+            <v-list-item-content>
+              <router-link to="/">
+                <v-img
+                  src="/img/logo/logo-and-alpaca-text-primary-button.png"
+                  height="48"
+                  contain
+                />
+              </router-link>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
       </template>
 
-      <v-divider
-        v-if="$auth.check && $vuetify.breakpoint.smAndDown"
-      />
+      <v-divider />
       <v-list dense>
         <v-list-item
           to="/"
@@ -46,7 +62,7 @@
             horizontal
           />
           <v-list-item
-            v-if="item.navType != 'divider'"
+            v-if="item.navType != 'divider' && item.routeType == 'vue'"
             :key="item.routeName"
             :data="item"
             :to="{name: item.routeName}"
@@ -58,11 +74,25 @@
               <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item
+            v-if="item.navType != 'divider' && item.routeType == 'laravel'"
+            :key="item.routeName"
+            :data="item"
+          >
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <a :href="item.routeName">
+                <v-list-item-title>{{ item.label }}</v-list-item-title>
+              </a>
+            </v-list-item-content>
+          </v-list-item>
         </div>
         <v-divider horizontal />
         <v-list-item
           v-if="!$auth.check"
-          @click="login()"
+          @click="$store.dispatch('auth/login')"
         >
           <v-list-item-action>
             <v-icon>meeting_room</v-icon>
@@ -73,7 +103,7 @@
         </v-list-item>
         <v-list-item
           v-if="$auth.check"
-          @click="logout()"
+          @click="$store.dispatch('auth/logout')"
         >
           <v-list-item-action>
             <v-icon>no_meeting_room</v-icon>
@@ -90,17 +120,13 @@
 import { mapGetters } from 'vuex';
 import Avatar from '@/components/core/Avatar';
 import AvatarMixin from '@/mixins/AvatarMixin';
-import AuthenticationMixin from '@/mixins/AuthenticationMixin';
 
 export default {
   name: 'CoreDrawer',
   components: {
     Avatar
   },
-  mixins: [
-    AvatarMixin,
-    AuthenticationMixin
-  ],
+  mixins: [ AvatarMixin ],
   props: {
     value: {
       type: Boolean,

@@ -1,44 +1,40 @@
 <template>
-  <div
-    style="width: 100%"
+  <v-menu
+    v-model="dateRangeMenu"
+    :close-on-content-click="false"
+    :nudge-right="40"
+    transition="scale-transition"
+    offset-y
+    min-width="290px"
   >
-    <v-menu
-      v-model="dateRangeMenu"
-      :close-on-content-click="false"
-      :nudge-right="40"
-      transition="scale-transition"
-      offset-y
-      min-width="290px"
-    >
-      <template #activator="{ on, attrs }">
-        <v-text-field
-          v-model="selected"
-          class="date-range-input"
-          :label="label"
-          :prepend-icon="getIcon()"
-          :clearable="clearable"
-          readonly
-          value
-          outlined
-          dense
-          v-bind="attrs"
-          v-on="on"
-          @input="$emit('input', $event)"
-          @blur="date = (value)"
-        />
-      </template>
-      <v-date-picker
+    <template #activator="{ on, attrs }">
+      <v-text-field
         v-model="selected"
-        light
-        range
+        :class="classes"
+        :label="label"
+        :prepend-icon="getIcon()"
+        :clearable="clearable"
+        :style="{'width': width, 'max-width': width}"
+        readonly
+        value
+        outlined
+        dense
+        v-bind="attrs"
+        v-on="on"
+        @input="$emit('input', $event)"
+        @blur="date = (value)"
       />
-    </v-menu>
-  </div>
+    </template>
+    <v-date-picker
+      v-model="selected"
+      light
+      range
+    />
+  </v-menu>
 </template>
 
 <script>
 export default {
-  components: { },
   props: {
     value: {
       required: false,
@@ -61,8 +57,23 @@ export default {
       required: false,
       type: String,
       default: "Date range"
+    },
+    width: {
+      required: false,
+      type: String,
+      default: "100%"
+    },
+    classes: {
+      required: false,
+      type: String,
+      default: ""
     }
   },
+
+  emits: [
+    'input'
+  ],
+
   data() {
     return {
       dateRangeMenu: false,

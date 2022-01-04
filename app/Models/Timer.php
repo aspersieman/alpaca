@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Conner\Tagging\Taggable;
 use App\Traits\FilterTrait;
 
-use Illuminate\Support\Facades\Log;
+use \DateTimeInterface;
 
 class Timer extends Model
 {
@@ -16,6 +16,17 @@ class Timer extends Model
   use FilterTrait;
 
   protected $table = 'timers';
+
+  /**
+   * Prepare a date for array / JSON serialization.
+   *
+   * @param  \DateTimeInterface  $date
+   * @return string
+   */
+  protected function serializeDate(DateTimeInterface $date)
+  {
+      return $date->format('Y-m-d H:i:s');
+  }
 
   /**
    * {@inheritDoc}
