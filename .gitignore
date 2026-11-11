@@ -21,3 +21,6 @@ yarn-error.log
 ubuntu*.log
 .phpunit.result.cache
 /database/backups
+/public/secret/credentials.json
+/storage/testing.sqlite
+/composer.phar

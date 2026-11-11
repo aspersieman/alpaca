@@ -67,20 +67,24 @@ class AddColumnsToUsersTable extends Migration
           'permissions' => []
         ]);
 
-        // create admin account
-        $AdminUser = User::create([
-          'name' => 'Nicol',
-          'email' => 'aspersieman@gmail.com',
-          'password' => '326EyWQj&EqV@YX2',
-          'remember_token' => Str::random(10),
-          'permissions' => [],
-          'last_login' => \Carbon\Carbon::now(),
-          'active' => \Carbon\Carbon::now(),
-          'activation_key' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
-        ]);
+        // create the admin account only when ADMIN_EMAIL and ADMIN_PASSWORD are set
+        $adminEmail = env('ADMIN_EMAIL');
+        $adminPassword = env('ADMIN_PASSWORD');
+        if ($adminEmail && $adminPassword) {
+          $AdminUser = User::create([
+            'name' => env('ADMIN_NAME', 'Admin'),
+            'email' => $adminEmail,
+            'password' => $adminPassword,
+            'remember_token' => Str::random(10),
+            'permissions' => [],
+            'last_login' => \Carbon\Carbon::now(),
+            'active' => \Carbon\Carbon::now(),
+            'activation_key' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
+          ]);
 
-        // make super user
-        $AdminUser->groups()->attach($groupSuperUser);
+          // make super user
+          $AdminUser->groups()->attach($groupSuperUser);
+        }
     }
 
     /**

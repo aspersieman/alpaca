@@ -23,7 +23,7 @@ class UserControllerTest extends TestCase
       // Default user has been created
       // from default seeds
       $this->assertDatabaseHas('users', [
-        'email' => 'aspersieman@gmail.com',
+        'email' => 'admin@example.com',
       ]);
 
       $user = factory(User::class)->create();
