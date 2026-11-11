@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-php composer.phar dump-autoload
-php composer.phar dump-autoload -o
+composer dump-autoload
+composer dump-autoload -o
 
 php artisan clear-compiled
 php artisan optimize

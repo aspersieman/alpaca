@@ -23,5 +23,9 @@
     <env name="CACHE_DRIVER" value="array"/>
     <env name="SESSION_DRIVER" value="array"/>
     <env name="QUEUE_DRIVER" value="sync"/>
+    <env name="APP_KEY" value="base64:YWxwYWNhLXRlc3Qta2V5LTAxMjM0NTY3ODlhYmNkZQ=="/>
+    <env name="FILE_DOWNLOAD_SECRET" value="test-only-secret"/>
+    <env name="ADMIN_EMAIL" value="admin@example.com"/>
+    <env name="ADMIN_PASSWORD" value="test-only-password"/>
   </php>
 </phpunit>
